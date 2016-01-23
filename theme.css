@@ -1,0 +1,8 @@
+#container {
+    padding: 5px;
+}
+
+select {
+    width: 90%;
+    margin: 5px 0 5px 0;
+}
