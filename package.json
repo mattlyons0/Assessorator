@@ -1,0 +1,13 @@
+{
+  "name": " Assessorator",
+  "version": "0.0.1",
+  "description": "An assessment generator application.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "author": "Matt Lyons <matt@matt-lyons.net>",
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.0"
+  }
+}
