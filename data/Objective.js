@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Contains Objective Metadata
  */

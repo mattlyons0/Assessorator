@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Contains Assessment Metadata and a list of questions used in the assessment
  */

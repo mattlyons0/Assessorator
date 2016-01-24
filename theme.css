@@ -1,8 +1,29 @@
 #container {
     padding: 5px;
+    font-family: Arial, "Trebuchet MS", sans-serif;
 }
 
 select {
-    width: 90%;
+    width: 70%;
     margin: 5px 0 5px 0;
+}
+
+li {
+    list-style-type: none;
+}
+
+li button {
+    float: right;
+    height: 18px;
+    width: 20px;
+}
+
+.list {
+    width: 70%;
+    min-height: 60px;
+    margin: 5px 0 5px 0;
+    padding: 2px 5px 2px 5px;
+    border: groove;
+    display: inline-block;
+    overflow: auto;
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Contains Course Metadata and lists of Assessments generated, Objectives created, and Topics created.
  */
@@ -67,3 +69,5 @@ class Course {
     this.assessments.push(new Assessment(assessmentName, genID));
   }
 }
+
+module.exports = Course;

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Contains Topic Metadata and a list of questions related to that topic.
  */

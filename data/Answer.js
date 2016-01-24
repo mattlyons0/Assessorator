@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Contains Answer Metadata
  */

@@ -1,3 +1,6 @@
+"use strict";
+
+let Course = require('./Course');
 /**
  * Contains a list of courses.
  */
@@ -16,11 +19,15 @@ class State {
    * @param courseID {String} Friendly ID of Course
    * @param courseYear {Number} Year of Course
    * @param courseSemester {String|Number} TODO figure out how to handle this
+   *
+   * @returns {Number} ID of course created.
    */
   createCourse(courseName, courseID, courseYear, courseSemester) {
     let genID = this.courseUID;
     this.courseUID++;
 
     this.courseList.push(new Course(courseName, courseID, courseYear, courseSemester, genID));
+    return genID;
   }
 }
+module.exports = State;

@@ -5,6 +5,8 @@
     <title>The Assessorator</title>
 
     <link rel="stylesheet" type="text/css" href="theme.css"/>
+
+    <script src="script.js"></script>
 </head>
 <body>
 <div id="container">
@@ -12,36 +14,43 @@
     <div id="leftCol" class="column" style="float:left;width:30%;">
         <div id="classes">
             Classes:<br/>
-            <select name="classes" size="10">
-
-            </select>
+            <div id="classList" class="list">
+                <li>No Classes
+                    <button onclick="UI.createClass()">+</button>
+                </li>
+            </div>
         </div>
         <div id="assessments">
             Assessments:<br/>
-            <select name="assessments" size="10">
-
-            </select>
+            <div class="list">
+                <li>No Assessments
+                    <button onclick="UI.createAssessment()">+</button>
+                </li>
+            </div>
         </div>
     </div>
     <div id="centerCol" class="column" style="display:inline-block;width:30%">
         <div id="questions">
             Questions:<br/>
-            <select name="question" size="10">
-
-            </select>
+            <div class="list">
+                <li>No Questions
+                    <button onclick="UI.createQuestion()">+</button>
+                </li>
+            </div>
         </div>
     </div>
     <div id="rightCol" class="column" style="float:right;width:40%;">
         <div id="question">
-            Question Edit
-            <select name="question" size="10">
-
-            </select>
+            Question Edit:<br/>
+            <div id="questionEditor" style="border-style:groove">
+                <h1>TODO</h1>
+            </div>
         </div>
     </div>
 
 
-    <p style="position:absolute; bottom: 0;"><br/><a href="todo.html">Project Todo List</a></p>
+    <p style="position:absolute; bottom: 0;"><a href="javascript:UI.printData()">Debug Info</a>&nbsp;<a
+            href="todo.html">Todo List</a></p>
 </div>
 </body>
 </html>
