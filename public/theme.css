@@ -1,6 +1,7 @@
 #container {
     padding: 5px;
     font-family: Arial, "Trebuchet MS", sans-serif;
+    overflow: hidden;
 }
 
 select {
@@ -26,4 +27,24 @@ li button {
     border: groove;
     display: inline-block;
     overflow: auto;
+}
+
+#classesContainer {
+    height: 85%;
+    margin: 20px 80px;
+}
+
+#classesList {
+    max-height: 500px;
+    width: 100%;
+    overflow: auto;
+}
+
+md-list-item.ng-enter {
+    transition: 0.5s;
+    opacity: 0;
+}
+
+md-list-item.ng-enter-active {
+    opacity: 1;
 }

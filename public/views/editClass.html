@@ -1,0 +1,53 @@
+<md-dialog id="editClassContainer">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>
+                <span>Create Class</span>
+            </h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+        <div>
+            <form name="classForm" ng-submit="submit()">
+                <div layout-gt-xs="row">
+                    <md-input-container class="md-block" flex-gt-xs>
+                        <label>Course Name</label>
+                        <input required id="classNameField" type="text" name="className" ng-model="class.name"
+                               md-auto-focus/>
+                        <div ng-messages="classForm.className.$error">
+                            <div ng-message="required">Name is required.</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex>
+                        <label>Course ID</label>
+                        <input ng-model="class.id"/>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex>
+                        <label>Semester</label>
+                        <md-select ng-model="class.semester">
+                            <md-option ng-repeat="semester in semesters" value="{{semester}}">
+                                {{semester}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex>
+                        <label>Year</label>
+                        <input type="number" ng-model="class.year"/>
+                    </md-input-container>
+                </div>
+                <input type="submit" style="display:none"/>
+            </form>
+        </div>
+
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="cancel()">Cancel</md-button>
+        <md-button class="md-primary" ng-click="submit()">
+            Create
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>
