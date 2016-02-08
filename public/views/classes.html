@@ -1,4 +1,4 @@
-<script src="../classesController.js"></script>
+<script src="../controllers/classesController.js"></script>
 
 <div id="classesContainer" class="md-padding" ng-controller="classesCtrl">
     <md-card>
@@ -20,10 +20,10 @@
         <md-content id="classesList" flex layout-padding>
             <md-list>
                 <md-list-item class="md-3-line" ng-repeat="class in classes">
-                    <md-button style="padding:5px;" flex>
+                    <md-button id="class{{ class.ID }}" ng-click="viewClass(class.ID)" style="padding:5px;" flex>
                         <div class="md-list-item-text" layout="column">
-                            <h3>{{ class.courseName }}</h3>
-                            <h4>{{ class.courseID }}</h4>
+                            <h3>{{ class.courseID }}</h3>
+                            <h4>{{ class.courseName }}</h4>
                             <p>{{ class.courseSemester + " " + class.courseYear }}</p>
                         </div>
                     </md-button>

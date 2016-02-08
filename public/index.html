@@ -20,17 +20,19 @@ See http://stackoverflow.com/questions/15538125/angularjs-in-head-vs-body -->
 <script src="libs/angular-sanitize.js"></script>
 
 <script src="assessoratorApp.js"></script>
-<script src="classesController.js"></script>
+<script src="controllers/viewController.js"></script>
+<script src="controllers/classesController.js"></script>
+<!--TODO figure out why this won't load in classView.html-->
+<script src="controllers/classViewController.js"></script>
 
 
-<div ng-app="assessoratorApp" id="container">
+<div ng-app="assessoratorApp" ng-controller="viewCtrl" id="container">
 
-    <h3>The Assessorator</h3>
+    <div ng-include="'views/'+page.URL"></div>
 
-    <div ng-include="'views/classes.html'"></div>
-
-    <p style="position:absolute; bottom: 0;"><a href="javascript:UI.printData()">Debug Info</a>&nbsp;<a
-            href="todo.html">Todo List</a></p>
+    <p style="position:absolute; bottom: 0; padding: 5px"><a href="javascript:UI.printData()">Data Debug</a>
+        &nbsp;<a href="#" ng-click="printPageData()">Page Debug</a>
+        &nbsp;<a href="todo.html">Todo List</a></p>
 </div>
 </body>
 </html>

@@ -13,6 +13,16 @@ UI.getClasses = function () {
   return state.courseList;
 };
 
+UI.getClassById = function (id) {
+  for (let x = 0; x < state.courseList.length; x++) {
+    if (state.courseList[x].ID === id) {
+      return state.courseList[x];
+    }
+  }
+
+  console.error("No course with ID " + id + " found");
+};
+
 UI.createClass = function (name, id, semester, year) {
   //Update Data Model
   let courseID = state.createCourse(name, id, year, semester);

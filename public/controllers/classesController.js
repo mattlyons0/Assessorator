@@ -20,6 +20,11 @@ app.controller("classesCtrl", function ($scope, $mdDialog) {
       closeTo: angular.element(document.querySelector('md-list-item:last-child'))
     });
   };
+
+  $scope.viewClass = function (classID) {
+    $scope.$parent.page.classID = classID;
+    $scope.$parent.page.URL = 'classView.html';
+  };
 });
 
 function CreateClassController($scope, $mdDialog) {
@@ -32,7 +37,7 @@ function CreateClassController($scope, $mdDialog) {
   $scope.semesters = ("Fall Spring Summer").split(' ');
 
   $scope.submit = function () {
-    if ($scope.class.name) {
+    if ($scope.class.id) {
       UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year);
       $mdDialog.hide();
     }

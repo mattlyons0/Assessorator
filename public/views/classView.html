@@ -1,0 +1,29 @@
+<script src="../controllers/classViewController.js"></script>
+
+<div id="classContainer" ng-controller="classViewCtrl">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" ng-click="goBack()" aria-label="Go Back">
+                <md-icon md-svg-icon="img/arrow-left.svg"></md-icon>
+            </md-button>
+            <h2>
+                <span>{{ class.courseID }}</span>
+            </h2>
+        </div>
+    </md-toolbar>
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab label="Overview">
+                <md-content class="md-padding">
+                    <h1>TODO</h1>
+                </md-content>
+            </md-tab>
+            <md-tab label="TODO">
+                <md-content class="md-padding">
+                    <p>Make new tabs created when clicking on adding something in overview</p>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+    </md-content>
+
+</div>
