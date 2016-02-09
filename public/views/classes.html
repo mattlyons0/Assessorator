@@ -8,12 +8,9 @@
                     <span>Classes</span>
                 </h2>
                 <span flex></span>
-                <md-button class="md-icon-button" ng-click="addClass($event)">
-
-                    <md-tooltip md-visible="addClassTooltip">
-                        Add Class
-                    </md-tooltip>
-                    <span style="font-size:28px">+</span>
+                <md-button id="createClassButton" class="md-icon-button" ng-click="addClass($event)">
+                    <md-tooltip md-visible="addClassTooltip">Create Class</md-tooltip>
+                    <md-icon md-svg-icon="img/plus.svg"></md-icon>
                 </md-button>
             </div>
         </md-toolbar>
@@ -27,8 +24,10 @@
                             <p>{{ class.courseSemester + " " + class.courseYear }}</p>
                         </div>
                     </md-button>
-                    <md-divider inset></md-divider>
+                    <md-divider inset ng-if="!lastClass(class)"></md-divider>
                 </md-list-item>
+                <!--Used to make create class appear to fade into box it creates-->
+                <md-list-item style="min-height: 0"></md-list-item>
             </md-list>
         </md-content>
     </md-card>

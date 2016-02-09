@@ -7,10 +7,12 @@ class Assessment {
   /**
    * Creates a new Assessment with no questions
    * @param assessmentName {String} Name of Assessment
+   * @param assessmentDescription {String} Description of Assessment
    * @param genID {Number} A *UNIQUE* ID (to this course) representing this Assessment in the data model.
    */
-  constructor(assessmentName, genID) {
+  constructor(assessmentName, assessmentDescription, genID) {
     this.assessmentName = assessmentName;
+    this.assessmentDescription = assessmentDescription;
 
     this.ID = genID;
 

@@ -5,10 +5,16 @@ app.controller("classesCtrl", function ($scope, $mdDialog) {
   if (UI.getClasses().length > 0)
     $scope.addClassTooltip = false;
 
+  $scope.lastClass = function(course){
+    return course.ID == UI.getClasses()[UI.getClasses().length - 1].ID;
+
+  };
+
   $scope.rightMenu = function ($mdOpenMenu, event) {
     $mdOpenMenu();
   };
 
+  var closeTo = angular.element(document.querySelector('md-list-item:last-child'));
   $scope.addClass = function (event) {
     $mdDialog.show({
       controller: CreateClassController,
@@ -17,7 +23,7 @@ app.controller("classesCtrl", function ($scope, $mdDialog) {
       targetEvent: event,
       clickOutsideToClose: true,
       fullscreen: false,
-      closeTo: angular.element(document.querySelector('md-list-item:last-child'))
+      closeTo: closeTo
     });
   };
 

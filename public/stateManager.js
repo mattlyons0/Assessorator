@@ -19,8 +19,18 @@ UI.getClassById = function (id) {
       return state.courseList[x];
     }
   }
-
   console.error("No course with ID " + id + " found");
+};
+
+UI.getAllQuestionsForClass = function (classID){
+  let course = UI.getClassById(classID);
+  let questions = [];
+  for(let x=0;x<course.topics.length;x++){
+    for(let y=0;y<course.topics[x].questions.length;y++){
+      questions.push(course.topics[x].questions[y]);
+    }
+  }
+  return questions;
 };
 
 UI.createClass = function (name, id, semester, year) {
