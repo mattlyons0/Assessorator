@@ -1,0 +1,59 @@
+<md-card id="editTopicContainer">
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">Create Question</span>
+        </md-card-title-text>
+    </md-card-title>
+    <form name="questionForm" ng-submit="submitQuestion()">
+        <md-content layout-padding>
+            <div>
+                <div layout="column">
+                    <md-input-container class="md-block" flex>
+                        <label>Question</label>
+                        <input required id="questionTitle{{tabID}}" type="text" name="questionTitle"
+                               ng-model="question.title"/>
+                        <div ng-messages="questionForm.questionTitle.$error">
+                            <div ng-message="required">A Question is required.</div>
+                        </div>
+                    </md-input-container>
+
+                    <div layout="row">
+                        <span style="padding-right:10px">Question Type:</span>
+                        <md-radio-group ng-model="question.type" class="md-primary" layout="row">
+                            <md-radio-button value="MC">Multiple Choice</md-radio-button>
+                            <md-radio-button value="MA">Multiple Answers</md-radio-button>
+                            <md-radio-button value="TF"> True/False</md-radio-button>
+                        </md-radio-group>
+                    </div>
+
+                    <md-input-container class="md-block" flex>
+                        <label>Description</label>
+                        <textarea ng-model="topic.description"></textarea>
+                    </md-input-container>
+
+                    <fieldset class="standard">
+                        <legend>Answers</legend>
+
+                        <md-radio-group ng-model="question.correctAnswer" class="md-primary">
+                            <div ng-repeat="answer in question.answers" layout="row">
+                                <md-radio-button aria-label="Answer" ng-if="useRadio()" ng-value="answer.text" ng-disabled="!answer.text" style="margin-bottom:0; height:36px"></md-radio-button>
+                                <md-checkbox aria-label="Answer" ng-if="question.type === 'MA'" ng-model="answer.correct" ng-disabled="!answer.text" class="md-primary" style="top:7px"></md-checkbox>
+                                <md-input-container md-no-float style="margin-bottom:0; margin-top:0; height:25px">
+                                    <input ng-model="answer.text" placeholder="Answer"/>
+                                </md-input-container>
+                            </div>
+                        <!--</md-radio-group>-->
+                    </fieldset>
+
+                </div>
+            </div>
+            <div layout="row">
+                <span flex></span>
+                <md-button ng-click="cleanup()">Cancel</md-button>
+                <md-button type="submit" class="md-primary">
+                    Create
+                </md-button>
+            </div>
+        </md-content>
+    </form>
+</md-card>

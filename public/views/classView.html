@@ -72,7 +72,7 @@
                                     <span>Questions</span>
                                 </h2>
                                 <span flex></span>
-                                <md-button class="md-icon-button">
+                                <md-button ng-click="createQuestion()" class="md-icon-button">
                                     <md-tooltip>Create Question</md-tooltip>
                                     <md-icon md-svg-icon="img/plus.svg"></md-icon>
                                 </md-button>
@@ -94,7 +94,7 @@
             </md-tab>
             <md-tab ng-repeat="tab in tabs" label="{{ tab.name }}">
                 <md-content class="md-padding greyBackground" >
-                    <div ng-include="tab.URL" ng-controller="editTopicCtrl" ng-init="tabID=tab.id;requestFocus()"></div>
+                    <div ng-include="tab.URL" dynamic-ctrl="tab.controller" ng-init="tabID=tab.id;requestFocus()"></div>
                 </md-content>
             </md-tab>
         </md-tabs>

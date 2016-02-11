@@ -46,3 +46,12 @@ UI.createQuestion = function () {
 UI.printData = function () {
   console.log(state);
 };
+
+//If a string is too long will append ...
+var strLimit = function(str){
+  let limit = 30; //limit in characters
+  if(str.length > limit){
+    return str.substring(0,limit).trim()+"…";
+  }
+  return str;
+};

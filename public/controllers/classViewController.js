@@ -5,7 +5,10 @@ app.controller("classViewCtrl", function ($scope) {
   let nextID = 0;
 
   $scope.createTopic = function(){
-    createTab("New Topic","views/editTopic.html");
+    createTab("New Topic","views/editTopic.html","editTopicCtrl");
+  };
+  $scope.createQuestion = function(){
+    createTab("New Question", "views/editQuestion.html","editQuestionCtrl");
   };
 
   $scope.getAllQuestions = function(){
@@ -34,11 +37,12 @@ app.controller("classViewCtrl", function ($scope) {
     console.error('No tab found with ID: '+tabID);
   };
 
-  function createTab(tabName,contentURL){
+  function createTab(tabName,contentURL,ctrl){
     let tab = {
       id: nextID,
       name: tabName,
-      URL: contentURL
+      URL: contentURL,
+      controller: ctrl
     };
     nextID++;
     $scope.tabs.push(tab);

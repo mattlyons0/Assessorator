@@ -1,6 +1,6 @@
 "use strict";
 app.controller("editTopicCtrl", function($scope){
-  $scope.topic = [];
+  $scope.topic = {};
 
   let tab;
 
@@ -9,21 +9,23 @@ app.controller("editTopicCtrl", function($scope){
       return;
     if(!tab)
       tab = $scope.$parent.getTabByID($scope.tabID);
-    tab.name = "Topic: "+$scope.topic.name;
+    tab.name = strLimit("Topic: "+$scope.topic.name);
   });
 
   $scope.submitTopic = function(){
     if(!$scope.topic.name)
       return;
     $scope.$parent.class.createTopic($scope.topic.name,$scope.topic.description);
-    //Cleanup
+    $scope.cleanup();
+  };
+
+  $scope.cleanup = function(){
     $scope.stopWatching();
     $scope.$parent.closeTab($scope.tabID);
   };
-
   $scope.requestFocus = function(){
     setTimeout(function(){
       document.getElementById("topicName"+$scope.tabID).focus();
     },200); //Delay until animation starts
-  }
+  };
 });
