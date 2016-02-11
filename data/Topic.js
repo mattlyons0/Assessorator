@@ -35,3 +35,5 @@ class Topic {
     this.questions.push(new Question(questionTitle, questionDescription, genID));
   }
 }
+
+module.exports = Topic;

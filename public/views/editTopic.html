@@ -1,0 +1,36 @@
+<md-card id="editTopicContainer">
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">Create Topic</span>
+        </md-card-title-text>
+    </md-card-title>
+    <form name="topicForm" ng-submit="submitTopic()">
+        <md-content layout-padding>
+            <div>
+                <div layout-gt-xs="row">
+                    <md-input-container class="md-block" flex>
+                        <label>Topic Name</label>
+                        <input required id="topicName{{tabID}}" type="text" name="topicName" ng-model="topic.name" ng-model-options="{debounce: 750}" md-auto-focus/>
+                        <div ng-messages="topicForm.topicName.$error">
+                            <div ng-message="required">Topic Name is required.</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex>
+                        <label>Description</label>
+                        <textarea ng-model="topic.description"></textarea>
+                    </md-input-container>
+                </div>
+            </div>
+            <div layout="row">
+                <span flex></span>
+                <md-button ng-click="closeTab(tab.id)">Cancel</md-button>
+                <md-button type="submit" class="md-primary">
+                    Create
+                </md-button>
+            </div>
+        </md-content>
+    </form>
+</md-card>

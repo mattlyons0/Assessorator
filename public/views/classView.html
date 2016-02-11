@@ -12,9 +12,9 @@
         </div>
     </md-toolbar>
     <md-content>
-        <md-tabs md-dynamic-height md-border-bottom>
+        <md-tabs md-autoselect md-dynamic-height md-border-bottom>
             <md-tab label="Overview">
-                <md-content class="md-padding" layout="column" layout-gt-sm="row">
+                <md-content class="md-padding greyBackground" layout="column" layout-gt-sm="row">
                     <md-card flex="40">
                         <md-toolbar>
                             <div class="md-toolbar-tools">
@@ -47,7 +47,7 @@
                                     <span>Topics</span>
                                 </h2>
                                 <span flex></span>
-                                <md-button class="md-icon-button">
+                                <md-button ng-click="createTopic()" class="md-icon-button">
                                     <md-tooltip>Create Topic</md-tooltip>
                                     <md-icon md-svg-icon="img/plus.svg"></md-icon>
                                 </md-button>
@@ -92,9 +92,9 @@
                     </md-card>
                 </md-content>
             </md-tab>
-            <md-tab label="TODO">
-                <md-content class="md-padding">
-                    <p>Make new tabs created when clicking on adding something in overview</p>
+            <md-tab ng-repeat="tab in tabs" label="{{ tab.name }}">
+                <md-content class="md-padding greyBackground" >
+                    <div ng-include="tab.URL" ng-controller="editTopicCtrl" ng-init="tabID=tab.id;requestFocus()"></div>
                 </md-content>
             </md-tab>
         </md-tabs>

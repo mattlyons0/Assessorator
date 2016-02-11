@@ -37,3 +37,5 @@ class Question {
     this.answers.push(new Answer(answerText, genID));
   }
 }
+
+module.exports = Question;

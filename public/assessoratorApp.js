@@ -1,4 +1,4 @@
-var app = angular.module("assessoratorApp", ['ngMaterial']);
+var app = angular.module("assessoratorApp", ['ngMaterial', 'ngMessages']);
 
 app.directive('ngRightClick', function ($parse) {
   return function (scope, element, attrs) {

@@ -22,7 +22,7 @@
                         <label>Course ID</label>
                         <input required name="classID" ng-model="class.id"/>
                         <div ng-messages="classForm.class.id.$error">
-                            <div ng-message="required">Name is required.</div>
+                            <div ng-message="required">Course ID is required.</div>
                         </div>
                     </md-input-container>
                     <md-input-container class="md-block" flex>
@@ -38,7 +38,6 @@
                         <input type="number" ng-model="class.year"/>
                     </md-input-container>
                 </div>
-                <input type="submit" style="display:none"/>
             </div>
 
         </md-dialog-content>

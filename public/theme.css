@@ -2,6 +2,9 @@
     /*padding: 5px;*/
     /*font-family: Arial, "Trebuchet MS", sans-serif;*/
     overflow: hidden;
+    -webkit-touch-callout: none; /*Disable text selection */
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 select {
@@ -38,6 +41,10 @@ li button {
     max-height: 500px;
     width: 100%;
     overflow: auto;
+}
+
+.greyBackground {
+    background: #f6f6f6;
 }
 
 md-list-item.ng-enter {

@@ -15,3 +15,5 @@ class Answer {
     this.id = genID;
   }
 }
+
+module.exports = Answer;

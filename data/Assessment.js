@@ -30,3 +30,5 @@ class Assessment {
     this.questionIDs.push(questionID);
   }
 }
+
+module.exports = Assessment;

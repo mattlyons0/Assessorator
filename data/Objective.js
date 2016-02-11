@@ -15,3 +15,5 @@ class Objective {
     this.ID = genID;
   }
 }
+
+module.exports = Objective;

@@ -1,5 +1,7 @@
 "use strict";
 
+let Topic = require('./Topic');
+
 /**
  * Contains Course Metadata and lists of Assessments generated, Objectives created, and Topics created.
  */
