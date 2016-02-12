@@ -58,7 +58,7 @@
                                 <md-list-item class="md-2-line" ng-repeat="topic in class.topics">
                                     <div class="md-list-item-text">
                                         <h3>{{ topic.topicName }}</h3>
-                                        <p>{{ topic.topicDescription }}</p>
+                                        <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
                                     </div>
                                     <md-divider inset></md-divider>
                                 </md-list-item>
@@ -82,8 +82,9 @@
                             <md-list>
                                 <md-list-item class="md-2-line" ng-repeat="question in getAllQuestions()">
                                     <div class="md-list-item-text">
-                                        <h3>{{ question.questionName }}</h3>
+                                        <h3>{{ question.questionTitle }}</h3>
                                         <p>{{ question.questionDescription }}</p>
+                                        {{$index}}
                                     </div>
                                     <md-divider inset></md-divider>
                                 </md-list-item>

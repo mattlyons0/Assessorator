@@ -7,10 +7,12 @@ class Answer {
   /**
    * Creates an answer
    * @param answerText {String} Answer String
+   * @param correct {Boolean} If the answer is a/the correct answer.
    * @param genID {Number} A *UNIQUE* ID (to this Question) representing this Answer in the data model.
    */
-  constructor(answerText, genID) {
+  constructor(answerText, correct, genID) {
     this.answerText = answerText;
+    this.correct = correct;
 
     this.id = genID;
   }

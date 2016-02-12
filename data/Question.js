@@ -1,5 +1,7 @@
 "use strict";
 
+let Answer = require('./Answer');
+
 /**
  * Contains Question Metadata and a list of answers.
  */
@@ -21,20 +23,18 @@ class Question {
      * @type {Answer[]} */
     this.answers = [];
     this.answerUID = 0;
-    /** ID of Correct Answer
-     * @type {number} */
-    this.correctAnswer = -1;
   }
 
   /**
    * Create a new Answer
    * @param answerText {String} Text String for Answer
+   * @param correct {Boolean} True or False if the answer is a/the correct answer
    */
-  createAnswer(answerText) {
+  createAnswer(answerText,correct) {
     let genID = this.answerUID;
     this.answerUID++;
 
-    this.answers.push(new Answer(answerText, genID));
+    this.answers.push(new Answer(answerText, correct, genID));
   }
 }
 

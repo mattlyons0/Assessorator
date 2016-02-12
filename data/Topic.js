@@ -1,5 +1,7 @@
 "use strict";
 
+let Question = require('./Question');
+
 /**
  * Contains Topic Metadata and a list of questions related to that topic.
  */

@@ -22,6 +22,7 @@ UI.getClassById = function (id) {
   console.error("No course with ID " + id + " found");
 };
 
+
 UI.getAllQuestionsForClass = function (classID){
   let course = UI.getClassById(classID);
   let questions = [];
@@ -37,12 +38,7 @@ UI.createClass = function (name, id, semester, year) {
   //Update Data Model
   let courseID = state.createCourse(name, id, year, semester);
 };
-UI.createAssessment = function () {
 
-};
-UI.createQuestion = function () {
-
-};
 UI.printData = function () {
   console.log(state);
 };

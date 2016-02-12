@@ -1,6 +1,7 @@
 "use strict";
 
 let Topic = require('./Topic');
+let Objective = require('./Objective');
 
 /**
  * Contains Course Metadata and lists of Assessments generated, Objectives created, and Topics created.
@@ -47,6 +48,15 @@ class Course {
     this.topicUID++;
 
     this.topics.push(new Topic(topicName, topicDescription, genID));
+  }
+
+  getTopic(topicID){
+    for (let x = 0; x < topics.length; x++) {
+      if (topics[x].ID === id) {
+        return topics[x];
+      }
+    }
+    console.error("No topic with ID " + id + " found");
   }
 
   /**

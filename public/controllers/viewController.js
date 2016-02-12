@@ -6,6 +6,7 @@ app.controller("viewCtrl", function ($scope) {
 
   if(process.env.NODE_ENV === 'dev'){
     UI.createClass("Dummy Class","DUM 100","Fall",2015);
+    UI.getClasses()[0].createTopic('Dummy Topic','A Topic created for the purposes of testing.');
   }
 
   $scope.printPageData = function () {

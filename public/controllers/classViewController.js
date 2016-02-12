@@ -1,14 +1,33 @@
 "use strict";
-app.controller("classViewCtrl", function ($scope) {
+app.controller("classViewCtrl", function ($scope,$timeout) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   let nextID = 0;
 
   $scope.createTopic = function(){
     createTab("New Topic","views/editTopic.html","editTopicCtrl");
+
+    //Remove popup from new question topic chooser UI
+    if(document.querySelector("#topicChooserInput")) {
+      $timeout(function () { //Delay until after current $apply
+        document.querySelector("#topicChooserInput").blur();
+        angular.element(document.querySelector('md-virtual-repeat-container')).triggerHandler('mouseleave');
+      }, 50); //Less than this seems to screw with the animation
+    }
   };
   $scope.createQuestion = function(){
     createTab("New Question", "views/editQuestion.html","editQuestionCtrl");
+  };
+  $scope.createObjective = function(){
+    createTab("New Objective","views/editObjective.html","editObjectiveCtrl");
+
+    //Remove popup from new question topic chooser UI
+    if(document.querySelector("#objectiveChooserInput")) {
+      $timeout(function () { //Delay until after current $apply
+        document.querySelector("#objectiveChooserInput").blur();
+        angular.element(document.querySelectorAll('md-virtual-repeat-container')[1]).triggerHandler('mouseleave');
+      }, 50); //Less than this seems to screw with the animation
+    }
   };
 
   $scope.getAllQuestions = function(){
