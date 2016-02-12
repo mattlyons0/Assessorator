@@ -18,6 +18,9 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   $scope.objective = {};
   $scope.objective.selected = [];
 
+  $scope.searchQueryTopic = function(){
+    return $scope.topic.searchQuery;
+  };
   $scope.searchTopics = function () {
     let array = [];
     let query = $scope.topic.searchQuery;
@@ -36,6 +39,9 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     return chip;
   };
 
+  $scope.searchQueryObjective = function(){
+    return $scope.objective.searchQuery;
+  };
   $scope.searchObjectives = function () {
     let array = [];
     let query = $scope.objective.searchQuery;

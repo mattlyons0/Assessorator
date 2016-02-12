@@ -14,87 +14,88 @@
     <md-content>
         <md-tabs md-autoselect md-dynamic-height md-border-bottom>
             <md-tab label="Overview">
-                <md-content class="md-padding greyBackground" layout="column" layout-gt-sm="row">
-                    <md-card flex="40">
-                        <md-toolbar>
-                            <div class="md-toolbar-tools">
-                                <h2>
-                                    <span>Assessments</span>
-                                </h2>
-                                <span flex></span>
-                                <md-button class="md-icon-button">
-                                    <md-tooltip>Create Assessment</md-tooltip>
-                                    <md-icon md-svg-icon="img/plus.svg"></md-icon>
-                                </md-button>
-                            </div>
-                        </md-toolbar>
-                        <md-content flex layout-padding>
-                            <md-list>
-                                <md-list-item class="md-2-line" ng-repeat="assessment in class.assessments">
-                                    <div class="md-list-item-text">
-                                        <h3>{{ assessment.assessmentName }}</h3>
-                                        <p>{{ assessment.assessmentDescription }}</p>
-                                    </div>
-                                    <md-divider inset></md-divider>
-                                </md-list-item>
-                            </md-list>
-                        </md-content>
-                    </md-card>
-                    <md-card flex="20">
-                        <md-toolbar>
-                            <div class="md-toolbar-tools">
-                                <h2>
-                                    <span>Topics</span>
-                                </h2>
-                                <span flex></span>
-                                <md-button ng-click="createTopic()" class="md-icon-button">
-                                    <md-tooltip>Create Topic</md-tooltip>
-                                    <md-icon md-svg-icon="img/plus.svg"></md-icon>
-                                </md-button>
-                            </div>
-                        </md-toolbar>
-                        <md-content flex layout-padding>
-                            <md-list>
-                                <md-list-item class="md-2-line" ng-repeat="topic in class.topics">
-                                    <div class="md-list-item-text">
-                                        <h3>{{ topic.topicName }}</h3>
-                                        <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
-                                    </div>
-                                    <md-divider inset></md-divider>
-                                </md-list-item>
-                            </md-list>
-                        </md-content>
-                    </md-card>
-                    <md-card flex="40">
-                        <md-toolbar>
-                            <div class="md-toolbar-tools">
-                                <h2>
-                                    <span>Questions</span>
-                                </h2>
-                                <span flex></span>
-                                <md-button ng-click="createQuestion()" class="md-icon-button">
-                                    <md-tooltip>Create Question</md-tooltip>
-                                    <md-icon md-svg-icon="img/plus.svg"></md-icon>
-                                </md-button>
-                            </div>
-                        </md-toolbar>
-                        <md-content flex layout-padding>
-                            <md-list>
-                                <md-list-item class="md-2-line" ng-repeat="question in getAllQuestions()">
-                                    <div class="md-list-item-text">
-                                        <h3>{{ question.questionTitle }}</h3>
-                                        <p>{{ question.questionDescription }}</p>
-                                        {{$index}}
-                                    </div>
-                                    <md-divider inset></md-divider>
-                                </md-list-item>
-                            </md-list>
-                        </md-content>
-                    </md-card>
-                </md-content>
+                <div autoscroll="130">
+                    <md-content class="md-padding greyBackground" layout="column" layout-gt-sm="row">
+                        <md-card flex="40">
+                            <md-toolbar>
+                                <div class="md-toolbar-tools">
+                                    <h2>
+                                        <span>Assessments</span>
+                                    </h2>
+                                    <span flex></span>
+                                    <md-button class="md-icon-button">
+                                        <md-tooltip md-direction="left">Create Assessment</md-tooltip>
+                                        <md-icon md-svg-icon="img/plus.svg"></md-icon>
+                                    </md-button>
+                                </div>
+                            </md-toolbar>
+                            <md-content flex layout-padding autoscroll="250">
+                                <md-list>
+                                    <md-list-item class="md-2-line" ng-repeat="assessment in class.assessments">
+                                        <div class="md-list-item-text">
+                                            <h3>{{ assessment.assessmentName }}</h3>
+                                            <p>{{ assessment.assessmentDescription }}</p>
+                                        </div>
+                                        <md-divider inset></md-divider>
+                                    </md-list-item>
+                                </md-list>
+                            </md-content>
+                        </md-card>
+                        <md-card flex="20">
+                            <md-toolbar>
+                                <div class="md-toolbar-tools">
+                                    <h2>
+                                        <span>Topics</span>
+                                    </h2>
+                                    <span flex></span>
+                                    <md-button ng-click="createTopic()" class="md-icon-button">
+                                        <md-tooltip md-direction="left">Create Topic</md-tooltip>
+                                        <md-icon md-svg-icon="img/plus.svg"></md-icon>
+                                    </md-button>
+                                </div>
+                            </md-toolbar>
+                            <md-content flex layout-padding autoscroll="250">
+                                <md-list>
+                                    <md-list-item class="md-2-line" ng-repeat="topic in class.topics">
+                                        <div class="md-list-item-text">
+                                            <h3>{{ topic.topicName }}</h3>
+                                            <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
+                                        </div>
+                                        <md-divider inset></md-divider>
+                                    </md-list-item>
+                                </md-list>
+                            </md-content>
+                        </md-card>
+                        <md-card flex="40">
+                            <md-toolbar>
+                                <div class="md-toolbar-tools">
+                                    <h2>
+                                        <span>Questions</span>
+                                    </h2>
+                                    <span flex></span>
+                                    <md-button ng-click="createQuestion()" class="md-icon-button">
+                                        <md-tooltip md-direction="left">Create Question</md-tooltip>
+                                        <md-icon md-svg-icon="img/plus.svg"></md-icon>
+                                    </md-button>
+                                </div>
+                            </md-toolbar>
+                            <md-content flex layout-padding autoscroll="250">
+                                <md-list>
+                                    <md-list-item class="md-2-line" ng-repeat="question in getAllQuestions()">
+                                        <div class="md-list-item-text">
+                                            <h3>{{ question.questionTitle }}</h3>
+                                            <p>{{ question.questionDescription }}</p>
+                                        </div>
+                                        <md-divider inset></md-divider>
+                                    </md-list-item>
+                                </md-list>
+                            </md-content>
+                        </md-card>
+                    </md-content>
+                </div>
             </md-tab>
             <md-tab ng-repeat="tab in tabs" label="{{ tab.name }}">
-                <md-content class="md-padding greyBackground" >
+                <md-content class="md-padding greyBackground">
                     <div ng-include="tab.URL" dynamic-ctrl="tab.controller" ng-init="tabID=tab.id;requestFocus()"></div>
                 </md-content>
             </md-tab>

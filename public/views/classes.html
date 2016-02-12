@@ -1,6 +1,6 @@
 <script src="../controllers/classesController.js"></script>
 
-<div id="classesContainer" class="md-padding" ng-controller="classesCtrl">
+<div id="classesContainer" class="md-padding" ng-controller="classesCtrl"">
     <md-card>
         <md-toolbar>
             <div class="md-toolbar-tools">
@@ -14,7 +14,7 @@
                 </md-button>
             </div>
         </md-toolbar>
-        <md-content id="classesList" flex layout-padding>
+        <md-content id="classesList" flex layout-padding autoscroll="160">
             <md-list>
                 <md-list-item class="md-3-line" ng-repeat="class in classes">
                     <md-button id="class{{ class.ID }}" ng-click="viewClass(class.ID)" style="padding:5px;" flex>
