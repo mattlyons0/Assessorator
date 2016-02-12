@@ -51,12 +51,12 @@ class Course {
   }
 
   getTopic(topicID){
-    for (let x = 0; x < topics.length; x++) {
-      if (topics[x].ID === id) {
-        return topics[x];
+    for (let x = 0; x < this.topics.length; x++) {
+      if (this.topics[x].ID === topicID) {
+        return this.topics[x];
       }
     }
-    console.error("No topic with ID " + id + " found");
+    console.error("No topic with ID " + topicID + " found");
   }
 
   /**

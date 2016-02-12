@@ -57,10 +57,13 @@
                             <md-content flex layout-padding autoscroll="250">
                                 <md-list>
                                     <md-list-item class="md-2-line" ng-repeat="topic in class.topics">
-                                        <div class="md-list-item-text">
-                                            <h3>{{ topic.topicName }}</h3>
-                                            <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
-                                        </div>
+                                        <md-button id="topic{{ topic.ID }}" ng-click="selectTopic(topic.ID)"
+                                                   style="padding:5px;" flex>
+                                            <div class="md-list-item-text">
+                                                <h3>{{ topic.topicName }}</h3>
+                                                <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
+                                            </div>
+                                        </md-button>
                                         <md-divider inset></md-divider>
                                     </md-list-item>
                                 </md-list>
@@ -81,12 +84,22 @@
                             </md-toolbar>
                             <md-content flex layout-padding autoscroll="250">
                                 <md-list>
-                                    <md-list-item class="md-2-line" ng-repeat="question in getAllQuestions()">
+                                    <md-list-item class="md-2-line" ng-repeat="question in selectedTopic.questions">
                                         <div class="md-list-item-text">
                                             <h3>{{ question.questionTitle }}</h3>
                                             <p>{{ question.questionDescription }}</p>
                                         </div>
                                         <md-divider inset></md-divider>
+                                    </md-list-item>
+                                    <md-list-item class="md-2-line" ng-if="!selectedTopic">
+                                        <div class="md-list-item-text">
+                                            <h3>Select a topic to view its questions.</h3>
+                                        </div>
+                                    </md-list-item>
+                                    <md-list-item class="md-2-line" ng-if="selectedTopic.questions.length == 0">
+                                        <div class="md-list-item-text">
+                                            <h3>No Questions created for Topic: {{selectedTopic.topicName}}.</h3>
+                                        </div>
                                     </md-list-item>
                                 </md-list>
                             </md-content>

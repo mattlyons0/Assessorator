@@ -34,6 +34,15 @@ app.controller("classViewCtrl", function ($scope,$timeout) {
     return UI.getAllQuestionsForClass($scope.class.ID);
   };
 
+  $scope.selectTopic = function(topicID){
+    if(topicID === undefined)
+      return;
+    if($scope.selectedTopic)
+      document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='transparent';
+    $scope.selectedTopic = $scope.class.getTopic(topicID);
+    document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='#E8E8E8';
+  };
+
   $scope.goBack = function () {
     $scope.$parent.page.classID = undefined;
     $scope.$parent.page.URL = 'classes.html';
