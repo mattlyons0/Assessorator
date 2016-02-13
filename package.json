@@ -1,13 +1,26 @@
 {
-  "name": " Assessorator",
-  "version": "0.0.1",
+  "name": "Assessorator",
+  "version": "0.1.0",
   "description": "An assessment generator application.",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "pack": "electron-packager . Assessorator --all --out=bin --ignore=bin --asar --overwrite",
+    "pack:local": "electron-packager . Assessorator --platform=linux --arch=x64 --out=bin --ignore=bin --asar --overwrite",
+    "buildWin": "electron-builder bin/Assessorator-win32-x64 --platform=win --out=bin"
   },
   "author": "Matt Lyons <matt@matt-lyons.net>",
   "devDependencies": {
-    "electron-prebuilt": "^0.36.0"
+    "electron-prebuilt": "^0.36.0",
+    "electron-packager": "~5.2.1",
+    "electron-builder": "~2.7.2"
+  },
+  "builder": {
+    "win" : {
+      "title": "Assessorator",
+      "icon": "icon.ico",
+      "version": "0.1.0",
+      "publisher": "Matt Lyons <matt@matt-lyons.net>"
+    }
   }
 }
