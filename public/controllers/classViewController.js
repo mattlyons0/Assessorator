@@ -29,7 +29,9 @@ app.controller("classViewCtrl", function ($scope,$timeout) {
       }, 50); //Less than this seems to screw with the animation
     }
   };
-
+  $scope.createAssessment = function(){
+    createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl");
+  };
   $scope.getAllQuestions = function(){
     return UI.getAllQuestionsForClass($scope.class.ID);
   };

@@ -2,6 +2,7 @@
 
 let Topic = require('./Topic');
 let Objective = require('./Objective');
+let Assessment = require('./Assessment');
 
 /**
  * Contains Course Metadata and lists of Assessments generated, Objectives created, and Topics created.
@@ -73,12 +74,13 @@ class Course {
   /**
    * Creates a new Assessment containing no questions
    * @param assessmentName {String} Name of Assessment
+   * @param assessmentDescription {String} Description of Assessment
    */
-  createAssessment(assessmentName) {
+  createAssessment(assessmentName,assessmentDescription) {
     let genID = this.assessmentUID;
     this.assessmentUID++;
 
-    this.assessments.push(new Assessment(assessmentName, genID));
+    this.assessments.push(new Assessment(assessmentName, assessmentDescription, genID));
   }
 }
 

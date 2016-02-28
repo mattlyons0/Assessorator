@@ -1,0 +1,59 @@
+<md-card id="editAssessmentContainer">
+    <form name="assessmentForm" ng-submit="submitAssessment()">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">Create Assessment</span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content autoscroll="350">
+            <md-content layout-padding>
+                <div layout="row">
+                    <div id="leftColumn" flex="70" style="margin-right: 10px">
+                        <md-input-container md-no-float class="md-block" flex
+                                            style="margin-bottom:0; margin-top:0; height:50px">
+                            <input required id="assessmentTitle{{tabID}}" type="text" name="assessmentTitle"
+                                   placeholder="Title" ng-model="assessment.title"/>
+                            <div ng-messages="assessmentForm.assessmentTitle.$error">
+                                <div ng-message="required">A title is required.</div>
+                            </div>
+                        </md-input-container>
+                        <md-input-container class="md-block" flex style="margin-bottom:0; margin-top:0">
+                            <label>Description</label>
+                            <textarea ng-model="assessment.description"></textarea>
+                        </md-input-container>
+
+                        <span class="md-subhead">Question Criteria</span>
+                        <div id="questionChoices" layout="row">
+                            <md-button>Pick Question
+                                <md-tooltip md-delay="500" md-direction="right">Manually choose a question to always be on the assessment.</md-tooltip>
+                            </md-button>
+                            <md-button>Create Requirement
+                                <md-tooltip md-delay="500" md-direction="right">Create a rule which will always be met with random questions.</md-tooltip>
+                            </md-button>
+
+                        </div>
+                    </div>
+
+                    <div id="rightColumn" flex="30" autoscroll="400">
+                        <fieldset class="standard" style="min-height:50px">
+                            <legend>Questions
+                                <md-tooltip md-delay="500" md-direction="top">The questions which will be generated in this assessment</md-tooltip>
+                            </legend>
+
+                        </fieldset>
+                    </div>
+
+                </div>
+            </md-content>
+        </md-card-content>
+        <md-card-actions>
+            <div layout="row">
+                <span flex></span>
+                <md-button ng-click="cleanup()">Cancel</md-button>
+                <md-button type="submit" class="md-primary">
+                    Create
+                </md-button>
+            </div>
+        </md-card-actions>
+    </form>
+</md-card>
