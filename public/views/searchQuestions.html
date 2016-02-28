@@ -1,0 +1,47 @@
+<md-card id="editObjectiveContainer">
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">{{tabName}}</span>
+        </md-card-title-text>
+    </md-card-title>
+    <md-content layout-padding>
+        <div layout="column">
+            <md-input-container class="md-block" flex>
+                <label>Search Query</label>
+                <input id="searchQuery" type="text" name="objectiveName" ng-model="search.query"/>
+            </md-input-container>
+            <div layout="row">
+                <md-checkbox class="md-primary" ng-model="search.title">Search Questions</md-checkbox>
+                <md-checkbox class="md-primary" ng-model="search.description">Search Descriptions</md-checkbox>
+                <md-checkbox class="md-primary" ng-model="search.caseSensitive">Case Sensitive</md-checkbox>
+                <!--TODO Put Topic selectors and objective selectors here-->
+            </div>
+            <div id="searchQueryContent" autoscroll="500">
+                <md-list>
+                    <md-list-item class="md-2-line" style="min-height:0" ng-repeat="question in query()">
+                        <div layout="row" class="md-padding" flex>
+                            <md-checkbox ng-model="search.results[$index].selected" style="margin: 0;"></md-checkbox>
+                            <div class="md-list-item-text">
+                                <h3>{{ question.questionTitle }}</h3>
+                                <p>{{ question.questionDescription }}</p>
+                            </div>
+                        </div>
+                        <md-divider inset></md-divider>
+                    </md-list-item>
+                    <md-list-item class="md-2-line" ng-if="query().length == 0">
+                        <div class="md-list-item-text">
+                            <h3>No questions found.</h3>
+                        </div>
+                    </md-list-item>
+                </md-list>
+            </div>
+        </div>
+        <div layout="row">
+            <span flex></span>
+            <md-button ng-click="cleanup()">Cancel</md-button>
+            <md-button ng-click="submit()" class="md-primary">
+                Choose
+            </md-button>
+        </div>
+    </md-content>
+</md-card>

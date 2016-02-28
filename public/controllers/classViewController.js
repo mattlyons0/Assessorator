@@ -32,6 +32,13 @@ app.controller("classViewCtrl", function ($scope,$timeout) {
   $scope.createAssessment = function(){
     createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl");
   };
+  $scope.searchQuestions = function(tabName,data){
+    if(!tabName)
+      tabName="Search Questions";
+    createTab(tabName,"views/searchQuestions.html","searchQuestionsCtrl",data);
+  };
+  
+  
   $scope.getAllQuestions = function(){
     return UI.getAllQuestionsForClass($scope.class.ID);
   };
@@ -67,14 +74,20 @@ app.controller("classViewCtrl", function ($scope,$timeout) {
     console.error('No tab found with ID: '+tabID);
   };
 
-  function createTab(tabName,contentURL,ctrl){
+  function createTab(tabName,contentURL,ctrl,data){
+    if(!data)
+      data = {};
+    
     let tab = {
       id: nextID,
       name: tabName,
       URL: contentURL,
-      controller: ctrl
+      controller: ctrl,
+      data: data
     };
     nextID++;
     $scope.tabs.push(tab);
+    
+    return tab.id;
   }
 });

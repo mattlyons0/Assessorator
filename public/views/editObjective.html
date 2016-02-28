@@ -1,4 +1,4 @@
-<md-card id="editTopicContainer">
+<md-card id="editObjectiveContainer">
     <md-card-title>
         <md-card-title-text>
             <span class="md-headline">Create Objective</span>
@@ -8,7 +8,7 @@
         <md-content layout-padding>
             <div layout="column">
                 <md-input-container class="md-block" flex>
-                    <label>Topic Name</label>
+                    <label>Objective Name</label>
                     <input required id="objectiveName{{tabID}}" type="text" name="objectiveName" ng-model="objective.name"/>
                     <div ng-messages="objectiveForm.objectiveName.$error">
                         <div ng-message="required">Objective Name is required.</div>

@@ -24,7 +24,7 @@
 
                         <span class="md-subhead">Question Criteria</span>
                         <div id="questionChoices" layout="row">
-                            <md-button>Pick Question
+                            <md-button ng-click="pickQuestion()">Pick Question
                                 <md-tooltip md-delay="500" md-direction="right">Manually choose a question to always be on the assessment.</md-tooltip>
                             </md-button>
                             <md-button>Create Requirement
@@ -39,7 +39,17 @@
                             <legend>Questions
                                 <md-tooltip md-delay="500" md-direction="top">The questions which will be generated in this assessment</md-tooltip>
                             </legend>
-
+                            <md-list>
+                                <md-list-item class="md-2-line" style="min-height:0" ng-repeat="question in getQuestions()">
+                                    <div layout="row" class="md-padding" flex>
+                                        <div class="md-list-item-text">
+                                            <h3>{{ question.questionTitle }}</h3>
+                                            <p>{{ question.questionDescription }}</p>
+                                        </div>
+                                    </div>
+                                    <md-divider ng-if="!$last" inset></md-divider>
+                                </md-list-item>
+                            </md-list>
                         </fieldset>
                     </div>
 
