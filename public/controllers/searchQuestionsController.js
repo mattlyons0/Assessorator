@@ -30,6 +30,15 @@ app.controller("searchQuestionsCtrl", function ($scope) {
             questions.add(question);
           }
         }
+        if($scope.search.answers){
+          for(let answer of question.answers){
+            if(($scope.search.caseSensitive && answer.answerText.includes($scope.search.query)) ||
+              (!$scope.search.caseSensitive && answer.answerText.toLowerCase().includes($scope.search.query.toLowerCase()))){
+              questions.add(question);
+              break; //No need to search other answers in this question
+            }
+          }
+        }
       }
     }
     let arr = Array.from(questions);
