@@ -58,3 +58,6 @@ md-list-item.ng-enter-active {
 .md-list-item-inner {
     min-height: 0 !important;
 }
+md-chips-wrap {
+    padding-bottom: 0 !important;
+}

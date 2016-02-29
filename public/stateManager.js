@@ -43,6 +43,30 @@ UI.printData = function () {
   console.log(state);
 };
 
+let toastQueue = [];
+let currentToast = false;
+var showToast = function (textContent,$mdToast){
+  if(!$mdToast){
+    console.error("showToast was called without a $mdToast variable");
+    return;
+  }
+  toastQueue.push({call: $mdToast.simple().textContent(textContent).position("bottom right").hideDelay(3000), mdToast: $mdToast});
+  if(!currentToast)
+    processToastQueue();
+};
+function processToastQueue(){
+  currentToast = toastQueue.length > 0;
+
+  for(let x=0;x<toastQueue.length;x++){
+    toastQueue[x].mdToast.show(toastQueue[x].call);
+    toastQueue.splice(0,1);
+    setInterval(function(){
+      processToastQueue();
+    },3000);
+    return;
+  }
+}
+
 //If a string is too long will append ...
 var strLimit = function(str){
   let limit = 30; //limit in characters
@@ -51,3 +75,32 @@ var strLimit = function(str){
   }
   return str;
 };
+
+if(Array.prototype.equals)
+  console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+  // if the other array is a falsy value, return
+  if (!array)
+    return false;
+
+  // compare lengths - can save a lot of time
+  if (this.length != array.length)
+    return false;
+
+  for (var i = 0, l=this.length; i < l; i++) {
+    // Check if we have nested arrays
+    if (this[i] instanceof Array && array[i] instanceof Array) {
+      // recurse into the nested arrays
+      if (!this[i].equals(array[i]))
+        return false;
+    }
+    else if (this[i] != array[i]) {
+      // Warning - two different object instances will never be equal: {x:20} != {x:20}
+      return false;
+    }
+  }
+  return true;
+};
+// Hide method from for-in loops
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});

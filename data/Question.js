@@ -23,6 +23,10 @@ class Question {
      * @type {Answer[]} */
     this.answers = [];
     this.answerUID = 0;
+
+    /** List of pointers to objective objects
+     * @type {Objective[]} */
+    this.objectives = [];
   }
 
   /**

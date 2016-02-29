@@ -1,0 +1,102 @@
+<style>
+    .md-chips {
+        position: relative;
+        top: 17px;
+    }
+    /*Undo searchQuestions.html css tricks*/
+    md-chips.md-default-theme .md-chips, md-chips .md-chips {
+        box-shadow: 0 1px rgb(224,224,224) !important;
+    }
+    md-chips input {
+        display: block;
+    }
+</style>
+<md-dialog id="editClassContainer">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>
+                <span>Create Rule</span>
+            </h2>
+        </div>
+    </md-toolbar>
+    <form name="ruleForm" ng-submit="submit()">
+        <md-dialog-content layout-padding>
+            <div>
+                <div layout-gt-xs="row">
+                    <md-input-container class="md-block">
+                        <md-select id="ruleSelector" ng-model="rule.selector" class="md-padding"
+                                   placeholder="Topic/Objective">
+                            <md-option ng-repeat="selector in selectors" value="{{selector}}">
+                                {{selector}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <md-select id="ruleCondition" ng-model="rule.condition" class="md-padding"
+                                   placeholder="Is/Isn't">
+                            <md-option ng-repeat="condition in conditions" value="{{condition}}">
+                                {{condition}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <!-- Conditional Search Fields -->
+
+                    <md-chips ng-if="rule.selector == 'Topic'" ng-model="rule.value"
+                              style="margin-right:7px; height:65px;"
+                              md-require-match="true" flex>
+                        <md-autocomplete md-no-cache="true" placeholder="Choose a Topic" md-min-length="0"
+                                         md-input-id="inputChooser" md-autocomplete-snap
+                                         md-search-text="search.query" md-items="topic in searchTopics()"
+                                         md-select-on-match>
+                            <md-item-template>
+                                        <span md-highlight-text="searchQuery()" md-highlight-flags="i">
+                                            {{topic.topicName}}
+                                        </span>
+                            </md-item-template>
+                            <md-not-found>
+                                <div>
+                                    No Topics Found.
+                                </div>
+                            </md-not-found>
+                        </md-autocomplete>
+                        <md-chip-template>
+                            {{$chip.topicName}}
+                        </md-chip-template>
+                    </md-chips>
+
+                    <md-chips ng-if="rule.selector == 'Objective'" ng-model="rule.value"
+                              style="margin-left:7px; height:65px;"
+                              md-require-match="true" md-autocomplete-snap flex>
+                        <md-autocomplete md-no-cache="true" placeholder="Choose an Objective" md-min-length="0"
+                                         md-input-id="inputChooser"
+                                         md-search-text="search.query"
+                                         md-items="objective in searchObjectives()" md-select-on-match>
+                            <md-item-template>
+                                    <span md-highlight-text="searchQuery()" md-highlight-flags="i">
+                                        {{objective.objectiveText}}
+                                    </span>
+                            </md-item-template>
+                            <md-not-found>
+                                <div>
+                                    No Objectives found.
+                                </div>
+                            </md-not-found>
+                        </md-autocomplete>
+                        <md-chip-template>
+                            {{$chip.objectiveText}}
+                        </md-chip-template>
+                    </md-chips>
+                </div>
+            </div>
+
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="cancel()">Cancel</md-button>
+            <md-button type="submit" class="md-primary">
+                Create
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

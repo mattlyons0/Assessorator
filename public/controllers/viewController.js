@@ -5,11 +5,15 @@ app.controller("viewCtrl", function ($scope, $window) {
   $scope.page.URL = 'classes.html';
 
   if(process.env.NODE_ENV === 'dev'){
-    UI.createClass("Dummy Class","DUM 100","Fall",2015);
-    UI.getClasses()[0].createTopic('Dummy Topic','A Topic created for the purposes of testing.');
-    UI.getClasses()[0].topics[0].createQuestion('Dummy Question 1','A Question for the purposes of testing.');
-    UI.getClasses()[0].topics[0].questions[0].createAnswer('The wrong answer',false);
-    UI.getClasses()[0].topics[0].questions[0].createAnswer('The right answer',true);
+    let n = 5;
+    for(let i=0;i<n;i++) {
+      UI.createClass("Dummy Class","DUM "+(100+i),"Fall",(2015+i));
+      UI.getClasses()[0].createTopic('Dummy Topic '+(i+1),'A Topic created for the purposes of testing.');
+      UI.getClasses()[0].topics[0].createQuestion('Dummy Question '+(i+1),'A Question for the purposes of testing.');
+      UI.getClasses()[0].topics[0].questions[0].createAnswer('True',false);
+      UI.getClasses()[0].topics[0].questions[0].createAnswer('False',true);
+      UI.getClasses()[0].createObjective('Test Objective ' + (i + 1));
+    }
   }
 
   $scope.printPageData = function () {

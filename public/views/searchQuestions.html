@@ -1,10 +1,18 @@
+<style>
+    md-chips.md-default-theme .md-chips, md-chips .md-chips {
+        box-shadow: none !important;
+    }
+    md-chips input {
+        display:none;
+    }
+</style>
 <md-card id="editObjectiveContainer">
     <md-card-title>
         <md-card-title-text>
             <span class="md-headline">{{tabName}}</span>
         </md-card-title-text>
     </md-card-title>
-    <md-content layout-padding>
+    <md-content layout-padding autoscroll="300">
         <div layout="column">
             <md-input-container class="md-block" flex>
                 <label>Search Query</label>
@@ -15,11 +23,25 @@
                 <md-checkbox class="md-primary" ng-model="search.description">Search Descriptions</md-checkbox>
                 <md-checkbox class="md-primary" ng-model="search.answers">Search Answers</md-checkbox>
                 <md-checkbox class="md-primary" ng-model="search.caseSensitive">Case Sensitive</md-checkbox>
-                <!--TODO Put Topic selectors and objective selectors here-->
+                <md-button ng-click="addRule($event)" style="position:relative;top:-7px;margin:0 15px 0 auto;">Add
+                    Rule
+                </md-button>
+            </div>
+            <div layout="row">
+                <fieldset class="standard" ng-if="rules.length > 0">
+                    <legend>Rules</legend>
+                    <md-chips ng-model="rules">
+                        <md-chip-template>
+                            <div ng-style="{'color':rulesTextColor}">
+                                {{$chip.selector}} {{$chip.condition}} <span ng-bind-html="getFormattedRuleValues($chip)"></span>
+                            </div>
+                        </md-chip-template>
+                    </md-chips>
+                </fieldset>
             </div>
             <div id="searchQueryContent" autoscroll="500">
                 <md-list>
-                    <md-list-item class="md-2-line" style="min-height:0" ng-repeat="question in query()">
+                    <md-list-item class="md-2-line" style="min-height:0" ng-if="rulesValidation" ng-repeat="question in query()">
                         <div layout="row" class="md-padding" flex>
                             <md-checkbox ng-model="search.results[$index].selected" style="margin: 0;"></md-checkbox>
                             <div class="md-list-item-text">
@@ -31,9 +53,13 @@
                     </md-list-item>
                     <md-list-item class="md-2-line" style="min-height:0" ng-if="query().length == 0">
                         <div layout="row" class="md-padding" flex>
-                            <div class="md-list-item-text">
+                            <div class="md-list-item-text" ng-if="rulesValidation">
                                 <h3>No questions found</h3>
                                 <p>Consider adjusting your search criteria.</p>
+                            </div>
+                            <div class="md-list-item-text" ng-if="!rulesValidation">
+                                <h3>Invalid Rules</h3>
+                                <p>Remove conflicting rules.</p>
                             </div>
                         </div>
                         <md-divider inset></md-divider>

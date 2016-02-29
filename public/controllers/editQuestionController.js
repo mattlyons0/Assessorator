@@ -65,22 +65,22 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       return;
     if ($scope.topic.selected.length === 0) {
       document.querySelector("#topicChooserInput").focus();
-      showToast('A Topic is Required.');
+      showToast('A Topic is Required.',$mdToast);
       return;
     }
     if($scope.topic.selected.length > 1){
       document.querySelector('#topicChooserInput').focus();
-      showToast('Only One Topic may be selected.');
+      showToast('Only One Topic may be selected.',$mdToast);
     }
     if ($scope.question.answers.length < 3){ //Counting ghost answer
-      showToast('A Question must have at least two answers.');
+      showToast('A Question must have at least two answers.',$mdToast);
       return;
     }
     if ($scope.question.answers.length > 1){
       let correct = false;
       for(let x=0;x<$scope.question.answers.length - 1;x++){ //Last one is always ghost answer
         if(!$scope.question.answers[x].text){
-          showToast('An Answer cannot be empty.');
+          showToast('An Answer cannot be empty.',$mdToast);
           document.querySelector('#questionAnswer'+x).focus();
           return;
         }
@@ -88,7 +88,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
           correct=true;
       }
       if(!correct){
-        showToast('A Question must have a correct answer.');
+        showToast('A Question must have a correct answer.',$mdToast);
         return;
       }
     }
@@ -96,6 +96,9 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     let topic = $scope.topic.selected[0];
     topic.createQuestion($scope.question.title,$scope.question.description);
     let question = topic.questions[topic.questions.length - 1];
+    for(objective of $scope.objective.selected) {
+      question.objectives.push(objective);
+    }
     for(let x=0;x<$scope.question.answers.length -1;x++){ //Omit ghost answer
       question.createAnswer($scope.question.answers[x].text,$scope.question.answers[x].correct);
     }
@@ -191,23 +194,4 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     }
   });
 
-  let toastQueue = [];
-  let currentToast = false;
-  function showToast(textContent){
-    toastQueue.push($mdToast.simple().textContent(textContent).position("bottom right").hideDelay(3000));
-    if(!currentToast)
-      processToastQueue();
-  }
-  function processToastQueue(){
-    currentToast = toastQueue.length > 0;
-
-    for(let x=0;x<toastQueue.length;x++){
-      $mdToast.show(toastQueue[x]);
-      toastQueue.splice(0,1);
-      setInterval(function(){
-        processToastQueue();
-      },3000);
-      return;
-    }
-  }
 });
