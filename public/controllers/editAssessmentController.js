@@ -28,12 +28,13 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast) {
     $scope.getTabByID($scope.tabID).data.searchQuestions = {};
     $scope.searchQuestions('Pick Questions',{type: 'pick', callbackTID: $scope.tabID});
     $scope.stopWatching2 = $scope.$watch('getTabByID(tabID).data.searchQuestions.complete', function(){
-      if($scope.getTabByID($scope.tabID).data.searchQuestions.complete){ //Search for manual questions is complete
+      if($scope.getTabByID($scope.tabID).data.searchQuestions.complete === true ||
+        $scope.getTabByID($scope.tabID).data.searchQuestions.complete === false){ //Search for manual questions is complete
         $scope.stopWatching2();
         //Detect selected questions
         for(let topic of $scope.class.topics) {
           for (let question of topic.questions) {
-            if(question.selected) {
+            if(question.selected && $scope.getTabByID($scope.tabID).data.searchQuestions.complete === true) { //If its selected and we didn't discard data
               $scope.questions.manuallyAdded.add(question);
             }
             delete question.selected;

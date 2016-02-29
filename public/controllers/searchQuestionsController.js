@@ -56,5 +56,9 @@ app.controller("searchQuestionsCtrl", function ($scope) {
   $scope.submit = function(){
     $scope.getTabByID($scope.tabData.callbackTID).data.searchQuestions.complete = true; //Trigger assessments tab to search for changed
     $scope.cleanup();
-  }
+  };
+  $scope.discard = function(){
+    $scope.getTabByID($scope.tabData.callbackTID).data.searchQuestions.complete = false; //Trigger wipe of selected field
+    $scope.cleanup();
+  };
 });
