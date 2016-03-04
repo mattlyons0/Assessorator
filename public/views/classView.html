@@ -59,9 +59,19 @@
                                     <md-list-item class="md-2-line" ng-repeat="topic in class.topics">
                                         <md-button id="topic{{ topic.ID }}" ng-click="selectTopic(topic.ID)"
                                                    style="padding:5px;" flex>
-                                            <div class="md-list-item-text">
-                                                <h3>{{ topic.topicName }}</h3>
-                                                <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
+                                            <div layout="row">
+                                                <div class="md-list-item-text">
+                                                    <h3>{{ topic.topicName }}</h3>
+                                                    <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
+                                                </div>
+                                                <div layout="row" style="padding-left:8px">
+                                                    <md-button ng-click="editTopic(topic.ID)" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
+                                                        <md-icon md-svg-icon="img/edit.svg"></md-icon>
+                                                    </md-button>
+                                                    <md-button ng-click="deleteTopic(topic.ID)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
+                                                        <md-icon md-svg-icon="img/delete.svg"></md-icon>
+                                                    </md-button>
+                                                </div>
                                             </div>
                                         </md-button>
                                         <md-divider inset></md-divider>
@@ -109,7 +119,7 @@
             </md-tab>
             <md-tab ng-repeat="tab in tabs" label="{{ tab.name }}">
                 <md-content class="md-padding greyBackground">
-                    <div ng-include="tab.URL" dynamic-ctrl="tab.controller" ng-init="tabID=tab.id;requestFocus()"></div>
+                    <div ng-include="tab.URL" dynamic-ctrl="tab.controller" ng-init="tabID=tab.id;tabData=tab.data;requestFocus()"></div>
                 </md-content>
             </md-tab>
         </md-tabs>

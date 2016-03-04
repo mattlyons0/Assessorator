@@ -1,6 +1,14 @@
 "use strict";
 app.controller("editTopicCtrl", function($scope){
   $scope.topic = {};
+  function init() {
+    if ($scope.tabData.topicID != undefined) {
+      let topic = $scope.class.getTopic($scope.tabData.topicID);
+      $scope.topic.name = topic.topicName;
+      $scope.topic.description = topic.topicDescription;
+      $scope.edit = true;
+    }
+  }
 
   let tab;
 
@@ -15,7 +23,13 @@ app.controller("editTopicCtrl", function($scope){
   $scope.submitTopic = function(){
     if(!$scope.topic.name)
       return;
-    $scope.$parent.class.createTopic($scope.topic.name,$scope.topic.description);
+    if(!$scope.edit)
+      $scope.$parent.class.createTopic($scope.topic.name,$scope.topic.description);
+    else{
+      let topic = $scope.class.getTopic($scope.tabData.topicID);
+      topic.topicName = $scope.topic.name;
+      topic.topicDescription = $scope.topic.description;
+    }
     $scope.cleanup();
   };
 
@@ -27,5 +41,6 @@ app.controller("editTopicCtrl", function($scope){
     setTimeout(function(){
       document.getElementById("topicName"+$scope.tabID).focus();
     },200); //Delay until animation starts
+    init();
   };
 });

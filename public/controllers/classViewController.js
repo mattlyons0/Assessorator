@@ -1,5 +1,5 @@
 "use strict";
-app.controller("classViewCtrl", function ($scope,$timeout) {
+app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   let nextID = 0;
@@ -14,6 +14,25 @@ app.controller("classViewCtrl", function ($scope,$timeout) {
         angular.element(document.querySelector('md-virtual-repeat-container')).triggerHandler('mouseleave');
       }, 50); //Less than this seems to screw with the animation
     }
+  };
+  $scope.editTopic = function(id){
+    createTab("Edit Topic","views/editTopic.html","editTopicCtrl",{topicID: id});
+  };
+  $scope.deleteTopic = function(id){
+    let topic = $scope.class.getTopic(id);
+    if(topic.questions.length > 0){
+      showToast("'"+topic.topicName+"' contains "+topic.questions.length+" questions. All questions must be " +
+        "removed from a topic before it can be deleted.",$mdToast);
+      return;
+    }
+    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Topic \''+topic.topicName+'\'?')
+      .ok('Delete').cancel('Cancel');
+    $mdDialog.show(confirm).then(function(){
+      $scope.class.deleteTopic(id);
+      $scope.selectedTopic = undefined;
+    }, function(){
+      //You didn't delete it.
+    });
   };
   $scope.createQuestion = function(){
     createTab("New Question", "views/editQuestion.html","editQuestionCtrl");
@@ -46,7 +65,7 @@ app.controller("classViewCtrl", function ($scope,$timeout) {
   $scope.selectTopic = function(topicID){
     if(topicID === undefined)
       return;
-    if($scope.selectedTopic)
+    if($scope.selectedTopic != undefined)
       document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='transparent';
     $scope.selectedTopic = $scope.class.getTopic(topicID);
     document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='#E8E8E8';

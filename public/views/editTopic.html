@@ -1,7 +1,7 @@
 <md-card id="editTopicContainer">
     <md-card-title>
         <md-card-title-text>
-            <span class="md-headline">Create Topic</span>
+            <span class="md-headline">{{edit?'Edit':'Create'}} Topic</span>
         </md-card-title-text>
     </md-card-title>
     <form name="topicForm" ng-submit="submitTopic()">
@@ -24,7 +24,7 @@
                 <span flex></span>
                 <md-button ng-click="cleanup()">Cancel</md-button>
                 <md-button type="submit" class="md-primary">
-                    Create
+                    {{edit?'Modify':'Create'}}
                 </md-button>
             </div>
         </md-content>

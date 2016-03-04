@@ -59,6 +59,14 @@ class Course {
     }
     console.error("No topic with ID " + topicID + " found");
   }
+  
+  deleteTopic(topicID){
+    for(let i=0;i<this.topics.length;i++){
+      if(this.topics[i].ID === topicID){
+        this.topics.splice(i,1);
+      }
+    }
+  }
 
   /**
    * Creates a new Objective
