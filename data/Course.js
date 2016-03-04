@@ -64,6 +64,7 @@ class Course {
     for(let i=0;i<this.topics.length;i++){
       if(this.topics[i].ID === topicID){
         this.topics.splice(i,1);
+        return;
       }
     }
   }

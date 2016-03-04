@@ -37,6 +37,20 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   $scope.createQuestion = function(){
     createTab("New Question", "views/editQuestion.html","editQuestionCtrl");
   };
+  $scope.editQuestion = function(id){
+    createTab("Edit Question", "views/editQuestion.html","editQuestionCtrl",{questionID: id,topicID: $scope.selectedTopic.ID});
+  };
+  $scope.deleteQuestion = function(id){
+    let topic = $scope.selectedTopic;
+    let question = topic.getQuestion(id);
+    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Question \''+question.questionTitle+'\'?')
+      .ok('Delete').cancel('Cancel');
+    $mdDialog.show(confirm).then(function(){
+      topic.deleteQuestion(id);
+    }, function(){
+      //You didn't delete it.
+    });
+  };
   $scope.createObjective = function(){
     createTab("New Objective","views/editObjective.html","editObjectiveCtrl");
 

@@ -1,5 +1,60 @@
 "use strict";
 app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
+  function init(){
+    if ($scope.tabData.questionID != undefined && $scope.tabData.topicID != undefined) {
+      let topic = $scope.class.getTopic($scope.tabData.topicID);
+      let question = topic.getQuestion($scope.tabData.questionID);
+
+      $scope.edit = true;
+
+      $scope.question.title=question.questionTitle;
+      $scope.question.description=question.questionDescription;
+      $scope.topic.selected = [topic];
+      $scope.objective.selected = [];
+      for(let objective of question.objectives){
+        $scope.objective.selected.push(objective);
+      }
+      let selectedText;
+      if(question.answers[0].answerText == 'True' && question.answers[1].answerText == 'False') {
+        $scope.question.type = 'TF';
+        for(let ans of question.answers){
+          if(ans.correct) {
+            $scope.question.correctAnswer = ans.answerText;
+            $scope.setCorrect=ans.answerText;
+            break;
+          }
+        }
+      }
+      else{
+        let selected = 0;
+        for(let ans of question.answers){
+          if(ans.correct) {
+            selected++;
+            selectedText = ans.answerText;
+          }
+        }
+        if(selected <= 1)
+          $scope.question.type = 'MC';
+        else {
+          $scope.question.type = 'MA';
+          $scope.ignoreNextDataValidate = true;
+        }
+
+        $scope.question.answers = [];
+        for(let ans of question.answers){
+          $scope.question.answers.push({
+            text: ans.answerText,
+            correct: ans.correct
+          });
+        }
+        if(selected <= 1) {
+          $scope.question.correctAnswer = selectedText;
+        }
+      }
+    }
+
+  }
+
   $scope.question = {};
   $scope.question.answers = [];
   $scope.question.answers.push({
@@ -94,13 +149,38 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     }
 
     let topic = $scope.topic.selected[0];
-    topic.createQuestion($scope.question.title,$scope.question.description);
-    let question = topic.questions[topic.questions.length - 1];
-    for(let objective of $scope.objective.selected) {
-      question.objectives.push(objective);
-    }
-    for(let x=0;x<$scope.question.answers.length -1;x++){ //Omit ghost answer
-      question.createAnswer($scope.question.answers[x].text,$scope.question.answers[x].correct);
+    if(!$scope.edit) {
+      topic.createQuestion($scope.question.title, $scope.question.description);
+      let question = topic.questions[topic.questions.length - 1];
+      for (let objective of $scope.objective.selected) {
+        question.objectives.push(objective);
+      }
+      for (let x = 0; x < $scope.question.answers.length - 1; x++) { //Omit ghost answer
+        question.createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct);
+      }
+    } else{ //Edit Topic
+      let oldTopic = $scope.class.getTopic($scope.tabData.topicID);
+      let question = oldTopic.getQuestion($scope.tabData.questionID);
+      question.questionTitle = $scope.question.title;
+      question.questionDescription = $scope.question.description;
+
+      question.objectives=[];
+      for (let objective of $scope.objective.selected) {
+        question.objectives.push(objective);
+      }
+      for(let i=0;i < $scope.question.answers.length -1; i++){
+        let len = question.answers.length;
+        if(i<len){
+          question.answers[i].answerText = $scope.question.answers[i].text;
+          question.answers[i].correct = $scope.question.answers[i].correct;
+        } else{
+          question.createAnswer($scope.question.answers[i].text, $scope.question.answers[i].correct);
+        }
+      }
+      if(oldTopic.ID !== topic.ID){ //Move topics
+        topic.questions.push(question);
+        oldTopic.deleteQuestion(question.ID);
+      }
     }
 
     $scope.cleanup();
@@ -119,6 +199,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     setTimeout(function () {
       document.getElementById("questionTitle" + $scope.tabID).focus();
     }, 500); //Delay until animation starts
+    init();
   };
 
   let tab;
@@ -132,6 +213,10 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   });
 
   $scope.stopWatching2 = $scope.$watch('question.correctAnswer', function () { //Selector Answer Data Structure Update
+    if($scope.ignoreNextDataValidate) {
+      $scope.ignoreNextDataValidate = false;
+      return;
+    }
     for (let x = 0; x < $scope.question.answers.length; x++) {
       if ($scope.question.answers[x].text === $scope.question.correctAnswer)
         $scope.question.answers[x].correct = true;
@@ -178,6 +263,11 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
           text: "False",
           correct: false
         });
+        if($scope.setCorrect == 'True')
+          $scope.question.answers[0].correct=true;
+        else if($scope.setCorrect == 'False')
+          $scope.question.answers[1].correct=true;
+        $scope.setCorrect = undefined;
       };
 
       if (dataExists) {

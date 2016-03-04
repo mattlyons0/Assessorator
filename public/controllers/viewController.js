@@ -10,8 +10,8 @@ app.controller("viewCtrl", function ($scope, $window) {
       UI.createClass("Dummy Class","DUM "+(100+i),"Fall",(2015+i));
       UI.getClasses()[0].createTopic('Dummy Topic '+(i+1),'A Topic created for the purposes of testing.');
       UI.getClasses()[0].topics[0].createQuestion('Dummy Question '+(i+1),'A Question for the purposes of testing.');
-      UI.getClasses()[0].topics[0].questions[0].createAnswer('True',false);
-      UI.getClasses()[0].topics[0].questions[0].createAnswer('False',true);
+      UI.getClasses()[0].topics[0].questions[i].createAnswer('True',false);
+      UI.getClasses()[0].topics[0].questions[i].createAnswer('False',true);
       UI.getClasses()[0].createObjective('Test Objective ' + (i + 1));
     }
   }

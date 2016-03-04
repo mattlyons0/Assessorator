@@ -36,6 +36,23 @@ class Topic {
 
     this.questions.push(new Question(questionTitle, questionDescription, genID));
   }
+  
+  getQuestion(questionID){
+    for(let question of this.questions){
+      if(question.ID === questionID)
+        return question;
+    }
+    return undefined;
+  }
+
+  deleteQuestion(questionID){
+    for(let i=0;i<this.questions.length;i++){
+      if(this.questions[i].ID === questionID){
+        this.questions.splice(i,1);
+        return;
+      }
+    }
+  }
 }
 
 module.exports = Topic;

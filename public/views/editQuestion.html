@@ -2,7 +2,7 @@
     <form name="questionForm" ng-submit="submitQuestion()">
         <md-card-title>
             <md-card-title-text>
-                <span class="md-headline">Create Question</span>
+                <span class="md-headline">{{edit?'Edit':'Create'}} Question</span>
             </md-card-title-text>
         </md-card-title>
         <md-card-content autoscroll="350">
@@ -103,7 +103,7 @@
                 <span flex></span>
                 <md-button ng-click="cleanup()">Cancel</md-button>
                 <md-button type="submit" class="md-primary">
-                    Create
+                    {{edit?'Modify':'Create'}}
                 </md-button>
             </div>
         </md-card-actions>
