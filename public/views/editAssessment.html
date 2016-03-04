@@ -41,16 +41,24 @@
                                 <md-list>
                                     <md-list-item class="md-2-line" style="min-height:0" ng-repeat="rule in questions.rules">
                                         <div layout="row" class="md-padding" flex>
-                                            <div class="md-list-item-text">
+                                            <div layout="column" class="md-list-item-text" flex>
                                                 <h3 ng-if="(rule.type == 'Topic' && !rule.topics.length) ||
                                                  (rule.type == 'Objective' && !rule.objectives.length)">{{ rule.type }}</h3>
                                                 <h3 ng-if="rule.type == 'Topic' && rule.topics.length" ng-bind-html="formatArray(rule.topics, 'topicName')"></h3>
                                                 <h3 ng-if="rule.type == 'Objective' && rule.objectives.length" ng-bind-html="formatArray(rule.objectives, 'objectiveText')"></h3>
                                                 <p ng-if="rule.numRequired" ng-style="{'color':checkPossible($index)?'':'red'}">
                                                     {{ rule.numRequired }} Question{{rule.numRequired>1?'s':''}}
-                                                    <md-tooltip md-delay="500" md-direction="right" ng-if="!checkPossible($index)">
+                                                    <md-tooltip md-delay="500" md-direction="bottom" ng-if="!checkPossible($index)">
                                                         This requirement is currently impossible to satisfy.</md-tooltip>
                                                 </p>
+                                            </div>
+                                            <div layout="row" style="padding-left:8px">
+                                                <md-button ng-click="editRequirement($index,$event)" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
+                                                    <md-icon md-svg-icon="img/edit.svg"></md-icon>
+                                                </md-button>
+                                                <md-button ng-click="deleteRequirement($index)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
+                                                    <md-icon md-svg-icon="img/delete.svg"></md-icon>
+                                                </md-button>
                                             </div>
                                         </div>
                                         <md-divider ng-if="!$last" inset></md-divider>

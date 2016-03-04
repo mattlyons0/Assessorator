@@ -108,10 +108,15 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
     tab.name = strLimit("Assessment: " + $scope.assessment.title);
   });
 
-  $scope.createRequirement = function (event) {
+  $scope.createRequirement = function (event,index) {
     let scope = $scope.$new(); //Makes current scope parent
-    $scope.questions.rules.push({});
-    scope.index = $scope.questions.rules.length - 1;
+    if(index == undefined) {
+      $scope.questions.rules.push({});
+      scope.index = $scope.questions.rules.length - 1;
+    } else {
+      scope.index = index;
+      scope.edit = true;
+    }
     $mdDialog.show({
       controller: CreateRequirementController,
       templateUrl: 'views/editRequirement.html',
@@ -123,12 +128,20 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
       // closeTo: closeTo
     });
   };
+  $scope.editRequirement = function(index,event){
+    $scope.createRequirement(event,index);
+  };
+  $scope.deleteRequirement = function(index){
+    $scope.questions.rules.splice(index, 1);
+  };
 });
 function CreateRequirementController($scope, $mdDialog, $mdToast) {
-  $scope.questions.rules[$scope.index].type = "Topic";
-  $scope.questions.rules[$scope.index].numRequired = 1;
-  $scope.questions.rules[$scope.index].objectives = [];
-  $scope.questions.rules[$scope.index].topics = [];
+  if(!$scope.edit) {
+    $scope.questions.rules[$scope.index].type = "Topic";
+    $scope.questions.rules[$scope.index].numRequired = 1;
+    $scope.questions.rules[$scope.index].objectives = [];
+    $scope.questions.rules[$scope.index].topics = [];
+  }
 
   $scope.search = {};
   $scope.search.query = "";
@@ -221,6 +234,7 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
   };
   $scope.cancel = function (event) {
     $mdDialog.cancel();
-    $scope.questions.rules.splice($scope.index, 1);
+    if(!$scope.edit)
+      $scope.questions.rules.splice($scope.index, 1);
   };
 }
