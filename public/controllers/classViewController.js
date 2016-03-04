@@ -99,8 +99,22 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   };
 
   $scope.goBack = function () {
-    $scope.$parent.page.classID = undefined;
-    $scope.$parent.page.URL = 'classes.html';
+    if($scope.tabs.length > 0) {
+      let confirm = $mdDialog.confirm().title('Are you sure you would like to go back?')
+        .textContent('All open tabs will be closed.').ok('Go Back').cancel('Cancel');
+      $mdDialog.show(confirm).then(function () {
+        back();
+      }, function () {
+        //You didn't do it.
+      });
+    } else{
+      back();
+    }
+
+    function back(){
+      $scope.$parent.page.classID = undefined;
+      $scope.$parent.page.URL = 'classes.html';
+    }
   };
 
   $scope.closeTab = function(tabID){
