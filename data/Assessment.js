@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Contains Assessment Metadata and a list of questions used in the assessment
+ * Contains Assessment Metadata, a list of questions used in the assessment and a list of rules to be evaluated upon generation.
  */
 class Assessment {
   /**
@@ -17,17 +17,12 @@ class Assessment {
     this.ID = genID;
 
     //Array Data
-    /** List of Question IDs
-     * @type {Number[]} */
-    this.questionIDs = [];
-  }
-
-  /**
-   * Add a question to the assessment
-   * @param questionID {Number} ID of Question
-   */
-  addQuestion(questionID) {
-    this.questionIDs.push(questionID);
+    /** List of Question Pointers
+     * @type {Question[]} */
+    this.questions = [];
+    /** List of Rules
+     * @type {{}[]} */
+    this.rules = [];
   }
 }
 

@@ -79,8 +79,10 @@ class Course {
   createAssessment(assessmentName,assessmentDescription) {
     let genID = this.assessmentUID;
     this.assessmentUID++;
-
-    this.assessments.push(new Assessment(assessmentName, assessmentDescription, genID));
+    
+    let assessment = new Assessment(assessmentName, assessmentDescription, genID);
+    this.assessments.push(assessment);
+    return assessment;
   }
 }
 

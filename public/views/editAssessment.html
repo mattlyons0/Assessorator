@@ -27,19 +27,45 @@
                             <md-button ng-click="pickQuestion()">Pick Question
                                 <md-tooltip md-delay="500" md-direction="right">Manually choose a question to always be on the assessment.</md-tooltip>
                             </md-button>
-                            <md-button>Create Requirement
+                            <md-button ng-click="createRequirement($event)">Create Requirement
                                 <md-tooltip md-delay="500" md-direction="right">Create a rule which will always be met with random questions.</md-tooltip>
                             </md-button>
+                        </div>
 
+                        <div id="requirements" layout="row" ng-if="questions.rules.length > 0">
+                            <fieldset>
+                                <legend>Requirements
+                                    <md-tooltip md-delay="500" md-direction="top">These requirements will be fufilled upon assessment generation.</md-tooltip>
+                                </legend>
+
+                                <md-list>
+                                    <md-list-item class="md-2-line" style="min-height:0" ng-repeat="rule in questions.rules">
+                                        <div layout="row" class="md-padding" flex>
+                                            <div class="md-list-item-text">
+                                                <h3 ng-if="(rule.type == 'Topic' && !rule.topics.length) ||
+                                                 (rule.type == 'Objective' && !rule.objectives.length)">{{ rule.type }}</h3>
+                                                <h3 ng-if="rule.type == 'Topic' && rule.topics.length" ng-bind-html="formatArray(rule.topics, 'topicName')"></h3>
+                                                <h3 ng-if="rule.type == 'Objective' && rule.objectives.length" ng-bind-html="formatArray(rule.objectives, 'objectiveText')"></h3>
+                                                <p ng-if="rule.numRequired" ng-style="{'color':checkPossible($index)?'':'red'}">
+                                                    {{ rule.numRequired }} Question{{rule.numRequired>1?'s':''}}
+                                                    <md-tooltip md-delay="500" md-direction="right" ng-if="!checkPossible($index)">
+                                                        This requirement is currently impossible to satisfy.</md-tooltip>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <md-divider ng-if="!$last" inset></md-divider>
+                                    </md-list-item>
+                                </md-list>
+                            </fieldset>
                         </div>
                     </div>
 
-                    <div id="rightColumn" flex="30" autoscroll="400">
+                    <div id="rightColumn" flex="30">
                         <fieldset class="standard" style="min-height:50px">
                             <legend>Questions
                                 <md-tooltip md-delay="500" md-direction="top">The questions which will be generated in this assessment</md-tooltip>
                             </legend>
-                            <md-list>
+                            <md-list autoscroll="450">
                                 <md-list-item class="md-2-line" style="min-height:0" ng-repeat="question in getQuestions()">
                                     <div layout="row" class="md-padding" flex>
                                         <div class="md-list-item-text">
@@ -48,6 +74,15 @@
                                         </div>
                                     </div>
                                     <md-divider ng-if="!$last" inset></md-divider>
+                                </md-list-item>
+                                <md-list-item class="md-2-line" ng-if="!getQuestions().length" style="min-height:0">
+                                    <div layout="row" class="md-padding" flex>
+                                        <div class="md-list-item-text">
+                                            <h3>No Questions Added</h3>
+                                            <p ng-if="!questions.rules.length">Add some questions or requirements!</p>
+                                            <p ng-if="questions.rules.length">All questions will be generated from requirements.</p>
+                                        </div>
+                                    </div>
                                 </md-list-item>
                             </md-list>
                         </fieldset>

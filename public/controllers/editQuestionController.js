@@ -96,7 +96,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     let topic = $scope.topic.selected[0];
     topic.createQuestion($scope.question.title,$scope.question.description);
     let question = topic.questions[topic.questions.length - 1];
-    for(objective of $scope.objective.selected) {
+    for(let objective of $scope.objective.selected) {
       question.objectives.push(objective);
     }
     for(let x=0;x<$scope.question.answers.length -1;x++){ //Omit ghost answer
