@@ -12,11 +12,12 @@ class Question {
    * @param {String} questionDescription Description of Question
    * @param {Number} genID A *UNIQUE* ID (to this Topic) representing this Question in the data model.
    */
-  constructor(questionTitle, questionDescription, genID) {
+  constructor(questionTitle, questionDescription, genID, topicID) {
     this.questionTitle = questionTitle;
     this.questionDescription = questionDescription;
 
     this.ID = genID;
+    this.topicID = topicID;
 
     //Array Data
     /** List of Answer Options

@@ -149,7 +149,13 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     }
 
     let topic = $scope.topic.selected[0];
-    if(!$scope.edit) {
+    let oldTopic = $scope.class.getTopic($scope.tabData.topicID);
+    let ignoreEdit = false;
+    if(oldTopic.ID !== topic.ID){ //Move topics
+      ignoreEdit = true;
+    }
+    
+    if(!$scope.edit || ignoreEdit) {
       topic.createQuestion($scope.question.title, $scope.question.description);
       let question = topic.questions[topic.questions.length - 1];
       for (let objective of $scope.objective.selected) {
@@ -159,7 +165,6 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
         question.createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct);
       }
     } else{ //Edit Topic
-      let oldTopic = $scope.class.getTopic($scope.tabData.topicID);
       let question = oldTopic.getQuestion($scope.tabData.questionID);
       question.questionTitle = $scope.question.title;
       question.questionDescription = $scope.question.description;
@@ -177,10 +182,9 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
           question.createAnswer($scope.question.answers[i].text, $scope.question.answers[i].correct);
         }
       }
-      if(oldTopic.ID !== topic.ID){ //Move topics
-        topic.questions.push(question);
-        oldTopic.deleteQuestion(question.ID);
-      }
+    }
+    if(oldTopic.ID !== topic.ID){ //Move topics
+      oldTopic.deleteQuestion(question.ID);
     }
 
     $scope.cleanup();

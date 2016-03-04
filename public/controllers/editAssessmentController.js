@@ -1,5 +1,25 @@
 "use strict";
 app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce) {
+  function init(){
+    if ($scope.tabData.assessmentID != undefined){
+      let assessment = $scope.class.getAssessment($scope.tabData.assessmentID);
+
+      $scope.edit = true;
+      $scope.assessment.title = assessment.assessmentName;
+      $scope.assessment.description = assessment.assessmentDescription;
+      $scope.questions.manuallyAdded = new Set(assessment.questions);
+      $scope.questions.rules = [];
+      for(let rule of assessment.rules){ //Copy, don't use pointer
+        $scope.questions.rules.push({
+          type: rule.type,
+          numRequired: rule.numRequired,
+          objectives: rule.objectives.slice(),
+          topics: rule.topics.slice()
+        });
+      }
+    }
+  }
+
   $scope.assessment = {};
   $scope.questions = {};
   $scope.questions.manuallyAdded = new Set();
@@ -12,14 +32,25 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
       showToast("Assessment cannot be empty.", $mdToast);
       return;
     }
-    let assessment = $scope.class.createAssessment($scope.assessment.title, $scope.assessment.description);
+
+    let assessment;
+    if(!$scope.edit)
+      assessment = $scope.class.createAssessment($scope.assessment.title, $scope.assessment.description);
+    else { //Editing
+      assessment = $scope.class.getAssessment($scope.tabData.assessmentID);
+      assessment.assessmentName = $scope.assessment.title;
+      assessment.assessmentDescription = $scope.assessment.description;
+    }
     let manuallyAdded = Array.from($scope.questions.manuallyAdded);
+    assessment.questions = [];
     for (let question of manuallyAdded) {
       assessment.questions.push(question);
     }
+    assessment.rules = [];
     for(let rule of $scope.questions.rules){
       assessment.rules.push(rule);
     }
+
     $scope.cleanup();
   };
 
@@ -32,6 +63,7 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
     setTimeout(function () {
       document.getElementById("assessmentTitle" + $scope.tabID).focus();
     }, 500); //Delay until animation starts
+    init();
   };
 
 
@@ -94,8 +126,12 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
   };
 
   $scope.getQuestions = function () {
-    //TODO also factor in rules
     return Array.from($scope.questions.manuallyAdded);
+  };
+  $scope.deleteManualQuestion = function(id,topicID){
+    let topic = $scope.class.getTopic(topicID);
+    let question = topic.getQuestion(id);
+    $scope.questions.manuallyAdded.delete(question);
   };
 
 
@@ -115,7 +151,7 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
       scope.index = $scope.questions.rules.length - 1;
     } else {
       scope.index = index;
-      scope.edit = true;
+      scope.editRequirementEnabled = true;
     }
     $mdDialog.show({
       controller: CreateRequirementController,
@@ -136,7 +172,7 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
   };
 });
 function CreateRequirementController($scope, $mdDialog, $mdToast) {
-  if(!$scope.edit) {
+  if(!$scope.editRequirementEnabled) {
     $scope.questions.rules[$scope.index].type = "Topic";
     $scope.questions.rules[$scope.index].numRequired = 1;
     $scope.questions.rules[$scope.index].objectives = [];
@@ -234,7 +270,7 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
   };
   $scope.cancel = function (event) {
     $mdDialog.cancel();
-    if(!$scope.edit)
+    if(!$scope.editRequirementEnabled)
       $scope.questions.rules.splice($scope.index, 1);
   };
 }

@@ -32,9 +32,19 @@
                             <md-content flex layout-padding autoscroll="250">
                                 <md-list>
                                     <md-list-item class="md-2-line" ng-repeat="assessment in class.assessments">
-                                        <div class="md-list-item-text">
-                                            <h3>{{ assessment.assessmentName }}</h3>
-                                            <p>{{ assessment.assessmentDescription }}</p>
+                                        <div class="md-list-item-text" layout="row">
+                                            <div layout="column" flex>
+                                                <h3>{{ assessment.assessmentName }}</h3>
+                                                <p>{{ assessment.assessmentDescription }}</p>
+                                            </div>
+                                            <div layout="row" style="padding-left:8px">
+                                                <md-button ng-click="editAssessment(assessment.ID)" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
+                                                    <md-icon md-svg-icon="img/edit.svg"></md-icon>
+                                                </md-button>
+                                                <md-button ng-click="deleteAssessment(assessment.ID)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
+                                                    <md-icon md-svg-icon="img/delete.svg"></md-icon>
+                                                </md-button>
+                                            </div>
                                         </div>
                                         <md-divider inset></md-divider>
                                     </md-list-item>
@@ -95,17 +105,19 @@
                             <md-content flex layout-padding autoscroll="250">
                                 <md-list>
                                     <md-list-item class="md-2-line" ng-repeat="question in selectedTopic.questions" flex>
-                                        <div class="md-list-item-text" layout="column" flex>
-                                            <h3>{{ question.questionTitle }}</h3>
-                                            <p>{{ question.questionDescription }}</p>
-                                        </div>
-                                        <div layout="row" style="padding-left:8px">
-                                            <md-button ng-click="editQuestion(question.ID)" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
-                                                <md-icon md-svg-icon="img/edit.svg"></md-icon>
-                                            </md-button>
-                                            <md-button ng-click="deleteQuestion(question.ID)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
-                                                <md-icon md-svg-icon="img/delete.svg"></md-icon>
-                                            </md-button>
+                                        <div class="md-list-item-text" layout="row" flex>
+                                            <div layout="column" flex>
+                                                <h3>{{ question.questionTitle }}</h3>
+                                                <p>{{ question.questionDescription }}</p>
+                                            </div>
+                                                <div layout="row" style="padding-left:8px">
+                                                <md-button ng-click="editQuestion(question.ID)" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
+                                                    <md-icon md-svg-icon="img/edit.svg"></md-icon>
+                                                </md-button>
+                                                <md-button ng-click="deleteQuestion(question.ID)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
+                                                    <md-icon md-svg-icon="img/delete.svg"></md-icon>
+                                                </md-button>
+                                            </div>
                                         </div>
                                         <md-divider inset></md-divider>
                                     </md-list-item>

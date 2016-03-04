@@ -65,6 +65,19 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   $scope.createAssessment = function(){
     createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl");
   };
+  $scope.editAssessment = function(id){
+    createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl", {assessmentID: id});
+  };
+  $scope.deleteAssessment = function(id){
+    let assessment = $scope.class.getAssessment(id);
+    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Assessment \''+assessment.assessmentName+'\'?')
+      .ok('Delete').cancel('Cancel');
+    $mdDialog.show(confirm).then(function(){
+      $scope.class.deleteAssessment(id);
+    }, function(){
+      //You didn't delete it.
+    });
+  };
   $scope.searchQuestions = function(tabName,data){
     if(!tabName)
       tabName="Search Questions";

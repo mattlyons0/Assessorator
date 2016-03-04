@@ -93,6 +93,21 @@ class Course {
     this.assessments.push(assessment);
     return assessment;
   }
+  getAssessment(id){
+    for(let assessment of this.assessments){
+      if(assessment.ID === id){
+        return assessment;
+      }
+    }
+  }
+  deleteAssessment(id){
+    for(let i=0;i<this.assessments.length;i++){
+      if(this.assessments[i].ID === id){
+        this.assessments.splice(i,1);
+        return;
+      }
+    }
+  }
 }
 
 module.exports = Course;

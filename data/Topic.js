@@ -34,7 +34,7 @@ class Topic {
     let genID = this.questionUID;
     this.questionUID++;
 
-    this.questions.push(new Question(questionTitle, questionDescription, genID));
+    this.questions.push(new Question(questionTitle, questionDescription, genID,this.ID));
   }
   
   getQuestion(questionID){
