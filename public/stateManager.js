@@ -22,6 +22,15 @@ UI.getClassById = function (id) {
   console.error("No course with ID " + id + " found");
 };
 
+UI.deleteClass = function(id){
+  for(let i=0;i<state.courseList.length;i++){
+    if(state.courseList[i].ID === id){
+      state.courseList.splice(i,1);
+      return;
+    }
+  }
+};
+
 
 UI.getAllQuestionsForClass = function (classID){
   let course = UI.getClassById(classID);

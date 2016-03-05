@@ -24,7 +24,15 @@
                             <p>{{ class.courseSemester + " " + class.courseYear }}</p>
                         </div>
                     </md-button>
-                    <md-divider inset ng-if="!lastClass(class)"></md-divider>
+                    <div layout="row" style="padding-left:8px; position:relative;top:15px">
+                        <md-button ng-click="editClass($event,class.ID)" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
+                            <md-icon md-svg-icon="img/edit.svg"></md-icon>
+                        </md-button>
+                        <md-button ng-click="deleteClass(class.ID)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
+                            <md-icon md-svg-icon="img/delete.svg"></md-icon>
+                        </md-button>
+                    </div>
+                    <md-divider inset ng-if="!$last"></md-divider>
                 </md-list-item>
                 <!--Used to make create class appear to fade into box it creates-->
                 <md-list-item style="min-height: 0"></md-list-item>

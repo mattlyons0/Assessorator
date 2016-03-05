@@ -1,6 +1,12 @@
 "use strict";
 
-var app = angular.module("assessoratorApp", ['ngMaterial', 'ngMessages']);
+var app = angular.module("assessoratorApp", ['ngMaterial', 'ngMessages','ngSanitize']);
+
+app.config(function($mdThemingProvider) {
+  $mdThemingProvider.theme('warn')
+    .primaryPalette('red')
+    .accentPalette('red');
+});
 
 app.directive('ngRightClick', function ($parse) { //Currently Unused
   return function (scope, element, attrs) {
