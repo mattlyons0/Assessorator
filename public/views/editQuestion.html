@@ -1,3 +1,13 @@
+<style>
+    /*Undo searchQuestions.html css tricks*/
+    md-chips.md-default-theme .md-chips, md-chips .md-chips {
+        box-shadow: 0 1px rgb(224,224,224) !important;
+    }
+    md-chips input {
+        display: block;
+    }
+</style>
+
 <md-card id="editQuestionContainer">
     <form name="questionForm" ng-submit="submitQuestion()">
         <md-card-title>
@@ -24,7 +34,7 @@
                             <textarea ng-model="question.description"></textarea>
                         </md-input-container>
                         <div layout-gt-xs="row" style="margin-bottom:20px">
-                            <md-chips ng-model="topic.selected" style="margin-right:7px; height:45px;"
+                            <md-chips ng-model="topic.selected" style="margin-right:7px"
                                       md-transform-chip="transformChipTopic($chip)"
                                       md-require-match="true" flex>
                                 <md-chip-template>
@@ -47,7 +57,7 @@
                                 </md-autocomplete>
                             </md-chips>
 
-                            <md-chips required ng-model="objective.selected" style="margin-left:7px; height:45px;"
+                            <md-chips required ng-model="objective.selected" style="margin-left:7px"
                                       md-transform-chip="transformChipObjective($chip)"
                                       md-require-match="true" md-autocomplete-snap flex>
                                 <md-autocomplete md-no-cache="true" placeholder="Add an Objective" md-min-length="0"
