@@ -7,9 +7,34 @@
 var UI = {};
 
 let State = require('./../data/State');
-let state = new State();
+let state = undefined;
+
+let createCallbacks = [];
+
+UI.loadFromDisk = function(coursesFromDisk){
+  if(state){
+    console.error('Disk load prevented because there is an existing state!');
+    return;
+  }
+  state = new State(coursesFromDisk);
+  while(createCallbacks.length > 0){
+    createCallbacks[0]();
+    createCallbacks.splice(0,1);
+  }
+};
+
+UI.onStateCreate = function(callback){
+  if(!state)
+    createCallbacks.push(callback);
+  else {
+    callback();
+    createCallbacks.splice(0,1);
+  }
+};
 
 UI.getClasses = function () {
+  if(!state)
+    return;
   return state.courseList;
 };
 

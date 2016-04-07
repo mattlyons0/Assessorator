@@ -6,11 +6,17 @@ let Course = require('./Course');
  */
 class State {
   /**
-   * Creates a state with no courses.
+   * Creates a state with a courses array from the disk (if specified)
+   * @param [coursesFromDisk] {Course[]} Courses from the disk read
    */
-  constructor() {
+  constructor(coursesFromDisk) {
     this.courseList = [];
     this.courseUID = 0; //Running count of course ID's which have been assigned in order to always contain a unused ID
+
+    if(coursesFromDisk) {
+      this.courseList = coursesFromDisk;
+      this.courseUID = coursesFromDisk[coursesFromDisk.length - 1].ID + 1; //This will always be ordered by key because we use the key to store it
+    }
   }
 
   /**
@@ -26,7 +32,9 @@ class State {
     let genID = this.courseUID;
     this.courseUID++;
 
-    this.courseList.push(new Course(courseName, courseID, courseYear, courseSemester, genID));
+    let course = new Course(courseName, courseID, courseYear, courseSemester, genID);
+    this.courseList.push(course);
+    Database.addCourse(course);
     return genID;
   }
 }

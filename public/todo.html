@@ -12,12 +12,14 @@
         <li>There are some areas which don't scroll/scrolling offset is wrong</li>
         <li>There is no way to edit objectives</li>
         <li>Using per tab style tags doesn't work because it applies the rule from the tab which has loaded most recently</li>
+        <li>No data writes to the database except creating classes</li>
     </ul>
 
     <h2>Features</h2>
     <ul>
         <li>Polished UI</li>
         <ul>
+            <li>Fix text not wrapping to next line but instead doing ... in many places</li>
             <li>fix font not being roboto</li>
             <li>Right click <a href="https://github.com/atom/electron/blob/master/docs/api/menu.md">Context Menus</a>
             </li>
@@ -40,14 +42,19 @@
                 <li>Show objectives under topics and make selectable just like a topic</li>
             </ul>
             <li>Make real Icon</li>
-
-
+            <li>Add Objetive UI to under edit class menu</li>
+            <li>As long as objective doesn't wrap can have only title no description</li>
+            <li>Create No Topic (by default) and don't force a topic to be assigned to a question</li>
+            <li>Make assessment and questions clickable to edit with whole button</li>
+            <li>Allow empty assessments</li>
         </ul>
         <li>Saving and Loading from Database</li>
         <li>edX format Importing</li>
         <ul>
             <li>Support pasting in edX format</li>
             <li>Support reading text file(s) and doing bulk import</li>
+            <li>Allow bulk import to topic but not required</li>
+            <li>Import into specific assessment</li>
         </ul>
         <li>Cut, Copy, Paste menu on input fields</li>
         <li>Search Capability</li>

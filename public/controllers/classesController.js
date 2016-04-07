@@ -1,10 +1,15 @@
 "use strict";
 app.controller("classesCtrl", function ($scope, $mdDialog) {
-  $scope.classes = UI.getClasses();
-  $scope.addClassTooltip = true;
-  if (UI.getClasses().length > 0)
-    $scope.addClassTooltip = false;
+  $scope.addClassTooltip = $scope.classes && $scope.classes.length <= 0;
+  $scope.readingDisk = true;
 
+  UI.onStateCreate( () => {
+    $scope.$apply( () => {
+      $scope.classes = UI.getClasses();
+      $scope.readingDisk = false;
+    })
+  });
+  
   $scope.rightMenu = function ($mdOpenMenu, event) {
     $mdOpenMenu();
   };
@@ -109,7 +114,6 @@ function CreateClassController($scope, $mdDialog) {
 
   $scope.submit = function () {
     if ($scope.class.id) {
-      console.log($scope.class);
       if(!$scope.edit)
         UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year);
       else { //Editing

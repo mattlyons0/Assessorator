@@ -7,5 +7,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Assessorator node_modules" level="project" />
+    <orderEntry type="library" name="IndexedDB" level="project" />
+    <orderEntry type="library" name="chrome-DefinitelyTyped" level="project" />
   </component>
 </module>

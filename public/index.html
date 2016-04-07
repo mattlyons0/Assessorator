@@ -30,13 +30,15 @@ See http://stackoverflow.com/questions/15538125/angularjs-in-head-vs-body -->
 <script src="controllers/editAssessmentController.js"></script>
 <script src="controllers/searchQuestionsController.js"></script>
 
+<script src="databaseManager.js"></script>
 
 <div ng-app="assessoratorApp" ng-controller="viewCtrl" id="container" class="greyBackground" style="height:100%">
 
     <div ng-include="'views/'+page.URL"></div>
 
     <p style="position:absolute; bottom: 0; padding: 5px"><a href="javascript:UI.printData()">Data Debug</a>
-        &nbsp;<a href="todo.html">Todo List</a></p>
+        &nbsp;<a href="todo.html">Todo List</a> &nbsp;
+        <a href="javascript:Database.deleteDatabase()">Delete DB</a></p>
 </div>
 </body>
 </html>
