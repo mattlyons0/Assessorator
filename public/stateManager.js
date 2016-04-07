@@ -23,6 +23,11 @@ UI.loadFromDisk = function(coursesFromDisk){
   }
 };
 
+UI.stateCreated = function(){
+  return !!state;
+
+};
+
 UI.onStateCreate = function(callback){
   if(!state)
     createCallbacks.push(callback);

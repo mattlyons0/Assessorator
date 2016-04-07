@@ -3,12 +3,17 @@ app.controller("classesCtrl", function ($scope, $mdDialog) {
   $scope.addClassTooltip = $scope.classes && $scope.classes.length <= 0;
   $scope.readingDisk = true;
 
-  UI.onStateCreate( () => {
-    $scope.$apply( () => {
-      $scope.classes = UI.getClasses();
-      $scope.readingDisk = false;
-    })
-  });
+  if(!UI.stateCreated()) {
+    UI.onStateCreate(() => {
+      $scope.$apply(() => {
+        $scope.classes = UI.getClasses();
+        $scope.readingDisk = false;
+      })
+    });
+  } else {
+    $scope.classes = UI.getClasses();
+    $scope.readingDisk = false;
+  }
   
   $scope.rightMenu = function ($mdOpenMenu, event) {
     $mdOpenMenu();
