@@ -190,13 +190,14 @@ function deleteDatabase(){
     console.log("Database error: " + e.target.errorCode);
   };
   db.close();
-  fs.unlink(versionFile,function(err){
-    if(err && err.code != 'ENOENT'){
-      console.error('Failed to delete Database Version File: \n'+err);
-      return;
-    }
-    console.log('Deleted Version File');
-  })
+  location.reload();
+  // fs.unlink(versionFile,function(err){
+  //   if(err && err.code != 'ENOENT'){
+  //     console.error('Failed to delete Database Version File: \n'+err);
+  //     return;
+  //   }
+  //   console.log('Deleted Version File');
+  // })
 }
 
 function addCourse(course){
@@ -227,6 +228,17 @@ function getCourses(callback){
   openCursor.onerror = (error) => {
     console.error('Error getting courses from disk:\n'+error);
   };
+}
+
+function modifyCourse(course,callback){
+  let courseStore = db.transaction('courses','readwrite').objectStore('courses');
+  let request = courseStore.put(course);
+  request.onerror = (error) => {
+    console.error("Error updating course in database"+error);
+  };
+  request.onsuccess = (event) => {
+    console.log('Updated Database');
+  }
 }
 var Database = {};
 Database.loadDatabase = loadDatabase;

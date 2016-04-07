@@ -13,7 +13,7 @@ class State {
     this.courseList = [];
     this.courseUID = 0; //Running count of course ID's which have been assigned in order to always contain a unused ID
 
-    if(coursesFromDisk) {
+    if(coursesFromDisk.length) {
       this.courseList = coursesFromDisk;
       this.courseUID = coursesFromDisk[coursesFromDisk.length - 1].ID + 1; //This will always be ordered by key because we use the key to store it
     }

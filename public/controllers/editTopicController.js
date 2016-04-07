@@ -24,7 +24,7 @@ app.controller("editTopicCtrl", function($scope){
     if(!$scope.topic.name)
       return;
     if(!$scope.edit)
-      $scope.$parent.class.createTopic($scope.topic.name,$scope.topic.description);
+      $scope.class.createTopic($scope.topic.name,$scope.topic.description);
     else{
       let topic = $scope.class.getTopic($scope.tabData.topicID);
       topic.topicName = $scope.topic.name;

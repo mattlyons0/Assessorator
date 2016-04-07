@@ -149,12 +149,13 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     }
 
     let topic = $scope.topic.selected[0];
-    let oldTopic = $scope.class.getTopic($scope.tabData.topicID);
+    let oldTopic = undefined;
+    if($scope.edit)
+      oldTopic = $scope.class.getTopic($scope.tabData.topicID);
     let ignoreEdit = false;
-    if(oldTopic.ID !== topic.ID){ //Move topics
+    if (oldTopic && oldTopic.ID !== topic.ID) //Move topics
       ignoreEdit = true;
-    }
-    
+
     if(!$scope.edit || ignoreEdit) {
       topic.createQuestion($scope.question.title, $scope.question.description);
       let question = topic.questions[topic.questions.length - 1];
@@ -183,7 +184,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
         }
       }
     }
-    if(oldTopic.ID !== topic.ID){ //Move topics
+    if(oldTopic && oldTopic.ID !== topic.ID){ //Move topics
       oldTopic.deleteQuestion(question.ID);
     }
 
