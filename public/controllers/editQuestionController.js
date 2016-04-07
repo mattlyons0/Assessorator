@@ -2,8 +2,8 @@
 app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   function init(){
     if ($scope.tabData.questionID != undefined && $scope.tabData.topicID != undefined) {
-      let topic = $scope.class.getTopic($scope.tabData.topicID);
-      let question = topic.getQuestion($scope.tabData.questionID);
+      let topic = new CourseUtils($scope.class).getTopic($scope.tabData.topicID);
+      let question = new TopicUtils(topic).getQuestion($scope.tabData.questionID);
 
       $scope.edit = true;
 
@@ -151,22 +151,22 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     let topic = $scope.topic.selected[0];
     let oldTopic = undefined;
     if($scope.edit)
-      oldTopic = $scope.class.getTopic($scope.tabData.topicID);
+      oldTopic = new CourseUtils($scope.class).getTopic($scope.tabData.topicID);
     let ignoreEdit = false;
     if (oldTopic && oldTopic.ID !== topic.ID) //Move topics
       ignoreEdit = true;
 
     if(!$scope.edit || ignoreEdit) {
-      topic.createQuestion($scope.question.title, $scope.question.description);
+      new TopicUtils(topic).createQuestion($scope.question.title, $scope.question.description);
       let question = topic.questions[topic.questions.length - 1];
       for (let objective of $scope.objective.selected) {
         question.objectives.push(objective);
       }
       for (let x = 0; x < $scope.question.answers.length - 1; x++) { //Omit ghost answer
-        question.createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct);
+        new QuestionUtils(question).createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct);
       }
     } else{ //Edit Topic
-      let question = oldTopic.getQuestion($scope.tabData.questionID);
+      let question = new TopicUtils(oldTopic).getQuestion($scope.tabData.questionID);
       question.questionTitle = $scope.question.title;
       question.questionDescription = $scope.question.description;
 
@@ -180,12 +180,12 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
           question.answers[i].answerText = $scope.question.answers[i].text;
           question.answers[i].correct = $scope.question.answers[i].correct;
         } else{
-          question.createAnswer($scope.question.answers[i].text, $scope.question.answers[i].correct);
+          new QuestionUtils(question).createAnswer($scope.question.answers[i].text, $scope.question.answers[i].correct);
         }
       }
     }
     if(oldTopic && oldTopic.ID !== topic.ID){ //Move topics
-      oldTopic.deleteQuestion(question.ID);
+      new TopicUtils(oldTopic).deleteQuestion(question.ID);
     }
 
     $scope.cleanup();

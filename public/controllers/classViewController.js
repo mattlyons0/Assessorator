@@ -1,4 +1,5 @@
 "use strict";
+
 app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
@@ -19,7 +20,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     createTab("Edit Topic","views/editTopic.html","editTopicCtrl",{topicID: id});
   };
   $scope.deleteTopic = function(id){
-    let topic = $scope.class.getTopic(id);
+    let topic = new CourseUtils($scope.class).getTopic(id);
     if(topic.questions.length > 0){
       showToast("'"+topic.topicName+"' contains "+topic.questions.length+" questions. All questions must be " +
         "removed from a topic before it can be deleted.",$mdToast);
@@ -28,7 +29,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Topic \''+topic.topicName+'\'?')
       .ok('Delete').cancel('Cancel');
     $mdDialog.show(confirm).then(function(){
-      $scope.class.deleteTopic(id);
+      new CourseUtils($scope.class).deleteTopic(id);
       $scope.selectedTopic = undefined;
     }, function(){
       //You didn't delete it.
@@ -42,11 +43,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   };
   $scope.deleteQuestion = function(id){
     let topic = $scope.selectedTopic;
-    let question = topic.getQuestion(id);
+    let question = new TopicUtils(topic).getQuestion(id);
     let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Question \''+question.questionTitle+'\'?')
       .ok('Delete').cancel('Cancel');
     $mdDialog.show(confirm).then(function(){
-      topic.deleteQuestion(id);
+      new TopicUtils(topic).deleteQuestion(id);
     }, function(){
       //You didn't delete it.
     });
@@ -69,11 +70,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl", {assessmentID: id});
   };
   $scope.deleteAssessment = function(id){
-    let assessment = $scope.class.getAssessment(id);
+    let assessment = new CourseUtils($scope.class).getAssessment(id);
     let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Assessment \''+assessment.assessmentName+'\'?')
       .ok('Delete').cancel('Cancel');
     $mdDialog.show(confirm).then(function(){
-      $scope.class.deleteAssessment(id);
+      new CourseUtils($scope.class).deleteAssessment(id);
     }, function(){
       //You didn't delete it.
     });
@@ -94,7 +95,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       return;
     if($scope.selectedTopic != undefined)
       document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='transparent';
-    $scope.selectedTopic = $scope.class.getTopic(topicID);
+    $scope.selectedTopic = new CourseUtils($scope.class).getTopic(topicID);
     document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='#E8E8E8';
   };
 

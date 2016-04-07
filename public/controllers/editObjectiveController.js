@@ -15,7 +15,7 @@ app.controller("editObjectiveCtrl", function($scope){
   $scope.submitObjective = function(){
     if(!$scope.objective.name)
       return;
-    $scope.$parent.class.createObjective($scope.objective.name);
+    new CourseUtils($scope.class).createObjective($scope.objective.name);
     $scope.cleanup();
   };
 

@@ -1,9 +1,10 @@
 "use strict";
+
 app.controller("editTopicCtrl", function($scope){
   $scope.topic = {};
   function init() {
     if ($scope.tabData.topicID != undefined) {
-      let topic = $scope.class.getTopic($scope.tabData.topicID);
+      let topic = new CourseUtils($scope.class).getTopic($scope.tabData.topicID);
       $scope.topic.name = topic.topicName;
       $scope.topic.description = topic.topicDescription;
       $scope.edit = true;
@@ -24,9 +25,9 @@ app.controller("editTopicCtrl", function($scope){
     if(!$scope.topic.name)
       return;
     if(!$scope.edit)
-      $scope.class.createTopic($scope.topic.name,$scope.topic.description);
+      new CourseUtils($scope.class).createTopic($scope.topic.name, $scope.topic.description);
     else{
-      let topic = $scope.class.getTopic($scope.tabData.topicID);
+      let topic = new CourseUtils($scope.class).getTopic($scope.tabData.topicID);
       topic.topicName = $scope.topic.name;
       topic.topicDescription = $scope.topic.description;
     }

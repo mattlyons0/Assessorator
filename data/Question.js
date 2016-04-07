@@ -1,7 +1,5 @@
 "use strict";
 
-let Answer = require('./Answer');
-
 /**
  * Contains Question Metadata and a list of answers.
  */
@@ -28,18 +26,6 @@ class Question {
     /** List of pointers to objective objects
      * @type {Objective[]} */
     this.objectives = [];
-  }
-
-  /**
-   * Create a new Answer
-   * @param answerText {String} Text String for Answer
-   * @param correct {Boolean} True or False if the answer is a/the correct answer
-   */
-  createAnswer(answerText,correct) {
-    let genID = this.answerUID;
-    this.answerUID++;
-
-    this.answers.push(new Answer(answerText, correct, genID));
   }
 }
 

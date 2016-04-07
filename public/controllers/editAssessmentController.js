@@ -2,7 +2,7 @@
 app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce) {
   function init(){
     if ($scope.tabData.assessmentID != undefined){
-      let assessment = $scope.class.getAssessment($scope.tabData.assessmentID);
+      let assessment = new CourseUtils($scope.class).getAssessment($scope.tabData.assessmentID);
 
       $scope.edit = true;
       $scope.assessment.title = assessment.assessmentName;
@@ -35,9 +35,9 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
 
     let assessment;
     if(!$scope.edit)
-      assessment = $scope.class.createAssessment($scope.assessment.title, $scope.assessment.description);
+      assessment = new CourseUtils($scope.class).createAssessment($scope.assessment.title, $scope.assessment.description);
     else { //Editing
-      assessment = $scope.class.getAssessment($scope.tabData.assessmentID);
+      assessment = new CourseUtils($scope.class).getAssessment($scope.tabData.assessmentID);
       assessment.assessmentName = $scope.assessment.title;
       assessment.assessmentDescription = $scope.assessment.description;
     }
@@ -129,8 +129,8 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
     return Array.from($scope.questions.manuallyAdded);
   };
   $scope.deleteManualQuestion = function(id,topicID){
-    let topic = $scope.class.getTopic(topicID);
-    let question = topic.getQuestion(id);
+    let topic = new CourseUtils($scope.class).getTopic(topicID);
+    let question = new TopicUtils(topic).getQuestion(id);
     $scope.questions.manuallyAdded.delete(question);
   };
 

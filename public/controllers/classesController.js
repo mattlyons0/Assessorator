@@ -38,7 +38,6 @@ app.controller("classesCtrl", function ($scope, $mdDialog) {
     });
   };
   $scope.editClass = function(event,id){
-    console.log(id);
     $scope.addClass(event,id);
   };
   $scope.deleteClass = function(id){

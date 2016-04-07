@@ -3,6 +3,8 @@
 let Course = require('./Course');
 /**
  * Contains a list of courses.
+ * State is a special case and includes functions in the data structure class instead of requiring a Utils class because
+ *   it isn't included when data is saved to the disk, therefore functions will not be lost since it is never restored from disk.
  */
 class State {
   /**

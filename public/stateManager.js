@@ -6,7 +6,12 @@
 
 var UI = {};
 
-let State = require('./../data/State');
+var CourseUtils = require('../data/utils/CourseUtils');
+var QuestionUtils = require('../data/utils/QuestionUtils');
+var TopicUtils = require('../data/utils/TopicUtils');
+
+
+let State = require('../data/State');
 let state = undefined;
 
 let createCallbacks = [];
