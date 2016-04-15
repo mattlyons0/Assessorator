@@ -45,7 +45,7 @@ UI.onStateCreate = function(callback){
 
 UI.save = function(course){
   let worker = new Worker('worker.js');
-  worker.postMessage(course);
+  worker.postMessage(angular.toJson(course)); //angular.toJson removes angular's variables in the objects
 };
 
 UI.getClasses = function () {

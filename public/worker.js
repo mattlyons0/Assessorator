@@ -14,6 +14,8 @@ onmessage = function(msg){
 };
 
 function save(course){
+  course = JSON.parse(course);
+  
   let openRequest = indexedDB.open(DB_NAME,db_version);
   openRequest.onsuccess = function(e) {
     db = e.target.result;
