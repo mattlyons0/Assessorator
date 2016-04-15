@@ -30,6 +30,8 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       .ok('Delete').cancel('Cancel');
     $mdDialog.show(confirm).then(function(){
       new CourseUtils($scope.class).deleteTopic(id);
+
+      UI.save($scope.class);
       $scope.selectedTopic = undefined;
     }, function(){
       //You didn't delete it.
@@ -48,6 +50,8 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       .ok('Delete').cancel('Cancel');
     $mdDialog.show(confirm).then(function(){
       new TopicUtils(topic).deleteQuestion(id);
+
+      UI.save($scope.class);
     }, function(){
       //You didn't delete it.
     });
@@ -75,6 +79,8 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       .ok('Delete').cancel('Cancel');
     $mdDialog.show(confirm).then(function(){
       new CourseUtils($scope.class).deleteAssessment(id);
+
+      UI.save($scope.class);
     }, function(){
       //You didn't delete it.
     });

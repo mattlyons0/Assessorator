@@ -20,7 +20,7 @@ loadDatabase( () => {
   });
 });
 
-function loadDatabase(callback,addedData){
+function loadDatabase(callback){
   console.log('Opening Database Version '+db_version+'...');
   let openRequest = indexedDB.open(DB_NAME,db_version);
 
@@ -208,7 +208,8 @@ function addCourse(course){
     console.log('Successfully added course');
   };
   transaction.onerror = (err) => {
-    console.error('Error adding course to Database:\n'+err);
+    console.error('Error adding course to Database:');
+    console.log(err);
   };
 }
 
@@ -230,7 +231,7 @@ function getCourses(callback){
   };
 }
 
-function modifyCourse(course,callback){
+function modifyCourse(course){
   let courseStore = db.transaction('courses','readwrite').objectStore('courses');
   let request = courseStore.put(course);
   request.onerror = (error) => {
@@ -240,8 +241,23 @@ function modifyCourse(course,callback){
     console.log('Updated Database');
   }
 }
+
+function deleteCourse(courseID){
+  let courseStore = db.transaction('courses','readwrite').objectStore('courses');
+  let request = courseStore.delete(courseID);
+  request.onerror = (error) => {
+    console.error("Error deleting course in database"+error);
+  };
+  request.onsuccess = (event) => {
+    console.log('Deleted Course in Database');
+  }
+}
 var Database = {};
 Database.loadDatabase = loadDatabase;
 Database.deleteDatabase = deleteDatabase;
 Database.addCourse = addCourse;
 Database.getCourses = getCourses;
+Database.modifyCourse = modifyCourse;
+Database.deleteCourse = deleteCourse;
+
+module.exports = Database;

@@ -16,6 +16,9 @@ app.controller("editObjectiveCtrl", function($scope){
     if(!$scope.objective.name)
       return;
     new CourseUtils($scope.class).createObjective($scope.objective.name);
+
+    UI.save($scope.class);
+    
     $scope.cleanup();
   };
 

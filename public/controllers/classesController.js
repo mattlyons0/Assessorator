@@ -118,14 +118,18 @@ function CreateClassController($scope, $mdDialog) {
 
   $scope.submit = function () {
     if ($scope.class.id) {
-      if(!$scope.edit)
-        UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year);
-      else { //Editing
+      if(!$scope.edit) {
+        let courseID = UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year);
+
+        UI.save(UI.getClassById(courseID));
+      } else { //Editing
         let course = UI.getClassById($scope.classID);
         course.courseName = $scope.class.name;
         course.courseID = $scope.class.id;
         course.courseSemester = $scope.class.semester;
         course.courseYear = $scope.class.year;
+        
+        UI.save(course);
       }
       $mdDialog.hide();
     }

@@ -26,6 +26,7 @@ UI.loadFromDisk = function(coursesFromDisk){
     createCallbacks[0]();
     createCallbacks.splice(0,1);
   }
+  stresstest(); //Do stress test if env var is set
 };
 
 UI.stateCreated = function(){
@@ -40,6 +41,11 @@ UI.onStateCreate = function(callback){
     callback();
     createCallbacks.splice(0,1);
   }
+};
+
+UI.save = function(course){
+  let worker = new Worker('worker.js');
+  worker.postMessage(course);
 };
 
 UI.getClasses = function () {
@@ -60,6 +66,8 @@ UI.getClassById = function (id) {
 UI.deleteClass = function(id){
   for(let i=0;i<state.courseList.length;i++){
     if(state.courseList[i].ID === id){
+      Database.deleteCourse(id);
+      
       state.courseList.splice(i,1);
       return;
     }
@@ -81,6 +89,7 @@ UI.getAllQuestionsForClass = function (classID){
 UI.createClass = function (name, id, semester, year) {
   //Update Data Model
   let courseID = state.createCourse(name, id, year, semester);
+  return courseID;
 };
 
 UI.printData = function () {
@@ -119,6 +128,26 @@ var strLimit = function(str){
   }
   return str;
 };
+
+function stresstest(){
+  if(process.env.NODE_ENV === 'dev' && process.env.stress){
+    let n = 50;
+    for(let i=0;i<n;i++) {
+      UI.createClass("Dummy Class","DUM "+(100+i),"Fall",(2015+i));
+      for(let z=0;z<n*2;z++) { //1k
+        new CourseUtils(UI.getClasses()[i]).createTopic('Dummy Topic ' + (z + 1), 'A Topic created for the purposes of testing.');
+        new CourseUtils(UI.getClasses()[i]).createObjective('Test Objective ' + (z + 1));
+        for(let x=0;x<100;x++) { //10k
+          new TopicUtils(UI.getClasses()[i].topics[z]).createQuestion('Dummy Question ' + (x + 1), 'A Question for the purposes of testing.');
+          new QuestionUtils(UI.getClasses()[i].topics[z].questions[x]).createAnswer('True', false);
+          new QuestionUtils(UI.getClasses()[i].topics[z].questions[x]).createAnswer('False', true);
+        }
+      }
+      UI.save(UI.getClasses()[i]);
+    }
+    UI.save(UI.getClasses()[0]);
+  }
+}
 
 if(Array.prototype.equals)
   console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");

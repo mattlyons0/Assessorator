@@ -188,6 +188,8 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       new TopicUtils(oldTopic).deleteQuestion(question.ID);
     }
 
+    UI.save($scope.class);
+
     $scope.cleanup();
   };
 

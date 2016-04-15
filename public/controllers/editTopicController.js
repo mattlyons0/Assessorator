@@ -31,6 +31,7 @@ app.controller("editTopicCtrl", function($scope){
       topic.topicName = $scope.topic.name;
       topic.topicDescription = $scope.topic.description;
     }
+    UI.save($scope.class);
     $scope.cleanup();
   };
 

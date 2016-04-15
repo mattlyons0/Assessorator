@@ -7,4 +7,12 @@ app.controller("viewCtrl", function ($scope, $window) {
   $scope.printPageData = function () {
     console.log($scope.page)
   };
+
+  $scope.dataDebug = function(){
+    UI.printData();
+  };
+
+  $scope.todoList = function(){
+    location.replace('todo.html');
+  };
 });

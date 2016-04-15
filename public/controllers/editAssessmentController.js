@@ -51,6 +51,8 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
       assessment.rules.push(rule);
     }
 
+    UI.save($scope.class);
+    
     $scope.cleanup();
   };
 
