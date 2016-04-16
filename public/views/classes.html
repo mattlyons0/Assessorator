@@ -16,19 +16,17 @@
         </md-toolbar>
         <md-content id="classesList" flex layout-padding autoscroll="160">
             <md-list>
-                <md-list-item class="md-3-line" ng-repeat="class in classes">
-                    <md-button id="class{{ class.ID }}" ng-click="viewClass(class.ID)" style="padding:5px;" flex>
+                <md-list-item class="md-3-line" ng-repeat="class in classes" ng-click="viewClass(class.ID)">
                         <div class="md-list-item-text" layout="column">
                             <h3>{{ class.courseID }}</h3>
                             <h4>{{ class.courseName }}</h4>
                             <p>{{ class.courseSemester + " " + class.courseYear }}</p>
                         </div>
-                    </md-button>
-                    <div layout="row" style="padding-left:8px; position:relative;top:15px">
-                        <md-button ng-click="editClass($event,class.ID)" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
+                    <div layout="row">
+                        <md-button ng-click="editClass($event,class.ID); $event.stopPropagation();" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
                             <md-icon md-svg-icon="img/edit.svg"></md-icon>
                         </md-button>
-                        <md-button ng-click="deleteClass(class.ID)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
+                        <md-button ng-click="deleteClass(class.ID); $event.stopPropagation();" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
                             <md-icon md-svg-icon="img/delete.svg"></md-icon>
                         </md-button>
                     </div>

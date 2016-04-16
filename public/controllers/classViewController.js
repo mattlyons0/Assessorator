@@ -22,8 +22,8 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   $scope.deleteTopic = function(id){
     let topic = new CourseUtils($scope.class).getTopic(id);
     if(topic.questions.length > 0){
-      showToast("'"+topic.topicName+"' contains "+topic.questions.length+" questions. All questions must be " +
-        "removed from a topic before it can be deleted.",$mdToast);
+      showToast("'"+topic.topicName+"' contains "+topic.questions.length+" question"+(topic.questions.length>1?'s':'')+
+        ". All questions must be "+"removed from a topic before it can be deleted.",$mdToast);
       return;
     }
     let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Topic \''+topic.topicName+'\'?')
@@ -103,6 +103,13 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='transparent';
     $scope.selectedTopic = new CourseUtils($scope.class).getTopic(topicID);
     document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='#E8E8E8';
+  };
+  
+  $scope.determineListClass = function(var2){
+    if(var2)
+      return 'md-2-line';
+    else
+      return 'md-2-line md-1-line';
   };
 
   $scope.goBack = function () {
