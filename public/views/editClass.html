@@ -76,7 +76,7 @@
                                     <md-input-container style="height:40px; margin: 0; padding: 5px 0 0;" flex>
                                         <input id="objectiveEdit{{objective.ID}}" aria-label="Edit Objective"
                                                ng-model="class.objectives[objective.ID].objectiveText"
-                                               style="padding-left: 0">
+                                               ng-blur="editObjective(-1)" style="padding-left: 0">
                                     </md-input-container>
                                 </md-list-item>
                             </div>

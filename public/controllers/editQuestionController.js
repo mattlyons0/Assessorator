@@ -10,6 +10,9 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       $scope.question.title=question.questionTitle;
       $scope.question.description=question.questionDescription;
       $scope.topic.selected = [topic];
+      if(topic.ID == 0){ //Ignore the 'No Topic' Topic
+        $scope.topic.selected = [];
+      }
       $scope.objective.selected = [];
       for(let objective of question.objectives){
         $scope.objective.selected.push(objective);
@@ -79,11 +82,14 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   $scope.searchTopics = function () {
     let array = [];
     let query = $scope.topic.searchQuery;
-    if(!query)
-      return $scope.class.topics;
-    for (let x = 0; x < $scope.class.topics.length; x++) {
-      if ($scope.class.topics[x].topicName.toLowerCase().indexOf(query.toLowerCase()) > -1)
-        array.push($scope.class.topics[x]);
+    if(!query) {
+      array = $scope.class.topics.slice(0);
+      array.splice(0,1); //Remove first topic, 'No Topic'
+    } else {
+      for (let topic of $scope.class.topics) {
+        if (topic.topicName.toLowerCase().indexOf(query.toLowerCase()) > -1 && topic.ID != 0) //Check if its in the search and it isn't the No Topic
+          array.push($scope.class.topics[x]);
+      }
     }
     return array;
   };
@@ -118,11 +124,6 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   $scope.submitQuestion = function () {
     if (!$scope.question.title)
       return;
-    if ($scope.topic.selected.length === 0) {
-      document.querySelector("#topicChooserInput").focus();
-      showToast('A Topic is Required.',$mdToast);
-      return;
-    }
     if($scope.topic.selected.length > 1){
       document.querySelector('#topicChooserInput').focus();
       showToast('Only One Topic may be selected.',$mdToast);
@@ -149,6 +150,8 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     }
 
     let topic = $scope.topic.selected[0];
+    if(!$scope.topic.selected.length)
+      topic = $scope.class.topics[0]; //The 'No Topic' Topic
     let oldTopic = undefined;
     if($scope.edit)
       oldTopic = new CourseUtils($scope.class).getTopic($scope.tabData.topicID);
@@ -185,7 +188,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       }
     }
     if(oldTopic && oldTopic.ID !== topic.ID){ //Move topics
-      new TopicUtils(oldTopic).deleteQuestion(question.ID);
+      new TopicUtils(oldTopic).deleteQuestion($scope.tabData.questionID);
     }
 
     UI.save($scope.class);

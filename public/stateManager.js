@@ -67,7 +67,7 @@ UI.deleteClass = function(id){
   for(let i=0;i<state.courseList.length;i++){
     if(state.courseList[i].ID === id){
       Database.deleteCourse(id);
-      
+
       state.courseList.splice(i,1);
       return;
     }
@@ -89,6 +89,7 @@ UI.getAllQuestionsForClass = function (classID){
 UI.createClass = function (name, id, semester, year) {
   //Update Data Model
   let courseID = state.createCourse(name, id, year, semester);
+  new CourseUtils(UI.getClassById(courseID)).createTopic('No Topic','This is the topic where questions will appear under if they were not assigned to a topic.');
   return courseID;
 };
 

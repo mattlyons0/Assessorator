@@ -78,7 +78,8 @@
                                                     <md-button ng-click="editTopic(topic.ID)" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
                                                         <md-icon md-svg-icon="img/edit.svg"></md-icon>
                                                     </md-button>
-                                                    <md-button ng-click="deleteTopic(topic.ID)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
+                                                    <md-button ng-click="deleteTopic(topic.ID)" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;"
+                                                        ng-if="topic.ID != 0">
                                                         <md-icon md-svg-icon="img/delete.svg"></md-icon>
                                                     </md-button>
                                                 </div>

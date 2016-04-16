@@ -31,8 +31,8 @@ app.controller("classesCtrl", function ($scope, $mdDialog) {
       templateUrl: 'views/editClass.html',
       parent: angular.element(document.body),
       targetEvent: event,
-      clickOutsideToClose: true,
-      fullscreen: false,
+      clickOutsideToClose: false,
+      fullscreen: true,
       scope: scope,
       closeTo: closeTo
     });
@@ -130,6 +130,9 @@ function CreateClassController($scope, $mdDialog) {
   
   $scope.editObjective = function(objID){
     $scope.editObjectiveID = objID;
+
+    if(objID < 0)
+      return;
     setTimeout( () => {
       document.getElementById("objectiveEdit"+objID).focus(); //Select upon click
     }, 10);
