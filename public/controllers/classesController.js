@@ -151,6 +151,13 @@ function CreateClassController($scope, $mdDialog) {
 
   $scope.submit = function () {
     if ($scope.class.id) {
+      for(let i=0;i<$scope.class.objectives.length;i++) {
+        if ($scope.class.objectives[i].objectiveText.trim() == ''){
+          $scope.class.objectives.splice(i, 1);
+          i--;
+        }
+      }
+
       if(!$scope.edit) {
         let courseID = UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year);
 

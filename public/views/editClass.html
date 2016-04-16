@@ -55,7 +55,7 @@
                         <div autoscroll="300">
                             <div ng-repeat="objective in class.objectives">
                                 <md-list-item class="md-1-line" style="min-height: 25px"
-                                              ng-click="editObjective(objective.ID)"
+                                              ng-click="editObjective(objective.ID)" aria-label="Objective"
                                               ng-if="editObjectiveID != objective.ID">
                                     <p> {{objective.objectiveText}} </p>
 
