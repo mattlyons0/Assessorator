@@ -34,11 +34,11 @@ app.controller("exportAssessmentCtrl", function ($scope) {
   };
 
   $scope.exportAssessment = function(assessment){
-    let questions = new Set();
+    let questions = [];
     for(let question of assessment.questions){
-      questions.add(question);
+      questions.push(question);
     }
-    let line = "";
+
     for(let rule of assessment.rules){
       let possibleQuestions = new Set();
       for(let topic of rule.topics){
@@ -59,7 +59,6 @@ app.controller("exportAssessmentCtrl", function ($scope) {
       }
 
       let possibleQuestionArray = Array.from(possibleQuestions);
-      let randomQuestions = [];
       let randoms = new Set();
       for(let i=0;i<rule.numRequired;i++){
         let max = possibleQuestionArray.length;
@@ -73,17 +72,16 @@ app.controller("exportAssessmentCtrl", function ($scope) {
 
       let randomArr = Array.from(randoms);
       for(let rand of randomArr){
-        randomQuestions.push(possibleQuestionArray[rand]);
+        questions.push(possibleQuestionArray[rand]);
       }
-
-      let edxOut="";
-      for(let question of randomQuestions){
-        edxOut+=$scope.toEDX(question);
-      }
-
-      line+=edxOut;
     }
-    $scope.output.data=line;
+
+    let out = "";
+    while(questions.length != 0){
+      out+=$scope.toEDX(questions.splice(Math.floor(Math.random()*questions.length),1)[0]);
+      //Add a random question to the output (removing afterwards to ensure no duplicates)
+    }
+    $scope.output.data=out;
   };
 
   $scope.toEDX = function(question){
