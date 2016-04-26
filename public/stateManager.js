@@ -136,10 +136,10 @@ UI.stressTest = function () {
   let n = 50;
   for (let i = 0; i < n; i++) {
     UI.createClass("Dummy Class", "DUM " + (100 + i), "Fall", (2015 + i));
-    for (let z = 0; z < n * 2; z++) { //1k
+    for (let z = 0; z < n * 2; z++) { //100
       new CourseUtils(UI.getClasses()[i]).createTopic('Dummy Topic ' + (z + 1), 'A Topic created for the purposes of testing.');
       new CourseUtils(UI.getClasses()[i]).createObjective('Test Objective ' + (z + 1));
-      for (let x = 0; x < 100; x++) { //10k
+      for (let x = 0; x < 100; x++) { //5k
         new TopicUtils(UI.getClasses()[i].topics[z]).createQuestion('Dummy Question ' + (x + 1), 'A Question for the purposes of testing.');
         new QuestionUtils(UI.getClasses()[i].topics[z].questions[x]).createAnswer('True', false);
         new QuestionUtils(UI.getClasses()[i].topics[z].questions[x]).createAnswer('False', true);
@@ -148,7 +148,7 @@ UI.stressTest = function () {
     UI.save(UI.getClasses()[i]);
   }
   UI.save(UI.getClasses()[0]);
-}
+};
 
 if (Array.prototype.equals)
   console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
