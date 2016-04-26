@@ -59,6 +59,10 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
     let objectives = $scope.objective.selected; //Array of Objective Objects
 
     let questions = $scope.parseInput($scope.input.data);
+    if(!questions.length){
+      return;
+    }
+
     for(let question of questions) {
       let topicUtil = new TopicUtils(topic);
       let qID = topicUtil.createQuestion(question.title,question.description);

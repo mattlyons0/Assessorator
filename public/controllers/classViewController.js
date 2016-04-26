@@ -109,6 +109,10 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     createTab("Import Questions", "views/importQuestions.html","importQuestionsCtrl");
   };
   
+  $scope.exportAssessment = function(){
+    createTab("Export Assessment", "views/exportAssessment.html","exportAssessmentCtrl");
+  };
+  
   $scope.determineListClass = function(var2){
     if(var2)
       return 'md-2-line';

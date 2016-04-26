@@ -27,8 +27,8 @@
                         <!--</md-button>-->
                     <!--</md-menu-item>-->
                     <md-menu-item>
-                        <md-button>
-                            Generate Assessment
+                        <md-button ng-click="exportAssessment()">
+                            Export Assessment
                         </md-button>
                     </md-menu-item>
                 </md-menu-content>
@@ -106,6 +106,7 @@
                                             <div class="md-list-item-text">
                                                 <h3>{{ topic.topicName }}</h3>
                                                 <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
+                                                <p>{{topic.questions.length}} question{{topic.questions.length==1?'':'s'}}</p>
                                             </div>
                                             <div layout="row" style="padding-left:8px">
                                                 <md-button ng-click="editTopic(topic.ID); $event.stopPropagation();"

@@ -1,0 +1,45 @@
+<md-card id="exportAssessmentContainer">
+    <md-card-title flex>
+        <md-card-title-text flex>
+            <span class="md-headline">Export Assessment</span>
+        </md-card-title-text>
+    </md-card-title>
+    <form name="exportForm" ng-submit="cleanup()">
+        <md-content layout-padding>
+            <md-chips ng-model="assessment.selected" style="margin-right:7px"
+                      md-transform-chip="transformChipAssessment($chip)"
+                      md-require-match="true" flex>
+                <md-chip-template>
+                    {{$chip.assessmentName}}
+                </md-chip-template>
+                <md-autocomplete md-no-cache="true" placeholder="Choose an Assessment" md-min-length="0"
+                                 md-input-id="assessmentChooserInput" md-autocomplete-snap
+                                 md-search-text="assessment.searchQuery" md-items="assessment in searchAssessments()"
+                                 md-select-on-match>
+                    <md-item-template>
+                        <span md-highlight-text="searchQueryAssessment()" md-highlight-flags="i">
+                            {{assessment.assessmentName}}
+                        </span>
+                    </md-item-template>
+                    <md-not-found>
+                        <span>No Assessments Found</span>
+                    </md-not-found>
+                </md-autocomplete>
+            </md-chips>
+
+            <div layout="column" autoscroll="335">
+                <md-input-container class="md-block" flex>
+                    <label>edX Output:</label>
+                    <textarea id="importArea{{tabID}}" type="text" name="importData" ng-model="output.data"
+                              md-select-on-focus></textarea>
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <span flex></span>
+                <md-button type="submit" class="md-primary">
+                    Close
+                </md-button>
+            </div>
+        </md-content>
+    </form>
+</md-card>
