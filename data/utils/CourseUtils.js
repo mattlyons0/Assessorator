@@ -57,6 +57,13 @@ class CourseUtils {
 
     this.course.objectives.push(new Objective(objectiveText, genID));
   }
+  
+  getObjective(objectiveID){
+    for(let objective of this.course.objectives){
+      if(objective.ID===objectiveID)
+        return objective;
+    }
+  }
 
   /**
    * Creates a new Assessment containing no questions

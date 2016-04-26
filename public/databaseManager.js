@@ -221,6 +221,7 @@ function getCourses(callback){
     let cursor = event.target.result;
     if(cursor){
       courses.push(cursor.value);
+      repairPointers(cursor.value); //Relink assessment and objective pointers
       cursor.continue();
     } else { //We have finished querying the objectStore
       callback(courses);
@@ -229,6 +230,32 @@ function getCourses(callback){
   openCursor.onerror = (error) => {
     console.error('Error getting courses from disk:\n'+error);
   };
+}
+
+function repairPointers(course){
+  if(!course)
+    return;
+  //Repair Assessment pointers to questions
+  for(let assessment of course.assessments){
+    for(let i=0;i<assessment.questions.length;i++){
+      let oldQuestion = assessment.questions.splice(0,1)[0];
+      let topic = new CourseUtils(course).getTopic(oldQuestion.topicID);
+      let question = new TopicUtils(topic).getQuestion(oldQuestion.ID);
+      assessment.questions.push(question); //Repair pointer
+    }
+  }
+  //Repair Question pointers to objectives
+  for(let topic of course.topics){
+    for(let question of topic.questions){
+      for(let i=0;i<question.objectives.length;i++){
+        let oldObjective = question.objectives.splice(0,1)[0];
+        let courseUtil = new CourseUtils(course);
+        let objective = courseUtil.getObjective(oldObjective.ID);
+        if(objective)
+          question.objectives.push(objective); //Repair Pointer
+      }
+    }
+  }
 }
 
 function modifyCourse(course){
