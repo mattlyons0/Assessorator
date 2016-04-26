@@ -1,0 +1,65 @@
+<md-card id="importQuestionsContainer">
+    <md-card-title flex>
+        <md-card-title-text flex>
+            <span class="md-headline">Import Questions <md-button id="helpButton" ng-click="showHelp($event)" style="float:right">Help</md-button></span>
+        </md-card-title-text>
+    </md-card-title>
+    <form name="importForm" ng-submit="import()">
+        <md-content layout-padding>
+            <div layout="column" autoscroll="335">
+                <md-input-container class="md-block" flex>
+                    <label>Paste edX formatted questions in the box:</label>
+                    <textarea id="importArea{{tabID}}" type="text" name="importData" ng-model="input.data" md-select-on-focus></textarea>
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-chips ng-model="topic.selected" style="margin-right:7px"
+                          md-transform-chip="transformChipTopic($chip)"
+                          md-require-match="true" flex>
+                    <md-chip-template>
+                        {{$chip.topicName}}
+                    </md-chip-template>
+                    <md-autocomplete md-no-cache="true" placeholder="Topic" md-min-length="0"
+                                     md-input-id="topicChooserInput" md-autocomplete-snap
+                                     md-search-text="topic.searchQuery" md-items="topic in searchTopics()"
+                                     md-select-on-match>
+                        <md-item-template>
+                                        <span md-highlight-text="searchQueryTopic()" md-highlight-flags="i">
+                                            {{topic.topicName}}
+                                        </span>
+                        </md-item-template>
+                        <md-not-found>
+                            <div ng-click="createTopic()"
+                                 style="height:100%;width:100%; outline:none;border:0">Create New Topic
+                            </div>
+                        </md-not-found>
+                    </md-autocomplete>
+                </md-chips>
+
+                <md-chips required ng-model="objective.selected" style="margin-left:7px"
+                          md-require-match="true" md-autocomplete-snap flex>
+                    <md-chip-template>
+                        {{$chip.objectiveText}}
+                    </md-chip-template>
+                    <md-autocomplete md-no-cache="true" placeholder="Objective" md-min-length="0"
+                                     md-input-id="objectiveChooserInput"
+                                     md-search-text="objective.searchQuery"
+                                     md-items="objective in searchObjectives()" md-select-on-match>
+                                    <span md-highlight-text="searchQueryObjective()" md-highlight-flags="i">
+                                        {{objective.objectiveText}}
+                                    </span>
+                        <md-not-found>
+                            <div ng-click="createObjective()"
+                                 style="height:100%;width:100%; outline:none;border:0">Create New Objective
+                            </div>
+                        </md-not-found>
+                    </md-autocomplete>
+                </md-chips>
+                <md-button ng-click="cleanup()">Cancel</md-button>
+                <md-button type="submit" class="md-primary">
+                    Import
+                </md-button>
+            </div>
+        </md-content>
+    </form>
+</md-card>

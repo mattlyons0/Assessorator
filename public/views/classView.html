@@ -9,6 +9,30 @@
             <h2>
                 <span>{{ class.courseID }}</span>
             </h2>
+            <span flex></span>
+            <md-menu md-offset="0 45">
+                <md-button class="md-icon-button" aria-label="More" ng-click="$mdOpenMenu($event)">
+                    <md-icon md-svg-icon="img/dots-vertical.svg"></md-icon>
+                </md-button>
+
+                <md-menu-content>
+                    <md-menu-item>
+                        <md-button ng-click="importQuestions()">
+                            Import Questions
+                        </md-button>
+                    </md-menu-item>
+                    <!--<md-menu-item>-->
+                        <!--<md-button>-->
+                            <!--Export Questions-->
+                        <!--</md-button>-->
+                    <!--</md-menu-item>-->
+                    <md-menu-item>
+                        <md-button>
+                            Generate Assessment
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
         </div>
     </md-toolbar>
     <md-content>
@@ -90,7 +114,8 @@
                                                     <md-icon md-svg-icon="img/edit.svg"></md-icon>
                                                 </md-button>
                                                 <md-button ng-click="deleteTopic(topic.ID); $event.stopPropagation();"
-                                                           class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;"
+                                                           class="md-icon-button" aria-label="Delete"
+                                                           style="padding: 0;margin:0;"
                                                            ng-if="topic.ID != 0">
                                                     <md-icon md-svg-icon="img/delete.svg"></md-icon>
                                                 </md-button>
@@ -116,7 +141,8 @@
                             </md-toolbar>
                             <md-content flex layout-padding autoscroll="250">
                                 <md-list>
-                                    <md-list-item ng-repeat="question in selectedTopic.questions" ng-click="editQuestion(question.ID)"
+                                    <md-list-item ng-repeat="question in selectedTopic.questions"
+                                                  ng-click="editQuestion(question.ID)"
                                                   ng-class="determineListClass(question.questionDescription)">
                                         <div class="md-list-item-text" layout="row" flex>
                                             <div layout="column" flex>
@@ -124,12 +150,16 @@
                                                 <p>{{ question.questionDescription }}</p>
                                             </div>
                                             <div layout="row" style="padding-left:8px">
-                                                <md-button ng-click="editQuestion(question.ID); $event.stopPropagation();"
-                                                           class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
+                                                <md-button
+                                                        ng-click="editQuestion(question.ID); $event.stopPropagation();"
+                                                        class="md-icon-button" aria-label="Edit"
+                                                        style="padding: 0; margin:0;">
                                                     <md-icon md-svg-icon="img/edit.svg"></md-icon>
                                                 </md-button>
-                                                <md-button ng-click="deleteQuestion(question.ID); $event.stopPropagation();"
-                                                           class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
+                                                <md-button
+                                                        ng-click="deleteQuestion(question.ID); $event.stopPropagation();"
+                                                        class="md-icon-button" aria-label="Delete"
+                                                        style="padding: 0;margin:0;">
                                                     <md-icon md-svg-icon="img/delete.svg"></md-icon>
                                                 </md-button>
                                             </div>

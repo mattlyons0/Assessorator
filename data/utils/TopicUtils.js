@@ -25,6 +25,8 @@ class TopicUtils {
     this.topic.questionUID++;
 
     this.topic.questions.push(new Question(questionTitle, questionDescription, genID,this.topic.ID));
+    
+    return genID;
   }
 
   getQuestion(questionID){

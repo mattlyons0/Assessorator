@@ -114,12 +114,6 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     }
     return array;
   };
-  $scope.transformChipObjective = function (chip) {
-    if (chip.objectiveText) {
-      return chip.objectiveText;
-    }
-    return chip;
-  };
 
   $scope.submitQuestion = function () {
     if (!$scope.question.title)

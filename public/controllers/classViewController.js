@@ -104,6 +104,10 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     $scope.selectedTopic = new CourseUtils($scope.class).getTopic(topicID);
     document.querySelector('#topic'+$scope.selectedTopic.ID).style.background='#E8E8E8';
   };
+
+  $scope.importQuestions = function(){
+    createTab("Import Questions", "views/importQuestions.html","importQuestionsCtrl");
+  };
   
   $scope.determineListClass = function(var2){
     if(var2)
