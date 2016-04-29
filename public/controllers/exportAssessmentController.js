@@ -97,14 +97,18 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
     let out = "";
     out+=">>"+question.questionTitle+"<<\n";
     let answerStrings = [];
-    for(let answer of question.answers){
-      answerStrings.push("("+(answer.correct?"x":" ")+") "+answer.answerText+"\n");
+    for(let i=0;i<question.answers.length;i++){
+      let answer = question.answers[i];
+      let innerParenthesis = '';
+      if(i===0) //Randomize every question in edX
+        innerParenthesis+='!';
+      if(answer.correct === true) //Select correct question
+        innerParenthesis+='x';
+
+      answerStrings.push("("+innerParenthesis+") "+answer.answerText+"\n");
+      out+=answerStrings[i];
     }
-    while(answerStrings.length>0){
-      let random = Math.floor(Math.random()*answerStrings.length);
-      out+=answerStrings[random];
-      answerStrings.splice(random,1);
-    }
+
     if(question.questionDescription){
       out+="[explanation]\n"+question.questionDescription+"\n[explanation]\n";
     }
