@@ -164,6 +164,11 @@ function CreateClassController($scope, $mdDialog) {
       if(!$scope.edit) {
         let courseID = UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year);
 
+        for(let objective of $scope.class.objectives){
+          let courseUtil = new CourseUtils(UI.getClassById(courseID));
+          courseUtil.createObjective(objective.objectiveText);
+        }
+
         UI.save(UI.getClassById(courseID));
       } else { //Editing
         let course = UI.getClassById($scope.classID);
