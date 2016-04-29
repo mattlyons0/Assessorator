@@ -38,7 +38,7 @@ See http://stackoverflow.com/questions/15538125/angularjs-in-head-vs-body -->
 
     <div ng-include="'views/'+page.URL"></div>
 
-    <p style="position:absolute; bottom: 0; margin: 0; height:35px; overflow: hidden">
+    <p style="position:absolute; bottom: 0; margin: 0; height:35px; overflow: hidden" ng-if="devMode()">
         <md-button ng-click="dataDebug()">Data Debug</md-button>
         <md-button ng-click="todoList()">Todo List</md-button>
         <md-button onclick="Database.deleteDatabase()">Delete DB</md-button>

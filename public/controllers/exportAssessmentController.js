@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller("exportAssessmentCtrl", function ($scope) {
+app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
   $scope.assessment = {};
   $scope.assessment.selected = [];
 
@@ -39,6 +39,7 @@ app.controller("exportAssessmentCtrl", function ($scope) {
       questions.push(question);
     }
 
+    let incompleteRules = [];
     for(let rule of assessment.rules){
       let possibleQuestions = new Set();
       for(let topic of rule.topics){
@@ -62,18 +63,26 @@ app.controller("exportAssessmentCtrl", function ($scope) {
       let randoms = new Set();
       for(let i=0;i<rule.numRequired;i++){
         let max = possibleQuestionArray.length;
-        let randomNum = Math.floor(Math.random()*max); //Random number 0-(max-1)
-        if(randoms.has(randomNum)){
-          i--;
-        } else {
-          randoms.add(randomNum);
+
+        if(max===0) {
+          incompleteRules.push(rule);
+          break;
         }
+
+        let randomNum = Math.floor(Math.random()*max); //Random number 0-(max-1)
+        questions.push(possibleQuestionArray[randomNum]);
+        possibleQuestionArray.splice(randomNum,1);
       }
 
       let randomArr = Array.from(randoms);
       for(let rand of randomArr){
         questions.push(possibleQuestionArray[rand]);
       }
+    }
+
+    if(incompleteRules.length > 0){
+      showToast(incompleteRules.length+" rule"+(incompleteRules.length>1?'s':'')+" could not be satisfied for this assessment. " +
+        "The assessment generated is incomplete.",$mdToast,7);
     }
 
     let out = "";

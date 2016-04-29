@@ -98,13 +98,17 @@ UI.printData = function () {
 
 let toastQueue = [];
 let currentToast = false;
-var showToast = function (textContent, $mdToast) {
+var showToast = function (textContent, $mdToast,delay) {
+  let hideDelay = 3 * 1000;
+  if(delay > 0){
+    hideDelay = delay * 1000;
+  }
   if (!$mdToast) {
     console.error("showToast was called without a $mdToast variable");
     return;
   }
   toastQueue.push({
-    call: $mdToast.simple().textContent(textContent).position("bottom right").hideDelay(3000),
+    call: $mdToast.simple().textContent(textContent).position("bottom right").hideDelay(hideDelay),
     mdToast: $mdToast
   });
   if (!currentToast)

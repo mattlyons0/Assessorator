@@ -15,4 +15,8 @@ app.controller("viewCtrl", function ($scope, $window) {
   $scope.todoList = function(){
     location.replace('todo.html');
   };
+  
+  $scope.devMode = function(){
+    return process.env.NODE_ENV === 'dev';
+  }
 });
