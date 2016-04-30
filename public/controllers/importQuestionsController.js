@@ -58,7 +58,7 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       topic = $scope.class.topics[0]; //The 'No Topic' Topic
     let objectives = $scope.objective.selected; //Array of Objective Objects
 
-    let questions = $scope.parseInput($scope.input.data);
+    let questions = $scope.parseEdX($scope.input.data);
     if(!questions.length){
       return;
     }
@@ -73,7 +73,7 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       }
       let questionUtil = new QuestionUtils(q);
       for(let answer of question.answers){
-        questionUtil.createAnswer(answer.answerText,answer.correct);
+        questionUtil.createAnswer(answer.answerText,answer.correct,answer.pinned);
       }
     }
 
@@ -81,7 +81,7 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
     $scope.cleanup();
   };
 
-  $scope.parseInput = function (input) {
+  $scope.parseEdX = function (input) {
     let earlyAnswerError = false;
 
     let questions = [];
@@ -111,21 +111,24 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
         let closeQuestionIndex = line.lastIndexOf("<<");
         line = line.substring(openQuestionIndex + 2, closeQuestionIndex);
         currentQuestion.title = line;
-      } else if (line.indexOf("(") != -1 && line.indexOf(")") != -1) {
+      } else if (line.indexOf("(") != -1 && line.indexOf(")") != -1) { //Check if Answer ( )
         let openIndex = line.indexOf("(");
         let closeIndex = line.indexOf(")");
         let chosen = line.substring(openIndex + 1, closeIndex);
         let correctAnswer = false;
-        if (chosen.trim().toLowerCase().indexOf("x") != -1) {
+        let pinnedAnswer = false;
+        if (chosen.trim().toLowerCase().indexOf("x") != -1) //Check if correct answer
           correctAnswer = true;
-        }
+        if(chosen.trim().toLowerCase().indexOf("@") != -1) //Check if pinned answer
+          pinnedAnswer = true;
         let answer = line.substring(closeIndex + 1).trim();
         if (!currentQuestion.answers) {
           earlyAnswerError = true;
         } else {
           currentQuestion.answers.push({
             answerText: answer,
-            correct: correctAnswer
+            correct: correctAnswer,
+            pinned: pinnedAnswer
           });
         }
       }

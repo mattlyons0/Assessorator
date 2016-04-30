@@ -104,6 +104,8 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
         innerParenthesis+='!';
       if(answer.correct === true) //Select correct question
         innerParenthesis+='x';
+      if(answer.pinned === true)
+        innerParenthesis+='@';
 
       answerStrings.push("("+innerParenthesis+") "+answer.answerText+"\n");
       out+=answerStrings[i];
@@ -112,6 +114,8 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
     if(question.questionDescription){
       out+="[explanation]\n"+question.questionDescription+"\n[explanation]\n";
     }
+
+    out+="\n"; //Newline after each question for visibility
 
     return out;
   };

@@ -47,7 +47,8 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
         for(let ans of question.answers){
           $scope.question.answers.push({
             text: ans.answerText,
-            correct: ans.correct
+            correct: ans.correct,
+            pinned: ans.pinned
           });
         }
         if(selected <= 1) {
@@ -62,7 +63,8 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   $scope.question.answers = [];
   $scope.question.answers.push({
     text: "",
-    correct: false
+    correct: false,
+    pinned: false
   });
   $scope.question.type = 'MC';
 
@@ -115,6 +117,10 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     return array;
   };
 
+  $scope.togglePin = function(answer){
+    answer.pinned=!answer.pinned;
+  };
+
   $scope.submitQuestion = function () {
     if (!$scope.question.title)
       return;
@@ -160,7 +166,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
         question.objectives.push(objective);
       }
       for (let x = 0; x < $scope.question.answers.length - 1; x++) { //Omit ghost answer
-        new QuestionUtils(question).createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct);
+        new QuestionUtils(question).createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct, $scope.question.answers[x].pinned);
       }
     } else{ //Edit Topic
       let question = new TopicUtils(oldTopic).getQuestion($scope.tabData.questionID);
@@ -177,7 +183,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
           question.answers[i].answerText = $scope.question.answers[i].text;
           question.answers[i].correct = $scope.question.answers[i].correct;
         } else{
-          new QuestionUtils(question).createAnswer($scope.question.answers[i].text, $scope.question.answers[i].correct);
+          new QuestionUtils(question).createAnswer($scope.question.answers[i].text, $scope.question.answers[i].correct, $scope.question.answers[i].pinned);
         }
       }
     }
@@ -261,11 +267,13 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
         $scope.question.answers = [];
         $scope.question.answers.push({
           text: "True",
-          correct: false
+          correct: false,
+          pinned: false
         });
         $scope.question.answers.push({
           text: "False",
-          correct: false
+          correct: false,
+          pinned: false
         });
         if($scope.setCorrect == 'True')
           $scope.question.answers[0].correct=true;

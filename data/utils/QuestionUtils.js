@@ -19,12 +19,13 @@ class QuestionUtils {
    * Create a new Answer
    * @param answerText {String} Text String for Answer
    * @param correct {Boolean} True or False if the answer is a/the correct answer
+   * @param pinned {Boolean} If the answer should be pinned in place or randomized
    */
-  createAnswer(answerText,correct) {
+  createAnswer(answerText,correct,pinned) {
     let genID = this.question.answerUID;
     this.question.answerUID++;
 
-    this.question.answers.push(new Answer(answerText, correct, genID));
+    this.question.answers.push(new Answer(answerText, correct, pinned, genID));
   }
 }
 

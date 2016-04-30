@@ -145,8 +145,8 @@ UI.stressTest = function () {
       new CourseUtils(UI.getClasses()[i]).createObjective('Test Objective ' + (z + 1));
       for (let x = 0; x < 100; x++) { //5k
         new TopicUtils(UI.getClasses()[i].topics[z]).createQuestion('Dummy Question ' + (x + 1), 'A Question for the purposes of testing.');
-        new QuestionUtils(UI.getClasses()[i].topics[z].questions[x]).createAnswer('True', false);
-        new QuestionUtils(UI.getClasses()[i].topics[z].questions[x]).createAnswer('False', true);
+        new QuestionUtils(UI.getClasses()[i].topics[z].questions[x]).createAnswer('True', false,false);
+        new QuestionUtils(UI.getClasses()[i].topics[z].questions[x]).createAnswer('False', true,false);
       }
     }
     UI.save(UI.getClasses()[i]);
