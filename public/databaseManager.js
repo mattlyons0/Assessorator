@@ -235,25 +235,38 @@ function getCourses(callback){
 function repairPointers(course){
   if(!course)
     return;
-  //Repair Assessment pointers to questions
-  for(let assessment of course.assessments){
-    for(let i=0;i<assessment.questions.length;i++){
-      let oldQuestion = assessment.questions.splice(0,1)[0];
-      let topic = new CourseUtils(course).getTopic(oldQuestion.topicID);
-      let question = new TopicUtils(topic).getQuestion(oldQuestion.ID);
-      assessment.questions.push(question); //Repair pointer
-    }
-  }
+  
+  let courseUtil = new CourseUtils(course);
+  
   //Repair Question pointers to objectives
   for(let topic of course.topics){
     for(let question of topic.questions){
       for(let i=0;i<question.objectives.length;i++){
-        let oldObjective = question.objectives.splice(0,1)[0];
-        let courseUtil = new CourseUtils(course);
+        let oldObjective = question.objectives.splice(0,1)[0]; //0 because we are cycling through the array
         let objective = courseUtil.getObjective(oldObjective.ID);
-        if(objective)
-          question.objectives.push(objective); //Repair Pointer
+        question.objectives.push(objective); //Repair Pointer
       }
+    }
+  }
+
+  //Repair Topic/Objective & ManuallyAddedQuestion pointers to Assessments
+  for(let assessment of course.assessments){
+    for(let rule of assessment.rules){ //Topic/Objectives
+      for(let i=0;i<rule.topics.length;i++){
+        let oldTopic = rule.topics.splice(0,1)[0];
+        let topic = courseUtil.getTopic(oldTopic.ID);
+        rule.topics.push(topic);
+      }
+      for(let i=0;i<rule.objectives.length;i++){
+        let oldObjective = rule.objectives.splice(0,1)[0];
+        let objective = courseUtil.getObjective(oldObjective.ID);
+        rule.objectives.push(objective);
+      }
+    }
+    for(let i=0; i<assessment.questions.length;i++){ //Manually added questions
+      let oldQuestion = assessment.questions.splice(i,1)[0];
+      let question = new TopicUtils(topic).getQuestion(oldQuestion.ID);
+      assessment.questions.push(question); //Repair pointer
     }
   }
 }
