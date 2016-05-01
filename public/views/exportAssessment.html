@@ -27,7 +27,7 @@
                 </md-autocomplete>
             </md-chips>
 
-            <div layout="column" autoscroll="335">
+            <div layout="column" autoscroll="430">
                 <md-input-container class="md-block" flex>
                     <label>edX Output:</label>
                     <textarea id="importArea{{tabID}}" type="text" name="importData" ng-model="output.data"
@@ -35,6 +35,7 @@
                 </md-input-container>
             </div>
             <div layout="row">
+                <md-button ng-click="saveToFile()">Save As</md-button>
                 <span flex></span>
                 <md-button type="submit" class="md-primary">
                     Close

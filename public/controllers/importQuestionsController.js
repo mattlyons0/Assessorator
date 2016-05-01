@@ -1,6 +1,8 @@
 "use strict";
 
 app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
+  let fs = require('fs');
+
   let tab;
   $scope.input = [];
 
@@ -54,26 +56,26 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       return;
     }
     let topic = $scope.topic.selected[0]; //Topic object
-    if(topic == undefined)
+    if (topic == undefined)
       topic = $scope.class.topics[0]; //The 'No Topic' Topic
     let objectives = $scope.objective.selected; //Array of Objective Objects
 
     let questions = $scope.parseEdX($scope.input.data);
-    if(!questions.length){
+    if (!questions.length) {
       return;
     }
 
-    for(let question of questions) {
+    for (let question of questions) {
       let topicUtil = new TopicUtils(topic);
-      let qID = topicUtil.createQuestion(question.title,question.description);
+      let qID = topicUtil.createQuestion(question.title, question.description);
       let q = topicUtil.getQuestion(qID);
-      for(let objective of objectives) {
+      for (let objective of objectives) {
         q.objectives.push(objective);
 
       }
       let questionUtil = new QuestionUtils(q);
-      for(let answer of question.answers){
-        questionUtil.createAnswer(answer.answerText,answer.correct,answer.pinned);
+      for (let answer of question.answers) {
+        questionUtil.createAnswer(answer.answerText, answer.correct, answer.pinned);
       }
     }
 
@@ -119,7 +121,7 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
         let pinnedAnswer = false;
         if (chosen.trim().toLowerCase().indexOf("x") != -1) //Check if correct answer
           correctAnswer = true;
-        if(chosen.trim().toLowerCase().indexOf("@") != -1) //Check if pinned answer
+        if (chosen.trim().toLowerCase().indexOf("@") != -1) //Check if pinned answer
           pinnedAnswer = true;
         let answer = line.substring(closeIndex + 1).trim();
         if (!currentQuestion.answers) {
@@ -141,28 +143,28 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       showToast('No questions found.', $mdToast);
       return [];
     }
-    if(earlyAnswerError){
-      showToast('Found answer before question!',$mdToast);
+    if (earlyAnswerError) {
+      showToast('Found answer before question!', $mdToast);
     }
     let answerLess = [];
     for (let question of questions) {
       if (question.answers.length < 2)
         answerLess.push(question);
       let correct = false;
-      for(let answer of question.answers){
-        if(answer.correct == true){
-          correct=true;
+      for (let answer of question.answers) {
+        if (answer.correct == true) {
+          correct = true;
           break;
         }
       }
-      if(correct == false){
-        showToast('At least one question does not have a correct answer.',$mdToast);
+      if (correct == false) {
+        showToast('At least one question does not have a correct answer.', $mdToast);
         return [];
       }
     }
     if (answerLess.length > 0) {
-      let confirm = $mdDialog.confirm().title('There '+(answerLess.length>1?'are':'is')+' ' + answerLess.length + ' question'+(answerLess.length>1?'s':'')+
-        ' with less than 2 answers. Are you sure you would like to import?')
+      let confirm = $mdDialog.confirm().title('There ' + (answerLess.length > 1 ? 'are' : 'is') + ' ' + answerLess.length + ' question' + (answerLess.length > 1 ? 's' : '') +
+          ' with less than 2 answers. Are you sure you would like to import?')
         .ok('Import').cancel('Cancel');
       $mdDialog.show(confirm).then(function () {
         return questions;
@@ -193,6 +195,28 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       .title('Import Syntax')
       .htmlContent(helpText)
       .ok('Close'));
+  };
+
+  $scope.browseFile = function () {
+    const dialog = require('electron').remote.dialog;
+    let selectedFiles = dialog.showOpenDialog({
+      title: 'Import edX Questions',
+      properties: ['openFile', 'multiSelections'],
+      filters: [{name: 'All Files', extensions: ['*']}, {name: 'Text Files', extensions: ['txt']}]
+    });
+
+    if(selectedFiles) {
+      for (let selectedFile of selectedFiles) {
+        fs.readFile(selectedFile,'utf8', function(err,data){
+          if(err){
+            showToast('Error reading file: '+selectedFile,$mdToast);
+            console.error('Error reading file "'+selectedFile+'"\n'+err);
+          } else{
+            $scope.input.data+=data;
+          }
+        });
+      }
+    }
   };
 
   $scope.requestFocus = function () {

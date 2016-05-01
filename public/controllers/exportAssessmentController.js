@@ -1,6 +1,8 @@
 "use strict";
 
 app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
+  let fs = require('fs');
+
   $scope.assessment = {};
   $scope.assessment.selected = [];
 
@@ -118,6 +120,32 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
     out+="\n"; //Newline after each question for visibility
 
     return out;
+  };
+
+  $scope.saveToFile = function(){
+    if(!$scope.output.data || !$scope.output.data.trim()){
+      showToast('An assessment must be generated to be able to save it.',$mdToast);
+      return;
+    }
+
+    const dialog = require('electron').remote.dialog;
+    let saveDirectory = dialog.showSaveDialog({
+      title: 'Save edX Assessment',
+      properties: ['createDirectory'],
+      filters: [{name: 'Text File', extensions: ['txt']}, {name: 'All Files', extensions: ['*']}]
+    });
+
+    if(saveDirectory){
+      fs.writeFile(saveDirectory,$scope.output.data, function(err){
+        if(err){
+          showToast('Error saving file.',$mdToast);
+          console.error('Error saving file "'+saveDirectory+'"\n'+err);
+        } else{
+          showToast("File Saved to '"+saveDirectory+"'",$mdToast);
+          // require('electron').shell.showItemInFolder(saveDirectory);
+        }
+      });
+    }
   };
 
   $scope.cleanup = function () {

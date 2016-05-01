@@ -13,6 +13,8 @@
                 </md-input-container>
             </div>
             <div layout="row">
+                <md-button ng-click="browseFile()">Import File</md-button>
+
                 <md-chips ng-model="topic.selected" style="margin-right:7px"
                           md-transform-chip="transformChipTopic($chip)"
                           md-require-match="true" flex>
