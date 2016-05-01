@@ -3,6 +3,9 @@
 const electron = require('electron');
 const app = electron.app; // Module to control application life.
 const BrowserWindow = electron.BrowserWindow; // Module to create native browser window.
+const dialog = electron.dialog;
+
+const pkg = require('./package.json');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -10,9 +13,8 @@ let mainWindow;
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, webPreferences: {"zoomFactor": 0.9}}); //If things are too big we can zoom out possibly
+  mainWindow = new BrowserWindow({width: 800, height: 600, icon: './icon.png', webPreferences: {"zoomFactor": 0.9}}); //If things are too big we can zoom out possibly
 
-  // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/public/index.html');
 
   if(process.env.NODE_ENV === 'dev') {
@@ -20,13 +22,34 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 
+  mainWindow.on('close',function(e){
+    mainWindow.hide(); //Appear as the window is closed
+
+    e.preventDefault(); //Delay closing until onClose finishes
+    mainWindow.webContents.executeJavaScript("UI.onClose()",function(){mainWindow.destroy();}); //Execute UI.onClose() then destroy the window
+  });
+
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
+    // Dereference the window object
     mainWindow = null;
   });
+
+  mainWindow.on('unresponsive',function(){
+    let name = pkg.name;
+    let buttons = ["Restart (Unsaved Changes Will Be Lost!)", "Wait"];
+
+    dialog.showMessageBox({type: "question", buttons: buttons, title: name+" has become unresponsive",
+    message: "Would you like to restart the application or wait?"}, function(response){
+      if(response == buttons[0]){ //Kill the window
+        mainWindow.destroy();
+        createWindow();
+
+      } else{ //Wait
+
+      }
+    });
+  })
 }
 
 // This method will be called when Electron has finished

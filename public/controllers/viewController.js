@@ -27,5 +27,5 @@ app.controller("viewCtrl", function ($scope, $mdDialog) {
     let versionHtml = 'Version: '+pkg.version+'<br/><br/>';
     $mdDialog.show($mdDialog.alert().parent(angular.element(document.body)).title(pkg.name)
       .htmlContent(versionHtml+pkg.description).ok('Close'));
-  }
+  };
 });
