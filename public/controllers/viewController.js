@@ -1,6 +1,9 @@
 "use strict";
-app.controller("viewCtrl", function ($scope, $window) {
+app.controller("viewCtrl", function ($scope, $mdDialog) {
   var process = require('process');
+
+  let pkg = require('../package.json');
+
   $scope.page = {};
   $scope.page.URL = 'classes.html';
 
@@ -18,5 +21,11 @@ app.controller("viewCtrl", function ($scope, $window) {
   
   $scope.devMode = function(){
     return process.env.NODE_ENV === 'dev';
+  };
+
+  $scope.about = function(){
+    let versionHtml = 'Version: '+pkg.version+'<br/><br/>';
+    $mdDialog.show($mdDialog.alert().parent(angular.element(document.body)).title(pkg.name)
+      .htmlContent(versionHtml+pkg.description).ok('Close'));
   }
 });
