@@ -10,7 +10,7 @@ let mainWindow;
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, "zoom-factor": 1}); //If things are too big we can zoom out possibly
+  mainWindow = new BrowserWindow({width: 800, height: 600, webPreferences: {"zoomFactor": 0.9}}); //If things are too big we can zoom out possibly
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/public/index.html');
