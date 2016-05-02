@@ -91,7 +91,7 @@
                             <legend>Answers</legend>
                                 <md-radio-group ng-model="question.correctAnswer" class="md-primary">
                                     <div ng-repeat="answer in question.answers" layout="row">
-                                        <md-radio-button aria-label="Answer" ng-if="useRadio()" ng-value="answer.text"
+                                        <md-radio-button aria-label="Answer" ng-if="useRadio()" ng-value="$index"
                                                          ng-disabled="!answer.text"
                                                          style="margin-bottom:0; height:36px"></md-radio-button>
                                         <md-checkbox aria-label="Answer" ng-if="question.type === 'MA'"

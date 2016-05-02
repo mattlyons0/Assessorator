@@ -17,12 +17,13 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       for(let objective of question.objectives){
         $scope.objective.selected.push(objective);
       }
-      let selectedText;
+      let selectedIndex;
       if(question.answers[0].answerText == 'True' && question.answers[1].answerText == 'False') {
         $scope.question.type = 'TF';
-        for(let ans of question.answers){
+        for(let i=0;i<question.answers.length;i++){
+          let ans = question.answers[i];
           if(ans.correct) {
-            $scope.question.correctAnswer = ans.answerText;
+            $scope.question.correctAnswer = i;
             $scope.setCorrect=ans.answerText;
             break;
           }
@@ -30,10 +31,11 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       }
       else{
         let selected = 0;
-        for(let ans of question.answers){
+        for(let i=0;i<question.answers.length;i++){
+          let ans = question.answers[i];
           if(ans.correct) {
             selected++;
-            selectedText = ans.answerText;
+            selectedIndex = i;
           }
         }
         if(selected <= 1)
@@ -52,7 +54,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
           });
         }
         if(selected <= 1) {
-          $scope.question.correctAnswer = selectedText;
+          $scope.question.correctAnswer = selectedIndex;
         }
       }
     }
@@ -228,7 +230,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       return;
     }
     for (let x = 0; x < $scope.question.answers.length; x++) {
-      if ($scope.question.answers[x].text === $scope.question.correctAnswer)
+      if (x === $scope.question.correctAnswer)
         $scope.question.answers[x].correct = true;
       else
         $scope.question.answers[x].correct = false;
