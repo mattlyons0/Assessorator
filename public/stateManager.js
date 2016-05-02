@@ -28,6 +28,19 @@ UI.loadFromDisk = function (coursesFromDisk) {
   }
 };
 
+UI.diskLoadError = function(error){
+  let scope = angular.element(document.querySelector('#classesContainer')).scope();
+  if(error.message.indexOf('Internal error opening backing store') != -1){
+    scope.dbReadError('dom');
+  } else if(error == 'VersionError'){
+    scope.dbReadError('version');
+  } else if(error == 'blocked'){
+    scope.dbReadError('blocked');
+  } else{
+    scope.dbReadError('unknown');
+  }
+};
+
 UI.stateCreated = function () {
   return !!state;
 

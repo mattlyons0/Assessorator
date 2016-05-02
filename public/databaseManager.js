@@ -14,13 +14,15 @@ let db = undefined; //Opened DB Object
 let db_version = 1;
 
 // getDBVersion(loadDatabase); //Open DB
-loadDatabase( () => {
-  getCourses( (loadedCourses) => {
+loadDatabase( function(){
+  getCourses( function(loadedCourses){
     UI.loadFromDisk(loadedCourses);
   });
+}, function(err){
+  UI.diskLoadError(err);
 });
 
-function loadDatabase(callback){
+function loadDatabase(callback,errorCallback){
   console.log('Opening Database Version '+db_version+'...');
   let openRequest = indexedDB.open(DB_NAME,db_version);
 
@@ -116,16 +118,25 @@ function loadDatabase(callback){
   };
 
   openRequest.onerror = function(event) {
-    console.log("Error");
+    console.error("Error Opening DB");
     if(openRequest.error.name == 'VersionError'){
       console.error('Version Error: '+openRequest.error.message);
+      if(errorCallback){
+        errorCallback(openRequest.error.name);
+      }
     } else{
-      console.log(openRequest.error);
+      console.error(openRequest.error);
+      if(errorCallback){
+        errorCallback(openRequest.error);
+      }
     }
 
     openRequest.onblocked = function(event){
       console.error('Error opening Database. Blocked.');
       console.error(event); //TODO fix this not occuring (chromium bug?)
+      if(errorCallback){
+        errorCallback('blocked');
+      }
     }
   };
 

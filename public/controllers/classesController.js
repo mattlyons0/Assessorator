@@ -1,7 +1,8 @@
 "use strict";
-app.controller("classesCtrl", function ($scope, $mdDialog) {
+app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
   $scope.addClassTooltip = $scope.classes && $scope.classes.length <= 0;
   $scope.readingDisk = true;
+  $scope.readError = undefined;
 
   if(!UI.stateCreated()) {
     UI.onStateCreate(() => {
@@ -94,6 +95,25 @@ app.controller("classesCtrl", function ($scope, $mdDialog) {
   $scope.viewClass = function (classID) {
     $scope.$parent.page.classID = classID;
     $scope.$parent.page.URL = 'classView.html';
+  };
+
+  $scope.dbReadError = function(errorType){
+    let name = require('../package.json').name;
+    $scope.$apply($scope.readError = true);
+    if(errorType == 'dom'){
+      $scope.readErrorText = $sce.trustAsHtml("Error opening database. Please ensure no other instances of "+name+" are open then " +
+        "<a href='javascript:document.location.reload()'>Retry</a>.");
+    } else if(errorType == 'version'){
+      $scope.readErrorText = $sce.trustAsHtml("Error opening database, invalid version. See " +
+        "<a href='javascript:require(\"remote\").getCurrentWindow().toggleDevTools();'>console</a> for more information.");
+    } else if(errorType == 'blocked'){
+      $scope.readErrorText = $sce.trustAsHtml("Error opening database. Please ensure no other instances of "+name+" are open then " +
+        "<a href='javascript:document.location.reload()'>Retry</a>.");
+    } else if(errorType == 'unknown'){
+      $scope.readErrorText = $sce.trustAsHtml("Error opening database. See " +
+        "<a href='javascript:require(\"remote\").getCurrentWindow().toggleDevTools();'>console</a> for more information. " +
+        "<a href='javascript:document.location.reload()'>Retry</a>")
+    }
   };
 });
 
@@ -192,4 +212,5 @@ function CreateClassController($scope, $mdDialog) {
       $scope.class.objectives[x].ID = x;
     }
   }
+
 }

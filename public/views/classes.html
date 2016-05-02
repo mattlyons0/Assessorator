@@ -39,12 +39,18 @@
                         <h3>Welcome to The Assessorator. Create a class to get started.</h3>
                     </div>
                 </md-list-item>
-                <md-list-item class="md-2-line" ng-if="readingDisk">
+                <md-list-item class="md-2-line" ng-if="readingDisk && !readError">
                     <div class="md-list-item-text" style="text-align:center">
                         <h3>
                             Loading Data...
-                        </h3>
+                        </p>
                         <img src="img/ajax-loader.gif" style="height:19px;width:220px;margin-left:auto;margin-right:auto;"/>
+                    </div>
+                </md-list-item>
+                <md-list-item class="md-2-line" ng-if="readError">
+                    <div class="md-list-item-text" style="text-align:center">
+                        <div ng-bind-html="readErrorText">
+                        </div>
                     </div>
                 </md-list-item>
             </md-list>

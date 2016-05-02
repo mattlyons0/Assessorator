@@ -28,10 +28,6 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
   $scope.submitAssessment = function () {
     if (!$scope.assessment.title)
       return;
-    if ($scope.questions.manuallyAdded.size == 0 && $scope.questions.rules.length == 0) {
-      showToast("Assessment cannot be empty.", $mdToast);
-      return;
-    }
 
     let assessment;
     if(!$scope.edit)
