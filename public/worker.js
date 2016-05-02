@@ -26,6 +26,7 @@ function save(course){
       console.error("Error updating course in database"+error);
     };
     request.onsuccess = () => {
+      self.postMessage('success');
       console.log('Saved');
     }
   };

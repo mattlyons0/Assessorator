@@ -55,8 +55,13 @@ UI.onStateCreate = function (callback) {
   }
 };
 
-UI.save = function (course) {
+UI.save = function (course,callback) {
   let worker = new Worker('worker.js');
+  worker.addEventListener("message",function(msg){
+    if(callback){
+      callback();
+    }
+  });
   worker.postMessage(angular.toJson(course)); //angular.toJson removes angular's variables in the objects
 };
 
@@ -171,6 +176,107 @@ UI.stressTest = function () {
 UI.onClose = function(){
   
 };
+
+
+UI.exportJson = function(){
+  const dialog = require('electron').remote.dialog;
+  let path = dialog.showSaveDialog({
+    title: 'Save Entire Database',
+    properties: ['createDirectory'],
+    filters: [{name: 'JSON', extensions: ['json']}]
+  });
+  saveJSON(path);
+};
+
+UI.importJson = function(){
+  const dialog = require('electron').remote.dialog;
+  let buttons = ['No','Yes, Overwrite all existing data'];
+  dialog.showMessageBox({type: "question", buttons: buttons, title: "Are you sure you would like to import a database?",
+    message: "Importing a database will overwrite all existing data! Continue?"}, function(response){
+    if(response === 1){ //Import Database
+      let json = '';
+
+      let selectedFile = dialog.showOpenDialog({
+        title: 'Import Entire Database',
+        properties: ['openFile'],
+        filters: [{name: 'JSON', extensions: ['json']}]
+      });
+
+      let toast = angular.element(document.querySelector('#container')).scope().$mdToast;
+
+      if(selectedFile && selectedFile[0]) {
+        showToast("Importing Database...",toast,10);
+        fs.readFile(selectedFile[0],'utf8', function(err,data){
+          if(err){
+            showToast('Import Aborted. Error reading file: '+selectedFile[0],toast,5);
+            console.error('Error reading file "'+selectedFile[0]+'"\n'+err);
+          } else{
+            json=data;
+            if(!json || !json.trim()){
+              showToast("Import Aborted, selected file is empty.",toast);
+              return;
+            }
+
+            let parsedJSON = JSON.parse(json);
+            if(parsedJSON.courseList === undefined || parsedJSON.courseUID === undefined){
+              let title = require('../package.json').name;
+              showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title,toast,5);
+              return;
+            }
+            openJSON(parsedJSON);
+          }
+        });
+      }
+    }
+  });
+};
+
+function saveJSON(location){
+  let md5 = require('md5');
+  let json = toJSON();
+
+  if(location){
+    fs.writeFile(location,json, function(err){
+      let scope = angular.element(document.querySelector('#container')).scope();
+      if(err){
+        showToast('Error saving Database.',scope.$mdToast);
+        console.error('Error saving Database "'+saveDirectory+'"\n'+err);
+      } else{
+        fs.readFile(location,'utf8', function(err,data) {
+          if(err){
+            showToast("Error verifying saved Database.",scope.$mdToast);
+            return;
+          }
+
+          if(md5(data) === md5(json)) {
+            showToast("Database Saved to '" + location + "'", scope.$mdToast);
+          } else{
+            showToast("Database Saved in Invalid State!! (Checksum of saved file did not match original)",scope.$mdToast,10);
+          }
+        });
+      }
+    });
+  }
+}
+
+function openJSON(parsedJSON){
+  state = new State(parsedJSON.courseList);
+  let count = 0;
+  let callbacks = 0;
+  for(let course of state.courseList){
+    UI.save(course,function(){
+      callbacks++;
+      if(callbacks === count){
+        document.location.reload();
+      }
+    });
+    count++;
+  }
+}
+
+function toJSON(){
+  return angular.toJson(state);
+}
 
 
 if (Array.prototype.equals)

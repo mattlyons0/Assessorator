@@ -1,5 +1,6 @@
 "use strict";
-app.controller("viewCtrl", function ($scope, $mdDialog) {
+app.controller("viewCtrl", function ($scope, $mdDialog,$mdToast) {
+  $scope.$mdToast = $mdToast;
   var process = require('process');
 
   let pkg = require('../package.json');

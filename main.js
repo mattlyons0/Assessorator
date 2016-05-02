@@ -41,7 +41,7 @@ function createWindow() {
 
     dialog.showMessageBox({type: "question", buttons: buttons, title: name+" has become unresponsive",
     message: "Would you like to restart the application or wait?"}, function(response){
-      if(response == buttons[0]){ //Kill the window
+      if(response == 0){ //Kill the window
         mainWindow.destroy();
         createWindow();
 

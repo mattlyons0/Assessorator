@@ -12,7 +12,8 @@
   "author": "Matt Lyons <matt@matt-lyons.net>",
   "dependencies": {
     "appdirectory": "~0.1.0",
-    "mkdirp": "~0.5.1"
+    "mkdirp": "~0.5.1",
+    "md5": "~2.1.0"
   },
   "devDependencies": {
     "electron-prebuilt": "^0.37.8",

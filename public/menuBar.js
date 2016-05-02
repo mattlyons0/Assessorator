@@ -5,6 +5,29 @@ const MenuItem = remote.MenuItem;
 var name = require('electron').remote.app.getName();
 var template = [
   {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Import Database',
+        click: function(item, focusedWindow) {
+          if (focusedWindow){
+            let js = "UI.importJson()";
+            focusedWindow.webContents.executeJavaScript(js);
+          }
+        }
+      },
+      {
+        label: 'Export Database',
+        click: function(item, focusedWindow) {
+          if (focusedWindow){
+            let js = "UI.exportJson()";
+            focusedWindow.webContents.executeJavaScript(js);
+          }
+        }
+      }
+    ]
+  },
+  {
     label: 'Edit',
     submenu: [
       {
