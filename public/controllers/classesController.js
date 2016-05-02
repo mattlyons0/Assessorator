@@ -120,6 +120,8 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
 let Objective = require('../data/Objective');
 
 function CreateClassController($scope, $mdDialog) {
+  let deletedObjectives = [];
+  
   if($scope.classID == undefined) {
     $scope.class = {
       name: "",
@@ -168,7 +170,7 @@ function CreateClassController($scope, $mdDialog) {
   };
 
   $scope.deleteObjective = function(objID){
-    $scope.class.objectives.splice(objID,1);
+    deletedObjectives.push($scope.class.objectives.splice(objID,1)[0]);
     reorderObjectives();
   };
 
@@ -197,6 +199,20 @@ function CreateClassController($scope, $mdDialog) {
         course.courseSemester = $scope.class.semester;
         course.courseYear = $scope.class.year;
         course.objectives = $scope.class.objectives;
+
+        //Remove deleted objectives from questions
+        for(let obj of deletedObjectives){
+          for(let topic of course.topics){
+            for(let question of topic.questions){
+              for(let i=0;i<question.objectives.length;i++){
+                if(question.objectives[i].ID == obj.ID){
+                  question.objectives.splice(i,1);
+                  break;
+                }
+              }
+            }
+          }
+        }
         
         UI.save(course);
       }
