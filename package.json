@@ -18,7 +18,7 @@
   "devDependencies": {
     "electron-prebuilt": "^0.37.8",
     "electron-packager": "~7.0.1",
-    "electron-builder": "~3.14.0",
+    "electron-builder": "~2.7.2",
     "grunt-electron-installer": "~2.1.0",
     "grunt": "~1.0.1"
   },
@@ -26,7 +26,7 @@
     "win": {
       "title": "Assessorator",
       "icon": "icon.ico",
-      "version": "0.1.0",
+      "version": "0.6.0",
       "publisher": "Matt Lyons <matt@matt-lyons.net>"
     }
   }
