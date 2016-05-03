@@ -222,11 +222,11 @@ UI.importJson = function(){
             }
 
             let parsedJSON = JSON.parse(json);
-            // if(parsedJSON.courseList === undefined || parsedJSON.courseUID === undefined){
-            //   let title = require('../package.json').name;
-            //   showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title,toast,5);
-            //   return;
-            // }
+            if(parsedJSON.courseList === undefined || parsedJSON.courseUID === undefined){
+              let title = require('../package.json').name;
+              showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title,toast,5);
+              return;
+            }
             openJSON(parsedJSON);
           }
         });
