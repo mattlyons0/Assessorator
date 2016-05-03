@@ -113,6 +113,9 @@ function loadDatabase(callback,errorCallback){
         db.close();
       }
     };
+
+    getStorageUsage();
+    
     if(callback)
       callback();
   };
@@ -139,7 +142,9 @@ function loadDatabase(callback,errorCallback){
       }
     }
   };
+}
 
+function getStorageUsage(){
   navigator.webkitPersistentStorage.queryUsageAndQuota(
     function(usedBytes, grantedBytes){
       let usedMB = usedBytes / 1000000; //Bytes to Megabyte
@@ -155,7 +160,6 @@ function loadDatabase(callback,errorCallback){
     }
   )
 }
-
 // function getDBVersion(callback){
 //   //Create Directory Structure (if it doesn't exist)
 //   mkdirp(versionFolder, function(err){
@@ -192,16 +196,17 @@ function loadDatabase(callback,errorCallback){
 //   });
 // }
 
-function deleteDatabase(){
+function deleteDatabase(callback){
   var deleteDbRequest = indexedDB.deleteDatabase(DB_NAME);
   deleteDbRequest.onsuccess = function (event) {
     console.log('Database Deleted')
+    if(callback)
+      callback();
   };
   deleteDbRequest.onerror = function (e) {
     console.log("Database error: " + e.target.errorCode);
   };
   db.close();
-  location.reload();
   // fs.unlink(versionFile,function(err){
   //   if(err && err.code != 'ENOENT'){
   //     console.error('Failed to delete Database Version File: \n'+err);
@@ -293,7 +298,7 @@ function modifyCourse(course){
   }
 }
 
-function deleteCourse(courseID){
+function deleteCourse(courseID,callback){
   let courseStore = db.transaction('courses','readwrite').objectStore('courses');
   let request = courseStore.delete(courseID);
   request.onerror = (error) => {
@@ -301,6 +306,8 @@ function deleteCourse(courseID){
   };
   request.onsuccess = (event) => {
     console.log('Deleted Course in Database');
+    if(callback)
+      callback();
   }
 }
 var Database = {};

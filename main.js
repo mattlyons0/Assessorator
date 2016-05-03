@@ -26,7 +26,7 @@ function createWindow() {
     mainWindow.hide(); //Appear as the window is closed
 
     e.preventDefault(); //Delay closing until onClose finishes
-    mainWindow.webContents.executeJavaScript("UI.onClose()",function(){mainWindow.destroy();}); //Execute UI.onClose() then destroy the window
+    // mainWindow.webContents.executeJavaScript("UI.onClose()",function(){mainWindow.destroy();}); //Execute UI.onClose() then destroy the window
   });
 
   // Emitted when the window is closed.

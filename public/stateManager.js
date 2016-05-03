@@ -4,6 +4,10 @@
  * Use UI. to access methods
  */
 
+let appD = require('appdirectory');
+let dir = new appD("Assessorator");
+let makeDir = require('mkdirp');
+
 var UI = {};
 
 var CourseUtils = require('../data/utils/CourseUtils');
@@ -80,10 +84,10 @@ UI.getClassById = function (id) {
   console.error("No course with ID " + id + " found");
 };
 
-UI.deleteClass = function (id) {
+UI.deleteClass = function (id,callback) {
   for (let i = 0; i < state.courseList.length; i++) {
     if (state.courseList[i].ID === id) {
-      Database.deleteCourse(id);
+      Database.deleteCourse(id,callback);
 
       state.courseList.splice(i, 1);
       return;
@@ -173,8 +177,8 @@ UI.stressTest = function () {
 };
 
 //Called when the window is closed, will wait to close process until this function is done executing
-UI.onClose = function(){
-  
+UI.onClose = function(callback){
+  saveJSON(dir.userData()+'/dbBackup.json',callback);
 };
 
 
@@ -218,11 +222,11 @@ UI.importJson = function(){
             }
 
             let parsedJSON = JSON.parse(json);
-            if(parsedJSON.courseList === undefined || parsedJSON.courseUID === undefined){
-              let title = require('../package.json').name;
-              showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title,toast,5);
-              return;
-            }
+            // if(parsedJSON.courseList === undefined || parsedJSON.courseUID === undefined){
+            //   let title = require('../package.json').name;
+            //   showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title,toast,5);
+            //   return;
+            // }
             openJSON(parsedJSON);
           }
         });
@@ -236,42 +240,46 @@ function saveJSON(location){
   let json = toJSON();
 
   if(location){
-    fs.writeFile(location,json, function(err){
-      let scope = angular.element(document.querySelector('#container')).scope();
+    let err = fs.writeFileSync(location,json);
+    let scope = angular.element(document.querySelector('#container')).scope();
+    if(err){
+      showToast('Error saving Database.',scope.$mdToast);
+      console.error('Error saving Database "'+saveDirectory+'"\n'+err);
+    } else{
+      let data = fs.readFileSync(location,'utf8');
       if(err){
-        showToast('Error saving Database.',scope.$mdToast);
-        console.error('Error saving Database "'+saveDirectory+'"\n'+err);
-      } else{
-        fs.readFile(location,'utf8', function(err,data) {
-          if(err){
-            showToast("Error verifying saved Database.",scope.$mdToast);
-            return;
-          }
-
-          if(md5(data) === md5(json)) {
-            showToast("Database Saved to '" + location + "'", scope.$mdToast);
-          } else{
-            showToast("Database Saved in Invalid State!! (Checksum of saved file did not match original)",scope.$mdToast,10);
-          }
-        });
+        showToast("Error verifying saved Database.",scope.$mdToast);
+        if(callback)
+          callback();
+        return;
       }
-    });
+
+      if(md5(data) === md5(json)) {
+        showToast("Database Saved to '" + location + "'", scope.$mdToast);
+      } else{
+        showToast("Database Saved in Invalid State!! (Checksum of saved file did not match original)",scope.$mdToast,10);
+      }
+    }
   }
 }
 
 function openJSON(parsedJSON){
-  state = new State(parsedJSON.courseList);
-  let count = 0;
-  let callbacks = 0;
-  for(let course of state.courseList){
-    UI.save(course,function(){
-      callbacks++;
-      if(callbacks === count){
-        document.location.reload();
+  Database.deleteDatabase(function(){
+    Database.loadDatabase(function(){
+      state = new State(parsedJSON.courseList);
+      let count = 0;
+      let callbacks = 0;
+      for(let course of state.courseList){
+        UI.save(course,function(){
+          callbacks++;
+          if(callbacks === count){
+            document.location.reload();
+          }
+        });
+        count++;
       }
     });
-    count++;
-  }
+  });
 }
 
 function toJSON(){
@@ -307,3 +315,10 @@ Array.prototype.equals = function (array) {
 };
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
+//Create save backup dir on startup
+makeDir(dir.userData(),function(err){
+  if(err){
+    console.error('Error creating directory for backup file\n'+err);
+  }
+});
