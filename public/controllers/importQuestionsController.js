@@ -163,14 +163,8 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       }
     }
     if (answerLess.length > 0) {
-      let confirm = $mdDialog.confirm().title('There ' + (answerLess.length > 1 ? 'are' : 'is') + ' ' + answerLess.length + ' question' + (answerLess.length > 1 ? 's' : '') +
-          ' with less than 2 answers. Are you sure you would like to import?')
-        .ok('Import').cancel('Cancel');
-      $mdDialog.show(confirm).then(function () {
-        return questions;
-      }, function () {
-        return [];
-      });
+      showToast('There ' + (answerLess.length > 1 ? 'are' : 'is') + ' ' + answerLess.length + ' question' + (answerLess.length > 1 ? 's' : '') +
+        ' with less than 2 answers',$mdToast,5);
     }
 
     return questions;
