@@ -23,9 +23,9 @@ function createWindow() {
   }
 
   mainWindow.on('close',function(e){
-    mainWindow.hide(); //Appear as the window is closed
+    // mainWindow.hide(); //Appear as the window is closed
 
-    e.preventDefault(); //Delay closing until onClose finishes
+    // e.preventDefault(); //Delay closing until onClose finishes
     // mainWindow.webContents.executeJavaScript("UI.onClose()",function(){mainWindow.destroy();}); //Execute UI.onClose() then destroy the window
   });
 
