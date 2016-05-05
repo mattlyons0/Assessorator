@@ -21,6 +21,10 @@ li button {
     width: 20px;
 }
 
+h3 {
+    white-space: normal !important;
+}
+
 .list {
     width: 70%;
     min-height: 60px;
