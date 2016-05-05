@@ -6,11 +6,13 @@ app.controller("searchQuestionsCtrl", function ($scope, $mdDialog, $mdToast,$sce
     $scope.tabName = $scope.getTabByID($scope.tabID).name;
     
     $scope.rules = [];
+    $scope.selected = [];
 
     $scope.search = {};
     $scope.search.title = true;
     $scope.search.results = [];
     $scope.search.query = "";
+    $scope.search.selected = [];
 
     $scope.watcher1 = $scope.$watch('rules.length', function(){
       $scope.validateRules();
@@ -125,8 +127,51 @@ app.controller("searchQuestionsCtrl", function ($scope, $mdDialog, $mdToast,$sce
       }
     }
     let arr = Array.from(questions);
-    $scope.search.results = arr;
+    $scope.search.results = [];
+    for(let topic of $scope.class.topics) {
+      for(let question of topic.questions){
+        for (let arrQuestion of arr) {
+          if(arrQuestion == question){
+            $scope.search.results.push({
+              topicID: topic.ID,
+              questionID: question.ID
+            });
+          }
+        }
+      }
+    }
+
+    for(let i=0;i<$scope.search.results.length; i++){
+      let question = $scope.search.results[i];
+      let found = false;
+      for(let selected of $scope.selected){
+        if(selected.topicID == question.topicID && selected.questionID == question.questionID){
+          $scope.search.selected[i]=true;
+          found = true;
+        }
+      }
+      if(!found){
+        $scope.search.selected[i]=false;
+      }
+    }
     return arr; //Convert set into array
+  };
+
+  $scope.toggleSelect = function(index){
+    let selected = $scope.search.results[index];
+    let didSelect = false;
+    for(let select of $scope.selected){
+      if(selected.topicID == select.topicID && selected.questionID == select.questionID){
+        $scope.selected.splice($scope.selected.indexOf(selected),1);
+        $scope.search.selected[index] = false;
+        didSelect = true;
+        break;
+      }
+    }
+    if(!didSelect){
+      $scope.selected.push(selected);
+      $scope.search.selected[index] = true;
+    }
   };
   
   $scope.addRule = function(event){
@@ -166,6 +211,7 @@ app.controller("searchQuestionsCtrl", function ($scope, $mdDialog, $mdToast,$sce
     $scope.$parent.closeTab($scope.tabID);
   };
   $scope.submit = function(){
+    $scope.getTabByID($scope.tabData.callbackTID).data.searchQuestions.questions = $scope.selected;
     $scope.getTabByID($scope.tabData.callbackTID).data.searchQuestions.complete = true; //Trigger assessments tab to search for changed
     $scope.cleanup();
   };

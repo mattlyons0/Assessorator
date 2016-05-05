@@ -85,6 +85,40 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       //You didn't delete it.
     });
   };
+  $scope.deleteQuestions = function(){
+    $scope.data = {};
+    $scope.getTabByID(-1).data.searchQuestions = {};
+    $scope.searchQuestions('Delete Questions', {type: 'delete', callbackTID: -1});
+    $scope.stopWatching2 = $scope.$watch('getTabByID(-1).data.searchQuestions.complete', function () {
+      if ($scope.getTabByID(-1).data.searchQuestions.complete === true) { //Search for manual questions is complete
+        $scope.stopWatching2();
+        //Detect selected questions
+        let toDelete = [];
+        if($scope.data.searchQuestions.questions) {
+          for (let deleteQuestion of $scope.data.searchQuestions.questions) {
+            toDelete.push(deleteQuestion);
+          }
+        }
+        if(!toDelete.length){
+          return;
+        }
+
+        let confirm = $mdDialog.confirm().title('Are you sure you would like to delete '+toDelete.length+' question'+
+          (toDelete.length>1?'s':'')+'?')
+          .textContent('This action is not reversible').ok('Delete').cancel('Cancel');
+        $mdDialog.show(confirm).then(function () {
+          let courseUtil = new CourseUtils($scope.class);
+          for(let deleteQuestion of toDelete){
+            let topic = courseUtil.getTopic(deleteQuestion.topicID);
+            let topicUtil = new TopicUtils(topic);
+            topicUtil.deleteQuestion(deleteQuestion.questionID);
+          }
+        }, function () {
+          //You didn't do it.
+        });
+      }
+    })
+  };
   $scope.searchQuestions = function(tabName,data){
     if(!tabName)
       tabName="Search Questions";
@@ -148,6 +182,10 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   };
 
   $scope.getTabByID = function(tabID){
+    if(tabID === -1){
+      return $scope;
+    }
+
     for(let x=0;x<$scope.tabs.length;x++){
       if($scope.tabs[x].id === tabID){
         return $scope.tabs[x];

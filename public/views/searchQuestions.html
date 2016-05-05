@@ -41,9 +41,9 @@
             </div>
             <div id="searchQueryContent" autoscroll="500">
                 <md-list>
-                    <md-list-item class="md-2-line" style="min-height:0" ng-if="rulesValidation" ng-repeat="question in query()">
-                        <div layout="row" class="md-padding" flex>
-                            <md-checkbox ng-model="search.results[$index].selected" style="margin: 0;"></md-checkbox>
+                    <md-list-item class="md-2-line" style="min-height:0" ng-click="toggleSelect($index)" ng-if="rulesValidation" ng-repeat="question in query()">
+                        <div layout="row" class="md-padding"  flex>
+                            <md-checkbox ng-model="search.selected[$index]" style="margin: 0;"></md-checkbox>
                             <div class="md-list-item-text">
                                 <h3>{{ question.questionTitle }}</h3>
                                 <p>{{ question.questionDescription }}</p>
@@ -71,7 +71,7 @@
             <span flex></span>
             <md-button ng-click="discard()">Cancel</md-button>
             <md-button ng-click="submit()" class="md-primary">
-                Choose
+                {{ (tabData.type === 'pick')?'Choose':(tabData.type === 'delete')?'Delete Questions':'Close'}}
             </md-button>
         </div>
     </md-content>

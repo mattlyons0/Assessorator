@@ -69,16 +69,16 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
     $scope.getTabByID($scope.tabID).data.searchQuestions = {};
     $scope.searchQuestions('Pick Questions', {type: 'pick', callbackTID: $scope.tabID});
     $scope.stopWatching2 = $scope.$watch('getTabByID(tabID).data.searchQuestions.complete', function () {
-      if ($scope.getTabByID($scope.tabID).data.searchQuestions.complete === true ||
-        $scope.getTabByID($scope.tabID).data.searchQuestions.complete === false) { //Search for manual questions is complete
+      if ($scope.getTabByID($scope.tabID).data.searchQuestions.complete === true) { //Search for manual questions is complete
         $scope.stopWatching2();
         //Detect selected questions
-        for (let topic of $scope.class.topics) {
-          for (let question of topic.questions) {
-            if (question.selected && $scope.getTabByID($scope.tabID).data.searchQuestions.complete === true) { //If its selected and we didn't discard data
-              $scope.questions.manuallyAdded.add(question);
-            }
-            delete question.selected;
+        if($scope.getTabByID($scope.tabID).data.searchQuestions.questions) {
+          for (let selectedQuestion of $scope.getTabByID($scope.tabID).data.searchQuestions.questions) {
+            let classUtil = new CourseUtils($scope.class);
+            let topic = classUtil.getTopic(selectedQuestion.topicID);
+            let topicUtil = new TopicUtils(topic);
+            let question = topicUtil.getQuestion(selectedQuestion.questionID);
+            $scope.questions.manuallyAdded.add(question);
           }
         }
       }
