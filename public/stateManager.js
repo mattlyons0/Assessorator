@@ -235,6 +235,12 @@ UI.importJson = function(){
   });
 };
 
+UI.freeze = function(){
+  let x=0;
+  while(true)
+    x+=1;
+};
+
 function saveJSON(location){
   let md5 = require('md5');
   let json = toJSON();

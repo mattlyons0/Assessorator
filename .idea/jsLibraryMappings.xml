@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$" libraries="{Assessorator node_modules}" />
-    <file url="PROJECT" libraries="{Assessorator node_modules, IndexedDB, chrome-DefinitelyTyped}" />
+    <file url="file://$PROJECT_DIR$" libraries="{Assessorator/node_modules}" />
+    <file url="PROJECT" libraries="{IndexedDB, chrome-DefinitelyTyped, github-electron-DefinitelyTyped}" />
+    <includedPredefinedLibrary name="Assessorator/node_modules" />
     <includedPredefinedLibrary name="ECMAScript 6" />
     <includedPredefinedLibrary name="Node.js Core" />
   </component>

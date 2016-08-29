@@ -13,14 +13,15 @@
   "dependencies": {
     "appdirectory": "~0.1.0",
     "mkdirp": "~0.5.1",
-    "md5": "~2.1.0"
+    "md5": "~2.2.1"
   },
   "devDependencies": {
-    "electron-prebuilt": "^0.37.8",
-    "electron-packager": "~7.0.1",
-    "electron-builder": "~2.7.2",
+    "electron": "^1.3.4",
+    "electron-packager": "~7.7.0",
+    "electron-builder": "~6.3.0",
     "grunt-electron-installer": "~2.1.0",
-    "grunt": "~1.0.1"
+    "grunt": "~1.0.1",
+    "devtron": "^1.3.0"
   },
   "builder": {
     "win": {
