@@ -5,6 +5,8 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   $scope.tabs = [];
   let nextID = 0;
 
+  $scope.assessmentOpen = [];
+
   $scope.createTopic = function(){
     createTab("New Topic","views/editTopic.html","editTopicCtrl");
 
@@ -85,6 +87,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       //You didn't delete it.
     });
   };
+  $scope.getClassQuestions = function() {
+    let courseUtil = new CourseUtils($scope.class);
+    return courseUtil.countQuestions();
+  };
+
   $scope.deleteQuestions = function(){
     $scope.data = {};
     $scope.getTabByID(-1).data.searchQuestions = {};
@@ -143,8 +150,8 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     createTab("Import Questions", "views/importQuestions.html","importQuestionsCtrl");
   };
   
-  $scope.exportAssessment = function(){
-    createTab("Export Assessment", "views/exportAssessment.html","exportAssessmentCtrl");
+  $scope.exportAssessment = function(assessmentID){
+    createTab("Export Assessment", "views/exportAssessment.html","exportAssessmentCtrl",{assessmentID: assessmentID});
   };
   
   $scope.determineListClass = function(var2){
@@ -152,6 +159,86 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       return 'md-2-line';
     else
       return 'md-2-line md-1-line';
+  };
+
+  $scope.assessmentBadge = function(assessment){
+    let out = '';
+    if(assessment.questions.length == 0 && assessment.rules.length == 0)
+      return '0 Questions, 0 Rules';
+    if(assessment.rules.length != 0)
+      out += assessment.rules.length+' Rule'+(assessment.rules.length!=1?'s':'');
+    if(assessment.questions.length != 0) {
+      if (out.length > 0)
+        out += ', ';
+      out += assessment.questions.length + ' Question' + (assessment.questions.length != 1 ? 's' : '');
+    }
+    return out;
+  };
+
+  $scope.formatAssessmentRule = function (rule) {
+    let output = rule.numRequired + ' Question'+ (rule.numRequired!=1?'s':'') +' from ';
+    let property = ''; // objectives or topic
+    let property2 = ''; // objectiveName or topicName
+    if(rule.type == 'Objective'){
+      property = 'objectives';
+      property2 = 'objectiveText';
+      output += 'Objective';
+    } else if(rule.type == 'Topic'){
+      property = 'topics';
+      property2 = 'topicName';
+      output += 'Topic';
+    } else {
+      return '<p class="text-danger">Error: Rule without an Objective or Topic</p>';
+    }
+
+    if(rule[property].length != 1){
+      output += 's: ';
+    } else{
+      output += ': ';
+    }
+    for (let i = 0; i < rule[property].length; i++) {
+      if (rule[property][i][property2])
+        output += '<i>' + rule[property][i][property2] + '</i>';
+
+      if (i < rule[property].length - 2)
+        output += ", ";
+      else if (i < rule[property].length - 1)
+        output += " and ";
+    }
+    return output;
+  };
+
+  $scope.formatAssessmentQuestion = function(question) {
+    let out = question.questionTitle + ' <span class="text-muted">';
+    let trueCount = 0;
+    for(let answer of question.answers){
+      if (answer.correct == true)
+        trueCount++;
+    }
+    if (trueCount > 1)
+      out += 'Multiple Answers';
+    else if(question.answers.length == 2 && question.answers[0].answerText == 'True' && question.answers[1].answerText == 'False')
+      out += 'True/False';
+    else
+      out += 'Multiple Choice';
+    out += '</span>';
+    return out;
+  };
+
+  $scope.iterateAccordion = function(accordionArray,value,count){
+    for(let i=0;i<count;i++){
+      accordionArray[i]=value;
+    }
+  };
+
+  $scope.floatingScrollListener = function(cssChangeElem,srcElem){
+    let elem = angular.element(document.querySelector('#'+cssChangeElem));
+    let src = angular.element(document.querySelector('#'+srcElem))[0];
+    if (src.scrollTop != 0) {
+      elem.css('border-bottom', '1px solid #ddd');
+    } else{
+      elem.css('border-bottom','');
+    }
   };
 
   $scope.goBack = function () {
@@ -210,4 +297,42 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     
     return tab.id;
   }
+
+
+  /********************************
+  *  Right Click Menu Definitions
+  ********************************/
+
+  // Tab Headings
+  $scope.assessmentsHeading = [
+    ['Create Assessment', function ($itemScope, $event) {
+      $scope.createAssessment();
+    }]
+  ];
+  $scope.topicsHeading = [
+    ['Create Topic', function ($itemScope, $event) {
+      $scope.createTopic();
+    }]
+  ];
+  $scope.objectivesHeading = [
+    ['Create Objective', function ($itemScope, $event) {
+      $scope.createObjective();
+    }]
+  ];
+  $scope.questionsHeading = [
+    ['Create Question', function ($itemScope, $event) {
+      $scope.createQuestion();
+    }]
+  ];
+
+  // Accordion Headings
+  $scope.assessmentHeader = [
+    ['Edit Assessment', function($itemScope,$event){
+      $scope.editAssessment($itemScope.assessment.ID);
+    }],
+    null,
+    ['Delete Assessment', function($itemScope,$event){
+      $scope.deleteAssessment($itemScope.assessment.ID);
+    }]
+  ];
 });

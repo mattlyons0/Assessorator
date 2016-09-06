@@ -3,11 +3,23 @@
 app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
   let fs = require('fs');
 
-  $scope.assessment = {};
-  $scope.assessment.selected = [];
+  $scope.init = function() {
+    $scope.tabData = $scope.getTabByID($scope.tabID).data;
+    $scope.assessment = {};
+    $scope.assessment.selected = [];
 
-  $scope.output = {};
-  $scope.output.data = "";
+    $scope.output = {};
+    $scope.output.data = "";
+
+    if (typeof $scope.tabData.assessmentID == 'number') {
+      let courseUtil = new CourseUtils($scope.class);
+      let assessment = courseUtil.getAssessment($scope.tabData.assessmentID);
+      if (assessment) {
+        $scope.assessment.selected[0] = assessment;
+        $scope.exportAssessment(assessment);
+      }
+    }
+  };
 
   $scope.searchQueryAssessment = function () {
     return $scope.assessment.searchQuery;
@@ -158,5 +170,9 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
       $scope.output.data = "";
     }
   });
+
+  $scope.requestFocus = function(){
+    $scope.init(); //Call once variables have been set through ng-init
+  };
 
 });

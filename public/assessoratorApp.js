@@ -1,23 +1,11 @@
 "use strict";
 
-var app = angular.module("assessoratorApp", ['ngMaterial', 'ngMessages','ngSanitize']);
+var app = angular.module("assessoratorApp", ['ui.bootstrap','ui.bootstrap.contextMenu','ngMaterial', 'ngMessages','ngSanitize']);
 
 app.config(function($mdThemingProvider) {
   $mdThemingProvider.theme('warn')
     .primaryPalette('red')
     .accentPalette('red');
-});
-
-app.directive('ngRightClick', function ($parse) { //Currently Unused
-  return function (scope, element, attrs) {
-    var fn = $parse(attrs.ngRightClick);
-    element.bind('contextmenu', function (event) {
-      scope.$apply(function () {
-        event.preventDefault();
-        fn(scope, {$event: event});
-      });
-    });
-  };
 });
 
 app.directive('dynamicCtrl', ['$compile', '$parse',function($compile, $parse) { //Used for a dynamic controller
@@ -47,5 +35,20 @@ app.directive('autoscroll', ['$window', function($window) { //Used to make thing
       let maxHeight = $window.innerHeight - Number(attrs.autoscroll);
       element.css('max-height', maxHeight + 'px');
     }
+  }
+}]);
+
+// https://github.com/darlanalves/ngWheel
+app.directive('ngWheel', []).directive('ngScroll', ['$parse', function($parse) {
+  return function(scope, element, attr) {
+    var fn = $parse(attr.ngScroll);
+
+    element.bind('scroll', function(event) {
+      scope.$apply(function() {
+        fn(scope, {
+          $event: event
+        })
+      })
+    })
   }
 }]);

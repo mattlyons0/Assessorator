@@ -1,59 +1,65 @@
 <script src="../controllers/classesController.js"></script>
 
+<nav class="navbar navbar-masthead navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand">Assessorator</a>
+        </div>
+
+        <div class="collapse navbar-collapse bs-example-masthead-collapse-1">
+            <!-- Left Elements -->
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Course Selection</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+            <!-- Right Elements -->
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown" uib-dropdown>
+                    <a href="#" class="dropdown-toggle" uib-dropdown-toggle>Tools <span class="caret"></span></a>
+                    <ul class="dropdown-menu" uib-dropdown-menu>
+                        <li><a>No Course Selection Tools yet!<br/>Try selecting a course and then checking tools.</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Settings</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
 <div id="classesContainer" class="md-padding" style="margin-top: 0" ng-controller="classesCtrl">
-    <md-card>
-        <md-toolbar>
-            <div class="md-toolbar-tools">
-                <h2>
-                    <span>Classes</span>
-                </h2>
-                <span flex></span>
-                <md-button id="createClassButton" class="md-icon-button" ng-click="addClass($event)" ng-disabled="readingDisk">
-                    <md-tooltip md-visible="addClassTooltip">Create Class</md-tooltip>
-                    <md-icon md-svg-icon="img/plus.svg"></md-icon>
-                </md-button>
+     <div class="list-group" id="classesList" flex autoscroll="160">
+            <div class="list-group-item active">
+                <button type="button" id="createClassButton" class="btn btn-default btn-sm" style="float:right;top:-50px"
+                        ng-click="addClass($event)" ng-disabled="readingDisk" tooltip-placement="left" uib-tooltip="Add Course">
+                    <span class="glyphicon glyphicon-plus"></span> Add
+                </button>
+                <h3 class="list-group-item-heading">Courses</h3>
             </div>
-        </md-toolbar>
-        <md-content id="classesList" flex layout-padding autoscroll="160">
-            <md-list>
-                <md-list-item class="md-3-line" ng-repeat="class in classes" ng-click="viewClass(class.ID)">
-                        <div class="md-list-item-text" layout="column">
-                            <h3>{{ class.courseID }}</h3>
-                            <h4>{{ class.courseName }}</h4>
-                            <p>{{ class.courseSemester + " " + class.courseYear }}</p>
-                        </div>
-                    <div layout="row">
-                        <md-button ng-click="editClass($event,class.ID); $event.stopPropagation();" class="md-icon-button" aria-label="Edit" style="padding: 0; margin:0;">
-                            <md-icon md-svg-icon="img/edit.svg"></md-icon>
-                        </md-button>
-                        <md-button ng-click="deleteClass(class.ID); $event.stopPropagation();" class="md-icon-button" aria-label="Delete" style="padding: 0;margin:0;">
-                            <md-icon md-svg-icon="img/delete.svg"></md-icon>
-                        </md-button>
-                    </div>
-                    <md-divider inset ng-if="!$last"></md-divider>
-                </md-list-item>
-                <!--Used to make create class appear to fade into box it creates-->
-                <md-list-item style="min-height: 0"></md-list-item>
-                <md-list-item class="md-2-line" ng-if="classes.length == 0">
-                    <div class="md-list-item-text">
-                        <h3>Welcome to The Assessorator. Create a class to get started.</h3>
-                    </div>
-                </md-list-item>
-                <md-list-item class="md-2-line" ng-if="readingDisk && !readError">
-                    <div class="md-list-item-text" style="text-align:center">
-                        <h3>
-                            Loading Data...
-                        </p>
+            <!-- Classes Container-->
+            <a ng-repeat="class in classes" ng-click="viewClass(class.ID)" href="#" context-menu="classesMenu"
+               class="list-group-item list-group-item-action">
+                <span class="badge">{{ getClassQuestions(class.ID) }} Question{{ getClassQuestions(class.ID)==1?'':'s' }}</span>
+                <h4 class="list-group-item-heading">{{ class.courseID }} </h4>
+                <p class="list-group-item-text">{{ class.courseName }}</p>
+                <p class="list-group-item-text">{{ class.courseSemester + " " + class.courseYear }}</p>
+            </a>
+            <!-- No Classes -->
+            <div ng-if="classes.length == 0" class="list-group-item list-group-item-action">
+                <h4 class="list-group-item-heading">Welcome to The Assessorator. Create a class to get started.</h4>
+            </div>
+            <!-- Loading -->
+            <div ng-if="readingDisk && !readError" class="list-group-item list-group-item-action">
+                <h4 class="list-group-item-heading" style="margin-left:auto;margin-right:auto;text-align: center;">
+                        Loading Data...<br/>
                         <img src="img/ajax-loader.gif" style="height:19px;width:220px;margin-left:auto;margin-right:auto;"/>
-                    </div>
-                </md-list-item>
-                <md-list-item class="md-2-line" ng-if="readError">
-                    <div class="md-list-item-text" style="text-align:center">
-                        <div ng-bind-html="readErrorText">
-                        </div>
-                    </div>
-                </md-list-item>
-            </md-list>
-        </md-content>
-    </md-card>
+                </h4>
+            </div>
+            <!-- Load Error -->
+            <div ng-if="readError" class="list-group-item list-group-item-action">
+                <div ng-bind-html="readErrorText">
+                </div>
+            </div>
+        </div>
+
 </div>

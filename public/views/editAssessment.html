@@ -27,15 +27,15 @@
                             <md-button ng-click="pickQuestion()">Pick Question
                                 <md-tooltip md-delay="500" md-direction="right">Manually choose a question to always be on the assessment.</md-tooltip>
                             </md-button>
-                            <md-button ng-click="createRequirement($event)">Create Requirement
+                            <md-button ng-click="createRequirement($event)">Create Rule
                                 <md-tooltip md-delay="500" md-direction="right">Create a rule which will always be met with random questions.</md-tooltip>
                             </md-button>
                         </div>
 
                         <div id="requirements" layout="row" ng-if="questions.rules.length > 0">
                             <fieldset>
-                                <legend>Requirements
-                                    <md-tooltip md-delay="500" md-direction="top">These requirements will be fufilled upon assessment generation.</md-tooltip>
+                                <legend>Rules
+                                    <md-tooltip md-delay="500" md-direction="top">These rules will be fulfilled upon assessment generation.</md-tooltip>
                                 </legend>
 
                                 <md-list>
@@ -49,7 +49,7 @@
                                                 <p ng-if="rule.numRequired" ng-style="{'color':checkPossible($index)?'':'red'}">
                                                     {{ rule.numRequired }} Question{{rule.numRequired>1?'s':''}}
                                                     <md-tooltip md-delay="500" md-direction="bottom" ng-if="!checkPossible($index)">
-                                                        This requirement is currently impossible to satisfy.</md-tooltip>
+                                                        This rule is currently impossible to satisfy.</md-tooltip>
                                                 </p>
                                             </div>
                                             <div layout="row" style="padding-left:8px">
@@ -94,8 +94,8 @@
                                     <div layout="row" class="md-padding" flex>
                                         <div class="md-list-item-text">
                                             <h3>No Questions Added</h3>
-                                            <p ng-if="!questions.rules.length">Add some questions or requirements!</p>
-                                            <p ng-if="questions.rules.length">All questions will be generated from requirements.</p>
+                                            <p ng-if="!questions.rules.length">Add some questions or rules!</p>
+                                            <p ng-if="questions.rules.length">All questions will be generated from rules.</p>
                                         </div>
                                     </div>
                                 </md-list-item>

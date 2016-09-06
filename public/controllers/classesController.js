@@ -1,6 +1,5 @@
 "use strict";
 app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
-  $scope.addClassTooltip = $scope.classes && $scope.classes.length <= 0;
   $scope.readingDisk = true;
   $scope.readError = undefined;
 
@@ -71,17 +70,17 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
         deleteStr+=deleteArr[i]+'.';
       }
     }
-    let courseDescrip = course.courseName + ' ' + course.courseID + ' ' + course.courseSemester + ' ' + course.courseYear;
+    let courseDescrip = course.courseID + ', ' + course.courseName + ' ' + course.courseSemester + ' ' + course.courseYear;
     if(!deleteStr.trim()){
       deleteStr = courseDescrip;
       courseDescrip = "";
     }
-    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Class \''+course.courseName+'\'?')
+    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete '+ course.courseID +'?')
       .htmlContent(courseDescrip + '<br/><br/>This will delete: '+deleteStr)
       .ok('Delete all of this data').cancel('Cancel').theme('warn');
     $mdDialog.show(confirm).then(function(){
-      let finalConfirm = $mdDialog.confirm().title('Are you sure you would like to delete Class \''+course.courseName+'\'?')
-        .textContent('Are you sure? This operation cannot be reversed.').ok('Yes I am sure').cancel('Cancel').theme('warn');
+      let finalConfirm = $mdDialog.confirm().title('Are you sure you would like to delete '+ course.courseID +'?')
+        .textContent('This operation cannot be reversed.').ok('Yes I am sure').cancel('Cancel').theme('warn');
       $mdDialog.show(finalConfirm).then(function(){
         UI.deleteClass(id);
       }, function(){
@@ -91,6 +90,21 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
       //You didn't delete it.
     });
   };
+
+  $scope.getClassQuestions = function(id) {
+    let courseUtil = new CourseUtils(UI.getClassById(id));
+    return courseUtil.countQuestions();
+  };
+
+  $scope.classesMenu = [
+    ['Edit Course', function ($itemScope, $event) {
+      $scope.editClass($event,$itemScope.class.ID);
+    }],
+    null, //divider
+    ['Delete Course', function ($itemScope, $event) {
+      $scope.deleteClass($itemScope.class.ID);
+    }]
+  ];
 
   $scope.viewClass = function (classID) {
     $scope.$parent.page.classID = classID;
@@ -184,7 +198,7 @@ function CreateClassController($scope, $mdDialog) {
       }
 
       if(!$scope.edit) {
-        let courseID = UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year);
+        let courseID = UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year?$scope.class.year:'');
 
         for(let objective of $scope.class.objectives){
           let courseUtil = new CourseUtils(UI.getClassById(courseID));
@@ -197,7 +211,7 @@ function CreateClassController($scope, $mdDialog) {
         course.courseName = $scope.class.name;
         course.courseID = $scope.class.id;
         course.courseSemester = $scope.class.semester;
-        course.courseYear = $scope.class.year;
+        course.courseYear = $scope.class.year?$scope.class.year:'';
         course.objectives = $scope.class.objectives;
 
         //Remove deleted objectives from questions

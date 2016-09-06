@@ -93,6 +93,19 @@ class CourseUtils {
       }
     }
   }
+
+  /**
+   * Count the number of questions for the given course
+   * @returns {number} Total number of questions under every topic in the course
+   */
+  countQuestions(){
+    let count = 0;
+    for(let topic of this.course.topics){
+      count+= topic.questions.length;
+    }
+
+    return count;
+  }
 }
 
 module.exports = CourseUtils;

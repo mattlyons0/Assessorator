@@ -13,7 +13,7 @@ let mainWindow;
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, icon: './icon.png', webPreferences: {"zoomFactor": 0.9}}); //If things are too big we can zoom out possibly
+  mainWindow = new BrowserWindow({width: 1280, height: 720, icon: './icon.png', webPreferences: {"zoomFactor": 1.0}}); //If things are too big we can zoom out possibly
 
   mainWindow.loadURL('file://' + __dirname + '/public/index.html');
 

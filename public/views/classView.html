@@ -1,99 +1,116 @@
 <script src="../controllers/classViewController.js"></script>
 
 <div id="classContainer" ng-controller="classViewCtrl">
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <md-button class="md-icon-button" ng-click="goBack()" aria-label="Go Back">
-                <md-icon md-svg-icon="img/arrow-left.svg"></md-icon>
-            </md-button>
-            <h2>
-                <span>{{ class.courseID }}</span>
-            </h2>
-            <span flex></span>
-            <md-menu md-offset="0 45">
-                <md-button class="md-icon-button" aria-label="More" ng-click="$mdOpenMenu($event)">
-                    <md-icon md-svg-icon="img/dots-vertical.svg"></md-icon>
-                </md-button>
+    <nav class="navbar navbar-masthead navbar-default" style="margin-bottom:0">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand">{{ class.courseID }}</a>
+            </div>
 
-                <md-menu-content>
-                    <md-menu-item>
-                        <md-button ng-click="deleteQuestions()">
-                            Delete Multiple Questions
-                        </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                        <md-button ng-click="importQuestions()">
-                            Import Questions
-                        </md-button>
-                    </md-menu-item>
-                    <!--<md-menu-item>-->
-                        <!--<md-button>-->
-                            <!--Export Questions-->
-                        <!--</md-button>-->
-                    <!--</md-menu-item>-->
-                    <md-menu-item>
-                        <md-button ng-click="exportAssessment()">
-                            Export Assessment
-                        </md-button>
-                    </md-menu-item>
-                </md-menu-content>
-            </md-menu>
-        </div>
-    </md-toolbar>
+            <div class="collapse navbar-collapse bs-example-masthead-collapse-1">
+                <!-- Left Elements -->
+                <ul class="nav navbar-nav">
+                    <li><a href="#" ng-click="goBack()">Course Selection</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+                <!-- Right Elements -->
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown" uib-dropdown>
+                        <a href="#" class="dropdown-toggle" uib-dropdown-toggle>Tools <span class="caret"></span></a>
+                        <ul class="dropdown-menu" uib-dropdown-menu>
+                            <li><a href="#" ng-click="importQuestions()">Import Questions</a></li>
+                            <li><a href="#" ng-click="exportAssessment()">Export Assessment</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" ng-click="deleteQuestions()">Delete Multiple Questions</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Settings</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
     <md-content>
         <md-tabs md-autoselect md-dynamic-height md-border-bottom>
             <md-tab label="Overview">
                 <div autoscroll="130">
                     <md-content class="md-padding greyBackground" layout="column" layout-gt-sm="row">
-                        <md-card flex="40">
-                            <md-toolbar>
-                                <div class="md-toolbar-tools">
-                                    <h2>
-                                        <span>Assessments</span>
-                                    </h2>
-                                    <span flex></span>
-                                    <md-button ng-click="createAssessment()" class="md-icon-button">
-                                        <md-tooltip md-direction="left">Create Assessment</md-tooltip>
-                                        <md-icon md-svg-icon="img/plus.svg"></md-icon>
-                                    </md-button>
+
+                        <uib-tabset justified="true">
+                            <!-- Assessments Tab -->
+                            <uib-tab index="0" context-menu="assessmentsHeading">
+                                <uib-tab-heading>
+                                    Assessments  ({{ class.assessments.length }})
+                                </uib-tab-heading>
+
+                                <div class="tab-pane" style="padding:5px;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
+                                    <div id="assessmentFloatingButtons" class="container-fluid" style="padding-bottom:5px;">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-primary" ng-click="createAssessment()">Create New</button>
+                                            <button type="button" class="btn btn-default" ng-disabled="!class.assessments.length" ng-click="iterateAccordion(assessmentOpen,true,class.assessments.length)">Expand All</button>
+                                            <button type="button" class="btn btn-default" ng-disabled="!class.assessments.length" ng-click="iterateAccordion(assessmentOpen,false,class.assessments.length)">Collapse All</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="assessmentAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('assessmentFloatingButtons','assessmentAccordionScroll')">
+                                        <div class="container-fluid" ng-if="!class.assessments.length">
+                                            <h4 class="text-info">No Assessments</h4>
+                                        </div>
+
+                                        <uib-accordion close-others="false">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="assessment in class.assessments" is-open="assessmentOpen[$index]">
+                                                <uib-accordion-heading>
+                                                    <div context-menu="assessmentHeader">
+                                                        {{ assessment.assessmentName }}
+                                                        <span class="badge" style="margin-left:5px">
+                                                            {{ assessmentBadge(assessment) }}
+                                                        </span><br/>
+                                                        <small>{{ assessment.assessmentDescription }}</small>
+                                                    </div>
+                                                </uib-accordion-heading>
+
+                                                <div class="btn-group btn-group-sm pull-right" role="group">
+                                                    <button type="button" class="btn btn-default" ng-click="editAssessment(assessment.ID)">Edit</button>
+                                                    <button type="button" class="btn btn-default" ng-click="exportAssessment(assessment.ID)">Export</button>
+                                                </div>
+
+                                                <!-- Rules -->
+                                                <strong ng-if="assessment.rules.length">Rules:</strong>
+                                                <p style="padding-left:5px" ng-repeat="rule in assessment.rules" ng-bind-html="formatAssessmentRule(rule)"></p>
+                                                <!-- Manually Added Questions -->
+                                                <strong ng-if="assessment.questions.length">Questions:</strong>
+                                                <p style="padding-left:5px" ng-repeat="question in assessment.questions" ng-bind-html="formatAssessmentQuestion(question)"></p>
+
+                                                <!-- No Rules or Questions -->
+                                                <p class="text-info" ng-if="!assessment.questions.length && !assessment.rules.length">
+                                                    This assessment contains no rules or questions
+                                                </p>
+                                            </div>
+                                        </uib-accordion>
+                                    </div>
                                 </div>
-                            </md-toolbar>
-                            <md-content flex layout-padding autoscroll="250">
-                                <md-list>
-                                    <md-list-item ng-class="determineListClass(assessment.assessmentDescription)"
-                                                  ng-repeat="assessment in class.assessments"
-                                                  ng-click="editAssessment(assessment.ID)">
-                                        <div class="md-list-item-text" layout="row">
-                                            <div layout="column" flex>
-                                                <h3>{{ assessment.assessmentName }}</h3>
-                                                <p ng-if="assessment.assessmentDescription">{{
-                                                    assessment.assessmentDescription }}</p>
-                                            </div>
-                                            <div layout="row" style="padding-left:8px">
-                                                <md-button
-                                                        ng-click="editAssessment(assessment.ID); $event.stopPropagation();"
-                                                        class="md-icon-button" aria-label="Edit"
-                                                        style="padding: 0; margin:0;">
-                                                    <md-icon md-svg-icon="img/edit.svg"></md-icon>
-                                                </md-button>
-                                                <md-button
-                                                        ng-click="deleteAssessment(assessment.ID); $event.stopPropagation();"
-                                                        class="md-icon-button" aria-label="Delete"
-                                                        style="padding: 0;margin:0;">
-                                                    <md-icon md-svg-icon="img/delete.svg"></md-icon>
-                                                </md-button>
-                                            </div>
-                                        </div>
-                                        <md-divider inset></md-divider>
-                                    </md-list-item>
-                                    <md-list-item class="md-2-line" ng-if="!class.assessments.length">
-                                        <div class="md-list-item-text">
-                                            <h3>No Assessments created.</h3>
-                                        </div>
-                                    </md-list-item>
-                                </md-list>
-                            </md-content>
-                        </md-card>
+                            </uib-tab>
+                            <!-- Topics Tab-->
+                            <uib-tab index="1" context-menu="topicsHeading">
+                                <uib-tab-heading>
+                                    Topics  ({{ class.topics.length }})
+                                </uib-tab-heading>
+                            </uib-tab>
+                            <!-- Objectives Tab -->
+                            <uib-tab index="2" context-menu="objectivesHeading">
+                                <uib-tab-heading>
+                                    Objectives  ({{ class.objectives.length }})
+                                </uib-tab-heading>
+                            </uib-tab>
+                            <!-- Questions Tab -->
+                            <uib-tab index="3" context-menu="questionsHeading">
+                                <uib-tab-heading>
+                                    Questions  ({{ getClassQuestions() }})
+                                </uib-tab-heading>
+                            </uib-tab>
+                        </uib-tabset>
+
                         <md-card flex="20">
                             <md-toolbar>
                                 <div class="md-toolbar-tools">

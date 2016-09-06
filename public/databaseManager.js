@@ -281,8 +281,10 @@ function repairPointers(course){
     }
     for(let i=0; i<assessment.questions.length;i++){ //Manually added questions
       let oldQuestion = assessment.questions.splice(i,1)[0];
-      let question = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID)).getQuestion(oldQuestion.ID);
-      assessment.questions.push(question); //Repair pointer
+      if(oldQuestion) {
+        let question = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID)).getQuestion(oldQuestion.ID);
+        assessment.questions.push(question); //Repair pointer
+      }
     }
   }
 }
