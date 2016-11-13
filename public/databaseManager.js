@@ -237,6 +237,7 @@ function getCourses(callback){
     let cursor = event.target.result;
     if(cursor){
       courses.push(cursor.value);
+      updateDataFormat(cursor.value);
       repairPointers(cursor.value); //Relink assessment and objective pointers
       cursor.continue();
     } else { //We have finished querying the objectStore
@@ -246,6 +247,29 @@ function getCourses(callback){
   openCursor.onerror = (error) => {
     console.error('Error getting courses from disk:\n'+error);
   };
+}
+
+/**
+ * Detect missing data that was added in more recent versions and convert into that format
+ * @param course {Course} course data
+ */
+function updateDataFormat(course){
+  //Check for objective.questions field and populate if doesn't exist
+  for(let objective of course.objectives){
+    if(!objective.questions) { //Check if old data has questions field
+      objective.questions = [];
+      for(let topic of course.topics){
+        for(let question of topic.questions){
+          for(let obj of question.objectives){
+            if(obj.ID == objective.ID) {
+              objective.questions.push(question);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 function repairPointers(course){
@@ -285,6 +309,16 @@ function repairPointers(course){
         let question = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID)).getQuestion(oldQuestion.ID);
         assessment.questions.push(question); //Repair pointer
       }
+    }
+  }
+
+  //Repair Objective pointers to questions
+  for(let objective of course.objectives) {
+    for (let i = 0; i < objective.questions.length; i++) {
+      let oldQuestion = objective.questions.splice(0, 1)[0]; //0 because we are cycling through the array
+      let topicUtil = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID));
+      let question = topicUtil.getQuestion(oldQuestion.ID);
+      objective.questions.push(question); //Repair Pointer
     }
   }
 }

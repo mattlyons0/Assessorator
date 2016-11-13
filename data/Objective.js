@@ -2,6 +2,7 @@
 
 /**
  * Contains Objective Metadata
+ * Also contains a pointer to all questions under this objective
  */
 class Objective {
   /**
@@ -11,6 +12,8 @@ class Objective {
    */
   constructor(objectiveText, genID) {
     this.objectiveText = objectiveText;
+
+    this.questions = [];
 
     this.ID = genID;
   }
