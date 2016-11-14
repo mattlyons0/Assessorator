@@ -113,12 +113,12 @@ class CourseUtils {
    * @returns {Question} question with given UID
    */
   getQuestion(questionUID){
-    let topicID = questionUID.split(' ')[1];
+    let topicID = questionUID.topic;
 
     for(let topic of this.course.topics){
       if(topic.ID == topicID){
         for(let question of topic.questions){
-          if(question.UID == questionUID){
+          if(question.UID.question == questionUID.question && question.UID.topic == questionUID.topic){
             return question;
           }
         }

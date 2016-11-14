@@ -162,22 +162,26 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       ignoreEdit = true;
 
     if(!$scope.edit || ignoreEdit) {
-      new TopicUtils(topic).createQuestion($scope.question.title, $scope.question.description);
+      let topicUtil = new TopicUtils(topic);
+      topicUtil.createQuestion($scope.question.title, $scope.question.description);
       let question = topic.questions[topic.questions.length - 1];
+      let questionUtil = new QuestionUtils(question);
       for (let objective of $scope.objective.selected) {
-        question.objectives.push(objective);
+        questionUtil.addObjective(objective);
       }
       for (let x = 0; x < $scope.question.answers.length - 1; x++) { //Omit ghost answer
-        new QuestionUtils(question).createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct, $scope.question.answers[x].pinned);
+        questionUtil.createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct, $scope.question.answers[x].pinned);
       }
     } else{ //Edit Topic
-      let question = new TopicUtils(oldTopic).getQuestion($scope.tabData.questionID);
+      let oldTopicUtil = new TopicUtils(oldTopic);
+      let question = oldTopicUtil.getQuestion($scope.tabData.questionID);
       question.questionTitle = $scope.question.title;
       question.questionDescription = $scope.question.description;
 
       question.objectives=[];
+      let questionUtil = new QuestionUtils(question);
       for (let objective of $scope.objective.selected) {
-        question.objectives.push(objective);
+        questionUtil.addObjective(objective);
       }
       for(let i=0;i < $scope.question.answers.length -1; i++){
         let len = question.answers.length;

@@ -1,5 +1,15 @@
 "use strict";
 app.controller("editObjectiveCtrl", function($scope){
+  function init(){
+    if ($scope.tabData.objectiveID != undefined){
+      let objective = new CourseUtils($scope.class).getObjective($scope.tabData.objectiveID);
+
+      $scope.edit = true;
+      $scope.objective.name = objective.objectiveText;
+      $scope.objectiveID = objective.ID;
+    }
+  }
+
   $scope.objective = {};
 
   let tab;
@@ -15,7 +25,13 @@ app.controller("editObjectiveCtrl", function($scope){
   $scope.submitObjective = function(){
     if(!$scope.objective.name)
       return;
-    new CourseUtils($scope.class).createObjective($scope.objective.name);
+
+    if(!$scope.edit){
+      new CourseUtils($scope.class).createObjective($scope.objective.name);
+    } else{
+      let courseUtil = new CourseUtils($scope.class);
+      courseUtil.getObjective($scope.objectiveID).objectiveText = $scope.objective.name;
+    }
 
     UI.save($scope.class);
     
@@ -30,5 +46,6 @@ app.controller("editObjectiveCtrl", function($scope){
     setTimeout(function(){
       document.getElementById("objectiveName"+$scope.tabID).focus();
     },200); //Delay until animation starts
+    init();
   };
 });

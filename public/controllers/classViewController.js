@@ -1,11 +1,17 @@
 "use strict";
 
-app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
+app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $sce) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   let nextID = 0;
 
+  $scope.questionCount = new CourseUtils($scope.class).countQuestions();
+
+  //Used for accordions
   $scope.assessmentOpen = [];
+  $scope.topicOpen = [];
+  $scope.objectiveOpen = [];
+  $scope.questionOpen = [];
 
   $scope.createTopic = function(){
     createTab("New Topic","views/editTopic.html","editTopicCtrl");
@@ -23,6 +29,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   };
   $scope.deleteTopic = function(id){
     let topic = new CourseUtils($scope.class).getTopic(id);
+    if(id == 0){
+      showToast("Cannot delete '"+topic.topicName+"' as it is the topic questions without a topic are shown under.",$mdToast);
+      return;
+    }
+
     if(topic.questions.length > 0){
       showToast("'"+topic.topicName+"' contains "+topic.questions.length+" question"+(topic.questions.length>1?'s':'')+
         ". All questions must be "+"removed from a topic before it can be deleted.",$mdToast);
@@ -41,9 +52,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   };
   $scope.createQuestion = function(){
     createTab("New Question", "views/editQuestion.html","editQuestionCtrl");
+    $scope.updateQuestionCount();
   };
-  $scope.editQuestion = function(id){
-    createTab("Edit Question", "views/editQuestion.html","editQuestionCtrl",{questionID: id,topicID: $scope.selectedTopic.ID});
+  $scope.editQuestion = function(uid){
+    createTab("Edit Question", "views/editQuestion.html","editQuestionCtrl",{questionID: uid.question,topicID: uid.topic});
+    $scope.updateQuestionCount();
   };
   $scope.deleteQuestion = function(id){
     let topic = $scope.selectedTopic;
@@ -54,6 +67,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       new TopicUtils(topic).deleteQuestion(id);
 
       UI.save($scope.class);
+      $scope.updateQuestionCount();
     }, function(){
       //You didn't delete it.
     });
@@ -68,6 +82,10 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
         angular.element(document.querySelectorAll('md-virtual-repeat-container')[1]).triggerHandler('mouseleave');
       }, 50); //Less than this seems to screw with the animation
     }
+  };
+
+  $scope.editObjective = function(id){
+    createTab("New Objective","views/editObjective.html","editObjectiveCtrl", {objectiveID: id});
   };
   $scope.createAssessment = function(){
     createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl");
@@ -131,7 +149,10 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
       tabName="Search Questions";
     createTab(tabName,"views/searchQuestions.html","searchQuestionsCtrl",data);
   };
-  
+
+  $scope.updateQuestionCount = function(){
+    $scope.questionCount = new CourseUtils($scope.class).countQuestions();
+  };
   
   $scope.getAllQuestions = function(){
     return UI.getAllQuestionsForClass($scope.class.ID);
@@ -175,6 +196,15 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     return out;
   };
 
+  $scope.questionBadge = function(question){
+    let out = question.answers.length + ' Answer';
+
+    if(question.answers.length!=1)
+      out+='s';
+
+    return out;
+  };
+
   $scope.formatAssessmentRule = function (rule) {
     let output = rule.numRequired + ' Question'+ (rule.numRequired!=1?'s':'') +' from ';
     let property = ''; // objectives or topic
@@ -209,7 +239,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
   };
 
   $scope.formatAssessmentQuestion = function(question) {
-    let out = question.questionTitle + ' <span class="text-muted">';
+    return question.questionTitle + ' ' + $scope.formatQuestionType(question);
+  };
+
+  $scope.formatQuestionType = function(question){
+    let out = '<span class="text-muted">';
     let trueCount = 0;
     for(let answer of question.answers){
       if (answer.correct == true)
@@ -222,6 +256,58 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     else
       out += 'Multiple Choice';
     out += '</span>';
+    return out;
+  };
+
+  $scope.formatObjectiveQuestion = function(questionUID) {
+    let courseUtil = new CourseUtils($scope.class);
+    return $scope.formatAssessmentQuestion(courseUtil.getQuestion(questionUID));
+  };
+
+  $scope.formatQuestionAnswers = function(question){
+    let out = '';
+    for(let answer of question.answers){
+      out+=answer.answerText;
+      if(answer.correct)
+        out+='<span class="badge" style="margin-left:5px; background-color:#337ab7">Correct</span>';
+      if(answer.pinned)
+        out+='<span class="badge" style="margin-left:5px">Pinned</span>';
+      out+='<br/>'
+    }
+
+    return $sce.trustAsHtml(out);
+  };
+
+  $scope.formatQuestionTopicObjectives = function(question){
+    let topic = new CourseUtils($scope.class).getTopic(question.topicID);
+    let out = 'Topic: '+topic.topicName;
+    if(question.objectives.length){
+      out+='<br/>Objectives: ';
+    }
+    for(let i=0;i<question.objectives.length;i++){
+      let obj = question.objectives[i];
+      out+=obj.objectiveText;
+      if(i+1 != question.objectives.length)
+        out+=', ';
+    }
+
+    return out;
+  };
+
+  $scope.topicBadge = function(topic){
+    let out = topic.questions.length + ' Question';
+    if(topic.questions.length != 1){
+      out+='s';
+    }
+    return out;
+  };
+
+  $scope.objectiveBadge = function(objective){
+    let questions = objective.questionUIDs;
+    let out = questions.length + ' Question';
+    if(questions.length != 1){
+      out+='s';
+    }
     return out;
   };
 
@@ -333,6 +419,33 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast) {
     null,
     ['Delete Assessment', function($itemScope,$event){
       $scope.deleteAssessment($itemScope.assessment.ID);
+    }]
+  ];
+  $scope.topicHeader = [
+    ['Edit Topic', function($itemScope,$event){
+      $scope.editTopic($itemScope.topic.ID);
+    }],
+    null,
+    ['Delete Topic', function($itemScope,$event){
+      $scope.deleteTopic($itemScope.topic.ID);
+    }]
+  ];
+  $scope.objectiveHeader = [
+    ['Edit Objective', function($itemScope,$event){
+      $scope.editObjective($itemScope.objective.ID);
+    }],
+    null,
+    ['Delete Objective', function($itemScope,$event){
+      $scope.deleteObjective($itemScope.objective.ID);
+    }]
+  ];
+  $scope.questionHeader = [
+    ['Edit Question', function($itemScope,$event){
+      $scope.editQuestion($itemScope.question.UID);
+    }],
+    null,
+    ['Delete Question', function($itemScope,$event){
+      $scope.deleteQuestion($itemScope.question.ID);
     }]
   ];
 });

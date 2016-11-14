@@ -20,7 +20,10 @@ class ObjectiveUtils {
    * @param questionUID {String} UID of the question
    */
   addQuestionUID(questionUID){
-    //Maybe in the future will have to verify it doesn't already exist
+    for(let qUID of this.objective.questionUIDs){
+      if(qUID.topic == questionUID.topic && qUID.question == questionUID.question)
+        return;
+    }
     this.objective.questionUIDs.push(questionUID);
   }
 

@@ -17,7 +17,7 @@ class Question {
 
     this.ID = genID;
     this.topicID = topicID;
-    this.UID = ''; //this.ID+' '+this.UID
+    this.UID = {};
     new QuestionUtils(this).createUID();
 
     //Array Data

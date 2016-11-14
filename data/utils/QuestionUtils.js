@@ -38,7 +38,7 @@ class QuestionUtils {
    * Generate and add a UID to the given question
    */
   createUID(){
-    this.question.UID = this.question.ID+' '+this.question.topicID;
+    this.question.UID = {topic: this.question.topicID,question:this.question.ID};
   }
 }
 

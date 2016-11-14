@@ -84,7 +84,7 @@
 
                                                 <!-- No Rules or Questions -->
                                                 <p class="text-info" ng-if="!assessment.questions.length && !assessment.rules.length">
-                                                    This assessment contains no rules or questions
+                                                    This assessment contains no rules or questions.
                                                 </p>
                                             </div>
                                         </uib-accordion>
@@ -96,117 +96,154 @@
                                 <uib-tab-heading>
                                     Topics  ({{ class.topics.length }})
                                 </uib-tab-heading>
+
+                                <div class="tab-pane" style="padding:5px;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
+                                    <div id="topicFloatingButtons" class="container-fluid" style="padding-bottom:5px;">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-primary" ng-click="createTopic()">Create New</button>
+                                            <button type="button" class="btn btn-default" ng-disabled="!class.topics.length" ng-click="iterateAccordion(topicOpen,true,class.topics.length)">Expand All</button>
+                                            <button type="button" class="btn btn-default" ng-disabled="!class.topics.length" ng-click="iterateAccordion(topicOpen,false,class.topics.length)">Collapse All</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="topicAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('topicFloatingButtons','topicAccordionScroll')">
+                                        <div class="container-fluid" ng-if="!class.topics.length">
+                                            <h4 class="text-info">No Topics</h4>
+                                        </div>
+
+                                        <uib-accordion close-others="false">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in class.topics" is-open="topicOpen[$index]">
+                                                <uib-accordion-heading>
+                                                    <div context-menu="topicHeader">
+                                                        {{ topic.topicName }}
+                                                        <span class="badge" style="margin-left:5px">
+                                                            {{ topicBadge(topic) }}
+                                                        </span><br/>
+                                                        <small>{{ topic.topicDescription }}</small>
+                                                    </div>
+                                                </uib-accordion-heading>
+
+                                                <div class="btn-group btn-group-sm pull-right" role="group">
+                                                    <button type="button" class="btn btn-default" ng-click="editTopic(topic.ID)">Edit</button>
+                                                </div>
+
+                                                <!-- Questions -->
+                                                <strong ng-if="topic.questions.length">Questions:</strong>
+                                                <p style="padding-left:5px" ng-repeat="question in topic.questions" ng-bind-html="formatAssessmentQuestion(question)"></p>
+
+                                                <!-- No Questions -->
+                                                <p class="text-info" ng-if="!topic.questions.length">
+                                                    There are no questions under this topic.
+                                                </p>
+                                            </div>
+                                        </uib-accordion>
+                                    </div>
+                                </div>
                             </uib-tab>
                             <!-- Objectives Tab -->
                             <uib-tab index="2" context-menu="objectivesHeading">
                                 <uib-tab-heading>
                                     Objectives  ({{ class.objectives.length }})
                                 </uib-tab-heading>
+
+                                <div class="tab-pane" style="padding:5px;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
+                                    <div id="objectiveFloatingButtons" class="container-fluid" style="padding-bottom:5px;">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-primary" ng-click="createObjective()">Create New</button>
+                                            <button type="button" class="btn btn-default" ng-disabled="!class.objectives.length" ng-click="iterateAccordion(objectiveOpen,true,class.objectives.length)">Expand All</button>
+                                            <button type="button" class="btn btn-default" ng-disabled="!class.objectives.length" ng-click="iterateAccordion(objectiveOpen,false,class.objectives.length)">Collapse All</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="objectiveAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('objectiveFloatingButtons','objectiveAccordionScroll')">
+                                        <div class="container-fluid" ng-if="!class.objectives.length">
+                                            <h4 class="text-info">No Objectives</h4>
+                                        </div>
+
+                                        <uib-accordion close-others="false">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in class.objectives" is-open="objectiveOpen[$index]">
+                                                <uib-accordion-heading>
+                                                    <div context-menu="objectiveHeader">
+                                                        {{ objective.objectiveText }}
+                                                        <span class="badge" style="margin-left:5px">
+                                                            {{ objectiveBadge(objective) }}
+                                                        </span><br/>
+                                                    </div>
+                                                </uib-accordion-heading>
+
+                                                <div class="btn-group btn-group-sm pull-right" role="group">
+                                                    <button type="button" class="btn btn-default" ng-click="editObjective(objective.ID)">Edit</button>
+                                                </div>
+
+                                                <!-- Questions -->
+                                                <strong ng-if="objective.questionUIDs.length">Questions:</strong>
+                                                <p style="padding-left:5px" ng-repeat="questionUID in objective.questionUIDs" ng-bind-html="formatObjectiveQuestion(questionUID)"></p>
+
+                                                <!-- No Questions -->
+                                                <p class="text-info" ng-if="!objective.questionUIDs.length">
+                                                    There are no questions under this objective.
+                                                </p>
+
+                                            </div>
+                                        </uib-accordion>
+                                    </div>
+                                </div>
                             </uib-tab>
                             <!-- Questions Tab -->
                             <uib-tab index="3" context-menu="questionsHeading">
                                 <uib-tab-heading>
                                     Questions  ({{ getClassQuestions() }})
                                 </uib-tab-heading>
+
+                                <div class="tab-pane" style="padding:5px;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
+                                    <div id="questionFloatingButtons" class="container-fluid" style="padding-bottom:5px;">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-primary" ng-click="createQuestion()">Create New</button>
+                                            <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion(questionOpen,true,questionCount)">Expand All</button>
+                                            <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion(questionOpen,false,questionCount)">Collapse All</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="questionAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('questionFloatingButtons','questionAccordionScroll')">
+                                        <div class="container-fluid" ng-if="!questionCount">
+                                            <h4 class="text-info">No Questions</h4>
+                                        </div>
+
+                                        <uib-accordion close-others="false">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="question in getAllQuestions()" is-open="questionOpen[$index]">
+                                                <uib-accordion-heading>
+                                                    <div context-menu="questionHeader">
+                                                        {{ question.questionTitle }}
+                                                        <span class="badge" style="margin-left:5px">
+                                                            {{ questionBadge(question) }}
+                                                        </span><br/>
+                                                        <small>{{ question.questionDescription }}</small>
+                                                    </div>
+                                                </uib-accordion-heading>
+
+                                                <div class="btn-group btn-group-sm pull-right" role="group">
+                                                    <button type="button" class="btn btn-default" ng-click="editQuestion(question.UID)">Edit</button>
+                                                </div>
+
+                                                <!-- Question Topic and Objectives -->
+                                                <p ng-bind-html="formatQuestionTopicObjectives(question)"></p>
+
+                                                <!-- Question Type -->
+                                                <strong ng-bind-html="formatQuestionType(question)"></strong>
+
+                                                <!-- Answers -->
+                                                <p style="padding-left:5px" ng-if="question.answers" ng-bind-html="formatQuestionAnswers(question)"></p>
+
+                                                <!-- No Answers -->
+                                                <p class="text-info" ng-if="!question.answers">
+                                                    This question has no answers.
+                                                </p>
+                                            </div>
+                                        </uib-accordion>
+                                    </div>
+                                </div>
                             </uib-tab>
                         </uib-tabset>
-
-                        <md-card flex="20">
-                            <md-toolbar>
-                                <div class="md-toolbar-tools">
-                                    <h2>
-                                        <span>Topics</span>
-                                    </h2>
-                                    <span flex></span>
-                                    <md-button ng-click="createTopic()" class="md-icon-button">
-                                        <md-tooltip md-direction="left">Create Topic</md-tooltip>
-                                        <md-icon md-svg-icon="img/plus.svg"></md-icon>
-                                    </md-button>
-                                </div>
-                            </md-toolbar>
-                            <md-content flex layout-padding autoscroll="250">
-                                <md-list>
-                                    <md-list-item ng-repeat="topic in class.topics" ng-click="selectTopic(topic.ID)"
-                                                  id="topic{{topic.ID}}"
-                                                  ng-class="determineListClass(topic.topicDescription)">
-                                        <div class="md-list-item-text" layout="row">
-                                            <div class="md-list-item-text">
-                                                <h3>{{ topic.topicName }}</h3>
-                                                <p ng-if="topic.topicDescription">{{ topic.topicDescription }}</p>
-                                                <p>{{topic.questions.length}} question{{topic.questions.length==1?'':'s'}}</p>
-                                            </div>
-                                            <div layout="row" style="padding-left:8px">
-                                                <md-button ng-click="editTopic(topic.ID); $event.stopPropagation();"
-                                                           class="md-icon-button"
-                                                           aria-label="Edit" style="padding: 0; margin:0;">
-                                                    <md-icon md-svg-icon="img/edit.svg"></md-icon>
-                                                </md-button>
-                                                <md-button ng-click="deleteTopic(topic.ID); $event.stopPropagation();"
-                                                           class="md-icon-button" aria-label="Delete"
-                                                           style="padding: 0;margin:0;"
-                                                           ng-if="topic.ID != 0">
-                                                    <md-icon md-svg-icon="img/delete.svg"></md-icon>
-                                                </md-button>
-                                            </div>
-                                        </div>
-                                        <md-divider inset></md-divider>
-                                    </md-list-item>
-                                </md-list>
-                            </md-content>
-                        </md-card>
-                        <md-card flex="40">
-                            <md-toolbar>
-                                <div class="md-toolbar-tools">
-                                    <h2>
-                                        <span>Questions</span>
-                                    </h2>
-                                    <span flex></span>
-                                    <md-button ng-click="createQuestion()" class="md-icon-button">
-                                        <md-tooltip md-direction="left">Create Question</md-tooltip>
-                                        <md-icon md-svg-icon="img/plus.svg"></md-icon>
-                                    </md-button>
-                                </div>
-                            </md-toolbar>
-                            <md-content flex layout-padding autoscroll="250">
-                                <md-list>
-                                    <md-list-item ng-repeat="question in selectedTopic.questions"
-                                                  ng-click="editQuestion(question.ID)"
-                                                  ng-class="determineListClass(question.questionDescription)">
-                                        <div class="md-list-item-text" layout="row" flex>
-                                            <div layout="column" flex>
-                                                <h3>{{ question.questionTitle }}</h3>
-                                                <p>{{ question.questionDescription }}</p>
-                                            </div>
-                                            <div layout="row" style="padding-left:8px">
-                                                <md-button
-                                                        ng-click="editQuestion(question.ID); $event.stopPropagation();"
-                                                        class="md-icon-button" aria-label="Edit"
-                                                        style="padding: 0; margin:0;">
-                                                    <md-icon md-svg-icon="img/edit.svg"></md-icon>
-                                                </md-button>
-                                                <md-button
-                                                        ng-click="deleteQuestion(question.ID); $event.stopPropagation();"
-                                                        class="md-icon-button" aria-label="Delete"
-                                                        style="padding: 0;margin:0;">
-                                                    <md-icon md-svg-icon="img/delete.svg"></md-icon>
-                                                </md-button>
-                                            </div>
-                                        </div>
-                                        <md-divider inset></md-divider>
-                                    </md-list-item>
-                                    <md-list-item class="md-2-line" ng-if="!selectedTopic">
-                                        <div class="md-list-item-text">
-                                            <h3>Select a topic to view its questions.</h3>
-                                        </div>
-                                    </md-list-item>
-                                    <md-list-item class="md-2-line" ng-if="selectedTopic.questions.length == 0">
-                                        <div class="md-list-item-text">
-                                            <h3>No Questions created for {{selectedTopic.topicName}}.</h3>
-                                        </div>
-                                    </md-list-item>
-                                </md-list>
-                            </md-content>
-                        </md-card>
                     </md-content>
                 </div>
             </md-tab>
