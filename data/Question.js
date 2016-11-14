@@ -9,6 +9,7 @@ class Question {
    * @param {String} questionTitle Title of Question
    * @param {String} questionDescription Description of Question
    * @param {Number} genID A *UNIQUE* ID (to this Topic) representing this Question in the data model.
+   * @param {Number} topicID A ID referring to the topic the question ID is unique to.
    */
   constructor(questionTitle, questionDescription, genID, topicID) {
     this.questionTitle = questionTitle;
@@ -16,6 +17,8 @@ class Question {
 
     this.ID = genID;
     this.topicID = topicID;
+    this.UID = ''; //this.ID+' '+this.UID
+    new QuestionUtils(this).createUID();
 
     //Array Data
     /** List of Answer Options

@@ -13,7 +13,7 @@ class Objective {
   constructor(objectiveText, genID) {
     this.objectiveText = objectiveText;
 
-    this.questions = [];
+    this.questionUIDs = []; //An array of Question UIDs
 
     this.ID = genID;
   }

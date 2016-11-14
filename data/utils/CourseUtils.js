@@ -106,6 +106,25 @@ class CourseUtils {
 
     return count;
   }
+
+  /**
+   * Get a question from a UID (containing topic and question ID)
+   * @param questionUID {Number} containing topic and question ID
+   * @returns {Question} question with given UID
+   */
+  getQuestion(questionUID){
+    let topicID = questionUID.split(' ')[1];
+
+    for(let topic of this.course.topics){
+      if(topic.ID == topicID){
+        for(let question of topic.questions){
+          if(question.UID == questionUID){
+            return question;
+          }
+        }
+      }
+    }
+  }
 }
 
 module.exports = CourseUtils;

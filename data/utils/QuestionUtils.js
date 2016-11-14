@@ -1,6 +1,7 @@
 "use strict";
 
 let Answer = require('../Answer');
+let ObjectiveUtils = require('./ObjectiveUtils');
 
 /**
  * Contains functions for diong common operations on the Question data structure.
@@ -26,6 +27,18 @@ class QuestionUtils {
     this.question.answerUID++;
 
     this.question.answers.push(new Answer(answerText, correct, pinned, genID));
+  }
+
+  addObjective(objective){
+    this.question.objectives.push(objective);
+    new ObjectiveUtils(objective).addQuestionUID(this.question.UID);
+  }
+
+  /**
+   * Generate and add a UID to the given question
+   */
+  createUID(){
+    this.question.UID = this.question.ID+' '+this.question.topicID;
   }
 }
 

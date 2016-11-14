@@ -254,15 +254,24 @@ function getCourses(callback){
  * @param course {Course} course data
  */
 function updateDataFormat(course){
+  //Check for Question.UID field and populate if doesn't exist
+  for(let topic of course.topics){
+    for(let question of topic.questions){
+      if(!question.UID){
+        new QuestionUtils(question).createUID();
+      }
+    }
+  }
+
   //Check for objective.questions field and populate if doesn't exist
   for(let objective of course.objectives){
-    if(!objective.questions) { //Check if old data has questions field
-      objective.questions = [];
+    if(!objective.questionUIDs) { //Check if old data has questions field
+      objective.questionUIDs = [];
       for(let topic of course.topics){
         for(let question of topic.questions){
           for(let obj of question.objectives){
             if(obj.ID == objective.ID) {
-              objective.questions.push(question);
+              objective.questionUIDs.push(question.UID);
               break;
             }
           }
@@ -309,16 +318,6 @@ function repairPointers(course){
         let question = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID)).getQuestion(oldQuestion.ID);
         assessment.questions.push(question); //Repair pointer
       }
-    }
-  }
-
-  //Repair Objective pointers to questions
-  for(let objective of course.objectives) {
-    for (let i = 0; i < objective.questions.length; i++) {
-      let oldQuestion = objective.questions.splice(0, 1)[0]; //0 because we are cycling through the array
-      let topicUtil = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID));
-      let question = topicUtil.getQuestion(oldQuestion.ID);
-      objective.questions.push(question); //Repair Pointer
     }
   }
 }

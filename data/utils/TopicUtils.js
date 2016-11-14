@@ -1,6 +1,7 @@
 "use strict";
 
 let Question = require('../Question');
+let ObjectiveUtils = require('./ObjectiveUtils');
 
 /**
  * Contains Functions for doing common operations on the Topic data structure.
@@ -40,6 +41,12 @@ class TopicUtils {
   deleteQuestion(questionID){
     for(let i=0;i<this.topic.questions.length;i++){
       if(this.topic.questions[i].ID === questionID){
+
+        //Remove objective reference to question
+        for(let objective of this.topic.questions[i].objectives){
+          new ObjectiveUtils(objective).removeQuestionUID(this.topic.questions[i].UID);
+        }
+
         this.topic.questions.splice(i,1);
         return;
       }
