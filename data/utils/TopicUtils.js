@@ -41,6 +41,7 @@ class TopicUtils {
   deleteQuestion(questionID){
     for(let i=0;i<this.topic.questions.length;i++){
       if(this.topic.questions[i].ID === questionID){
+        let question = this.topic.questions[i];
 
         //Remove objective reference to question
         for(let objective of this.topic.questions[i].objectives){

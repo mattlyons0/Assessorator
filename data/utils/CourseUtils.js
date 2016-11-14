@@ -65,6 +65,16 @@ class CourseUtils {
     }
   }
 
+  deleteObjective(objectiveID){
+    for(let i=0;i<this.course.objectives.length;i++){
+      let obj = this.course.objectives[i];
+      if(objectiveID == obj.ID){
+        this.course.objectives.splice(i,1);
+        return;
+      }
+    }
+  }
+
   /**
    * Creates a new Assessment containing no questions
    * @param assessmentName {String} Name of Assessment

@@ -29,12 +29,14 @@ class ObjectiveUtils {
 
   /**
    * Remove a question UID from the local objective reference list
-   * @param questionUID {String} UID of question to remove reference from
+   * @param questionUID UID of question to remove reference from
    */
   removeQuestionUID(questionUID){
     for(let i=0;i<this.objective.questionUIDs.length;i++){
-      if(this.objective.questionUIDs[i] == questionUID){
+      let uid = this.objective.questionUIDs[i];
+      if(uid.topic == questionUID.topic && uid.question == questionUID.question){
         this.objective.questionUIDs.splice(i,1);
+        return;
       }
     }
   }

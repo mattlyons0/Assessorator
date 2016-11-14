@@ -1,6 +1,11 @@
 "use strict";
+
+let ObjectiveUtils = require('../data/utils/ObjectiveUtils');
+
 app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   function init(){
+    $scope.callback = $scope.tabData.callback;
+
     if ($scope.tabData.questionID != undefined && $scope.tabData.topicID != undefined) {
       let topic = new CourseUtils($scope.class).getTopic($scope.tabData.topicID);
       let question = new TopicUtils(topic).getQuestion($scope.tabData.questionID);
@@ -178,8 +183,11 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       question.questionTitle = $scope.question.title;
       question.questionDescription = $scope.question.description;
 
-      question.objectives=[];
       let questionUtil = new QuestionUtils(question);
+      for(let objective of question.objectives){
+        new ObjectiveUtils(objective).removeQuestionUID(question.UID);
+      }
+      question.objectives=[];
       for (let objective of $scope.objective.selected) {
         questionUtil.addObjective(objective);
       }
@@ -209,6 +217,9 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     $scope.stopWatching4();
     $scope.stopWatching5();
     $scope.$parent.closeTab($scope.tabID);
+
+    if($scope.callback)
+      $scope.callback();
   };
 
   $scope.requestFocus = function () {

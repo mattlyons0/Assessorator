@@ -51,20 +51,18 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     });
   };
   $scope.createQuestion = function(){
-    createTab("New Question", "views/editQuestion.html","editQuestionCtrl");
-    $scope.updateQuestionCount();
+    createTab("New Question", "views/editQuestion.html","editQuestionCtrl", {callback: $scope.updateQuestionCount});
   };
   $scope.editQuestion = function(uid){
-    createTab("Edit Question", "views/editQuestion.html","editQuestionCtrl",{questionID: uid.question,topicID: uid.topic});
-    $scope.updateQuestionCount();
+    createTab("Edit Question", "views/editQuestion.html","editQuestionCtrl",{questionID: uid.question,topicID: uid.topic, callback: $scope.updateQuestionCount});
   };
-  $scope.deleteQuestion = function(id){
-    let topic = $scope.selectedTopic;
-    let question = new TopicUtils(topic).getQuestion(id);
+  $scope.deleteQuestion = function(uid){
+    let courseUtil = new CourseUtils($scope.class);
+    let question = courseUtil.getQuestion(uid);
     let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Question \''+question.questionTitle+'\'?')
       .ok('Delete').cancel('Cancel');
     $mdDialog.show(confirm).then(function(){
-      new TopicUtils(topic).deleteQuestion(id);
+      new TopicUtils(courseUtil.getTopic(question.topicID)).deleteQuestion(question.ID);
 
       UI.save($scope.class);
       $scope.updateQuestionCount();
@@ -86,6 +84,19 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
 
   $scope.editObjective = function(id){
     createTab("New Objective","views/editObjective.html","editObjectiveCtrl", {objectiveID: id});
+  };
+  $scope.deleteObjective = function(id){
+    let courseUtil = new CourseUtils($scope.class);
+    let objective = courseUtil.getObjective(id);
+    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Objective \''+objective.objectiveText+'\'?')
+      .ok('Delete').cancel('Cancel');
+    $mdDialog.show(confirm).then(function(){
+     courseUtil.deleteObjective(id);
+
+      UI.save($scope.class);
+    }, function(){
+      //You didn't delete it.
+    });
   };
   $scope.createAssessment = function(){
     createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl");
@@ -445,7 +456,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     }],
     null,
     ['Delete Question', function($itemScope,$event){
-      $scope.deleteQuestion($itemScope.question.ID);
+      $scope.deleteQuestion($itemScope.question.UID);
     }]
   ];
 });
