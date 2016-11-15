@@ -14,31 +14,41 @@ let db = undefined; //Opened DB Object
 let db_version = 1;
 
 // getDBVersion(loadDatabase); //Open DB
-loadDatabase( function(){
-  getCourses( function(loadedCourses){
+let loaded = false;
+loadDatabase(function () {
+  getCourses(function (loadedCourses) {
     UI.loadFromDisk(loadedCourses);
+    loaded = true;
   });
-}, function(err){
+}, function (err) {
   UI.diskLoadError(err);
 });
 
-function loadDatabase(callback,errorCallback){
-  console.log('Opening Database Version '+db_version+'...');
-  let openRequest = indexedDB.open(DB_NAME,db_version);
+window.onerror = function (err) {
+  if (!loaded) {
+    console.error('Caught exception when loading database.');
+    console.error(err);
+    angular.element(document.querySelector('#classesContainer')).scope().dbReadError('unknown');
+  }
+};
 
-  openRequest.onupgradeneeded = function(e) {
+function loadDatabase(callback, errorCallback) {
+  console.log('Opening Database Version ' + db_version + '...');
+  let openRequest = indexedDB.open(DB_NAME, db_version);
+
+  openRequest.onupgradeneeded = function (e) {
     let oldVersion = e.oldVersion;
     let newVersion = e.newVersion;
-    console.log("Upgrading Database from version "+oldVersion+' to '+newVersion);
+    console.log("Upgrading Database from version " + oldVersion + ' to ' + newVersion);
 
-    if(oldVersion == 0){ //This is a new database
-      let courseStore = e.target.result.createObjectStore("courses",{keyPath: "ID"});
-      courseStore.transaction.oncomplete = function(event){
+    if (oldVersion == 0) { //This is a new database
+      let courseStore = e.target.result.createObjectStore("courses", {keyPath: "ID"});
+      courseStore.transaction.oncomplete = function (event) {
         console.log('Created courseStore');
         //TODO ensure it gets here
       };
-      courseStore.transaction.onerror = function(event){
-        console.error('Error creating initial courses object \n'+event);
+      courseStore.transaction.onerror = function (event) {
+        console.error('Error creating initial courses object \n' + event);
       }
     }
     else { //This should be a in-app upgrade (occurs when a course or topic is added)
@@ -100,61 +110,60 @@ function loadDatabase(callback,errorCallback){
       //   }
       // }
     }
-  };
-
-  openRequest.onsuccess = function(e) {
+  }
+  openRequest.onsuccess = function (e) {
     console.log("Database opened successfully.");
     db = e.target.result;
-    db.onversionchange = function(e) {
+    db.onversionchange = function (e) {
       console.log('Version Change');
 
-      if(e.newVersion == null) {
+      if (e.newVersion == null) {
         console.log('New Version null, closing...');
         db.close();
       }
     };
 
     getStorageUsage();
-    
-    if(callback)
+
+    if (callback)
       callback();
   };
 
-  openRequest.onerror = function(event) {
+  openRequest.onerror = function (event) {
     console.error("Error Opening DB");
-    if(openRequest.error.name == 'VersionError'){
-      console.error('Version Error: '+openRequest.error.message);
-      if(errorCallback){
+    if (openRequest.error.name == 'VersionError') {
+      console.error('Version Error: ' + openRequest.error.message);
+      if (errorCallback) {
         errorCallback(openRequest.error.name);
       }
-    } else{
+    } else {
       console.error(openRequest.error);
-      if(errorCallback){
+      if (errorCallback) {
         errorCallback(openRequest.error);
       }
     }
 
-    openRequest.onblocked = function(event){
+    openRequest.onblocked = function (event) {
       console.error('Error opening Database. Blocked.');
       console.error(event); //TODO fix this not occuring (chromium bug?)
-      if(errorCallback){
+      if (errorCallback) {
         errorCallback('blocked');
       }
     }
   };
 }
 
-function getStorageUsage(){
+function getStorageUsage() {
   navigator.webkitPersistentStorage.queryUsageAndQuota(
-    function(usedBytes, grantedBytes){
+    function (usedBytes, grantedBytes) {
       let usedMB = usedBytes / 1000000; //Bytes to Megabyte
       let grantedMB = grantedBytes / 1000000; //Bytes to Megabyte
-      console.log('Using '+usedMB+' MB of '+grantedMB+' MB.');
-      if(grantedMB-usedMB <= 50){ //If there are less than 50MB free
-        console.warn(grantedMB-usedMB+' MB free! Computer low on disk space!');
+      console.log('Using ' + usedMB + ' MB of ' + grantedMB + ' MB.');
+      if (grantedMB - usedMB <= 50) { //If there are less than 50MB free
+        console.warn(grantedMB - usedMB + ' MB free! Computer low on disk space!');
       }
     },
-    function(error){
+    function (error) {
       console.error('Error accessing data usage quota');
       console.error(error);
     }
@@ -196,11 +205,11 @@ function getStorageUsage(){
 //   });
 // }
 
-function deleteDatabase(callback){
+function deleteDatabase(callback) {
   var deleteDbRequest = indexedDB.deleteDatabase(DB_NAME);
   deleteDbRequest.onsuccess = function (event) {
     console.log('Database Deleted')
-    if(callback)
+    if (callback)
       callback();
   };
   deleteDbRequest.onerror = function (e) {
@@ -216,8 +225,8 @@ function deleteDatabase(callback){
   // })
 }
 
-function addCourse(course){
-  let transaction = db.transaction('courses','readwrite');
+function addCourse(course) {
+  let transaction = db.transaction('courses', 'readwrite');
   let courseStore = transaction.objectStore('courses');
   courseStore.add(course);
   transaction.oncomplete = () => {
@@ -229,13 +238,13 @@ function addCourse(course){
   };
 }
 
-function getCourses(callback){
-  let courseStore = db.transaction('courses','readonly').objectStore('courses');
+function getCourses(callback) {
+  let courseStore = db.transaction('courses', 'readonly').objectStore('courses');
   let openCursor = courseStore.openCursor();
   let courses = [];
   openCursor.onsuccess = (event) => {
     let cursor = event.target.result;
-    if(cursor){
+    if (cursor) {
       courses.push(cursor.value);
       updateDataFormat(cursor.value);
       repairPointers(cursor.value); //Relink assessment and objective pointers
@@ -245,7 +254,7 @@ function getCourses(callback){
     }
   };
   openCursor.onerror = (error) => {
-    console.error('Error getting courses from disk:\n'+error);
+    console.error('Error getting courses from disk:\n' + error);
   };
 }
 
@@ -253,24 +262,24 @@ function getCourses(callback){
  * Detect missing data that was added in more recent versions and convert into that format
  * @param course {Course} course data
  */
-function updateDataFormat(course){
+function updateDataFormat(course) {
   //Check for Question.UID field and populate if doesn't exist
-  for(let topic of course.topics){
-    for(let question of topic.questions){
-      if(!question.UID){
+  for (let topic of course.topics) {
+    for (let question of topic.questions) {
+      if (!question.UID) {
         new QuestionUtils(question).createUID();
       }
     }
   }
 
   //Check for objective.questions field and populate if doesn't exist
-  for(let objective of course.objectives){
-    if(!objective.questionUIDs) { //Check if old data has questions field
+  for (let objective of course.objectives) {
+    if (!objective.questionUIDs) { //Check if old data has questions field
       objective.questionUIDs = [];
-      for(let topic of course.topics){
-        for(let question of topic.questions){
-          for(let obj of question.objectives){
-            if(obj.ID == objective.ID) {
+      for (let topic of course.topics) {
+        for (let question of topic.questions) {
+          for (let obj of question.objectives) {
+            if (obj.ID == objective.ID) {
               objective.questionUIDs.push(question.UID);
               break;
             }
@@ -281,17 +290,17 @@ function updateDataFormat(course){
   }
 }
 
-function repairPointers(course){
-  if(!course)
+function repairPointers(course) {
+  if (!course)
     return;
-  
+
   let courseUtil = new CourseUtils(course);
-  
+
   //Repair Question pointers to objectives
-  for(let topic of course.topics){
-    for(let question of topic.questions){
-      for(let i=0;i<question.objectives.length;i++){
-        let oldObjective = question.objectives.splice(0,1)[0]; //0 because we are cycling through the array
+  for (let topic of course.topics) {
+    for (let question of topic.questions) {
+      for (let i = 0; i < question.objectives.length; i++) {
+        let oldObjective = question.objectives.splice(0, 1)[0]; //0 because we are cycling through the array
         let objective = courseUtil.getObjective(oldObjective.ID);
         question.objectives.push(objective); //Repair Pointer
       }
@@ -299,26 +308,26 @@ function repairPointers(course){
   }
 
   //Repair Topic/Objective & ManuallyAddedQuestion pointers to Assessments
-  for(let assessment of course.assessments){
-    for(let rule of assessment.rules){ //Topic/Objectives
-      for(let i=0;i<rule.topics.length;i++){
-        let oldTopic = rule.topics.splice(0,1)[0];
-        if(oldTopic) {
+  for (let assessment of course.assessments) {
+    for (let rule of assessment.rules) { //Topic/Objectives
+      for (let i = 0; i < rule.topics.length; i++) {
+        let oldTopic = rule.topics.splice(0, 1)[0];
+        if (oldTopic) {
           let topic = courseUtil.getTopic(oldTopic.ID);
           rule.topics.push(topic);
         }
       }
-      for(let i=0;i<rule.objectives.length;i++){
-        let oldObjective = rule.objectives.splice(0,1)[0];
-        if(oldObjective) {
+      for (let i = 0; i < rule.objectives.length; i++) {
+        let oldObjective = rule.objectives.splice(0, 1)[0];
+        if (oldObjective) {
           let objective = courseUtil.getObjective(oldObjective.ID);
           rule.objectives.push(objective);
         }
       }
     }
-    for(let i=0; i<assessment.questions.length;i++){ //Manually added questions
-      let oldQuestion = assessment.questions.splice(i,1)[0];
-      if(oldQuestion) {
+    for (let i = 0; i < assessment.questions.length; i++) { //Manually added questions
+      let oldQuestion = assessment.questions.splice(i, 1)[0];
+      if (oldQuestion) {
         let question = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID)).getQuestion(oldQuestion.ID);
         assessment.questions.push(question); //Repair pointer
       }
@@ -326,26 +335,26 @@ function repairPointers(course){
   }
 }
 
-function modifyCourse(course){
-  let courseStore = db.transaction('courses','readwrite').objectStore('courses');
+function modifyCourse(course) {
+  let courseStore = db.transaction('courses', 'readwrite').objectStore('courses');
   let request = courseStore.put(course);
   request.onerror = (error) => {
-    console.error("Error updating course in database"+error);
+    console.error("Error updating course in database" + error);
   };
   request.onsuccess = (event) => {
     console.log('Updated Database');
   }
 }
 
-function deleteCourse(courseID,callback){
-  let courseStore = db.transaction('courses','readwrite').objectStore('courses');
+function deleteCourse(courseID, callback) {
+  let courseStore = db.transaction('courses', 'readwrite').objectStore('courses');
   let request = courseStore.delete(courseID);
   request.onerror = (error) => {
-    console.error("Error deleting course in database"+error);
+    console.error("Error deleting course in database" + error);
   };
   request.onsuccess = (event) => {
     console.log('Deleted Course in Database');
-    if(callback)
+    if (callback)
       callback();
   }
 }
