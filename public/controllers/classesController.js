@@ -131,11 +131,7 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
   };
 });
 
-let Objective = require('../data/Objective');
-
 function CreateClassController($scope, $mdDialog) {
-  let deletedObjectives = [];
-  
   if($scope.classID == undefined) {
     $scope.class = {
       name: "",
@@ -151,59 +147,15 @@ function CreateClassController($scope, $mdDialog) {
       id: course.courseID,
       semester: course.courseSemester,
       year: course.courseYear,
-      objectives: []
+      objectives: course.objectives
     };
-
-    for(let obj of course.objectives){
-      $scope.class.objectives.push(new Objective(obj.objectiveText,obj.ID));
-    }
-
-    //Objective ID must be the index in the array
-    reorderObjectives();
   }
   $scope.semesters = ("Fall Spring Summer").split(' ');
-  $scope.editObjectiveID = undefined;
-  
-  $scope.editObjective = function(objID){
-    $scope.editObjectiveID = objID;
-
-    if(objID < 0)
-      return;
-    setTimeout( () => {
-      document.getElementById("objectiveEdit"+objID).focus(); //Select upon click
-    }, 10);
-  };
-
-  $scope.createObjective = function(){
-    let id=$scope.class.objectives.length;
-    $scope.class.objectives.push(new Objective("",id));
-    $scope.editObjectiveID = id;
-    setTimeout( () => {
-      document.getElementById("objectiveEdit"+id).focus();
-    }, 10)
-  };
-
-  $scope.deleteObjective = function(objID){
-    deletedObjectives.push($scope.class.objectives.splice(objID,1)[0]);
-    reorderObjectives();
-  };
 
   $scope.submit = function () {
     if ($scope.class.id) {
-      for(let i=0;i<$scope.class.objectives.length;i++) {
-        if ($scope.class.objectives[i].objectiveText.trim() == ''){
-          $scope.class.objectives.splice(i, 1);
-          i--;
-        }
-      }
-
       if(!$scope.edit) {
         let courseID = UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year?$scope.class.year:'');
-
-        for(let objective of $scope.class.objectives){
-          let courseUtil = new CourseUtils(UI.getClassById(courseID));
-          courseUtil.createObjective(objective.objectiveText);
-        }
 
         UI.save(UI.getClassById(courseID));
       } else { //Editing
@@ -212,22 +164,7 @@ function CreateClassController($scope, $mdDialog) {
         course.courseID = $scope.class.id;
         course.courseSemester = $scope.class.semester;
         course.courseYear = $scope.class.year?$scope.class.year:'';
-        course.objectives = $scope.class.objectives;
 
-        //Remove deleted objectives from questions
-        for(let obj of deletedObjectives){
-          for(let topic of course.topics){
-            for(let question of topic.questions){
-              for(let i=0;i<question.objectives.length;i++){
-                if(question.objectives[i].ID == obj.ID){
-                  question.objectives.splice(i,1);
-                  break;
-                }
-              }
-            }
-          }
-        }
-        
         UI.save(course);
       }
       $mdDialog.hide();
@@ -236,11 +173,4 @@ function CreateClassController($scope, $mdDialog) {
   $scope.cancel = function (event) {
     $mdDialog.cancel();
   };
-
-  function reorderObjectives(){
-    for(let x=0;x<$scope.class.objectives.length;x++){
-      $scope.class.objectives[x].ID = x;
-    }
-  }
-
 }

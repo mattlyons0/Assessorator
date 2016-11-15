@@ -38,58 +38,7 @@
                         <input type="number" ng-model="class.year"/>
                     </md-input-container>
                 </div>
-
-                <div layout="column">
-                    <md-list flex>
-                        <div class="md-subheader" layout="row">
-                            <span class="md-subheader-content" style="padding-bottom:15px; display: inline">
-                                Objectives
-                            </span>
-                            <md-button class="md-icon-button" ng-click="createObjective()"
-                                       style="bottom: 2px; right:10px">
-                                <md-tooltip md-direction="right">Create Objective</md-tooltip>
-                                <md-icon md-svg-icon="img/plus.svg"></md-icon>
-                            </md-button>
-                        </div>
-
-                        <div autoscroll="300">
-                            <div ng-repeat="objective in class.objectives">
-                                <md-list-item class="md-1-line" style="min-height: 25px"
-                                              ng-click="editObjective(objective.ID)" aria-label="Objective"
-                                              ng-if="editObjectiveID != objective.ID">
-                                    <p> {{objective.objectiveText}} </p>
-
-                                    <div layout="row" style="padding-left:8px; position:relative; bottom:3px">
-                                        <md-button ng-click="editObjective(objective.ID); $event.stopPropagation();" class="md-icon-button"
-                                                   aria-label="Edit" style="padding: 0; margin:0;">
-                                            <md-icon md-svg-icon="img/edit.svg"></md-icon>
-                                        </md-button>
-                                        <md-button ng-click="deleteObjective(objective.ID); $event.stopPropagation();" class="md-icon-button"
-                                                   aria-label="Delete" style="padding: 0;margin:0;">
-                                            <md-icon md-svg-icon="img/delete.svg"></md-icon>
-                                        </md-button>
-                                    </div>
-                                </md-list-item>
-
-                                <md-list-item class="md-1-line" style="min-height: 25px"
-                                              ng-if="editObjectiveID == objective.ID">
-                                    <md-input-container style="height:40px; margin: 0; padding: 5px 0 0;" flex>
-                                        <input id="objectiveEdit{{objective.ID}}" aria-label="Edit Objective"
-                                               ng-model="class.objectives[objective.ID].objectiveText"
-                                               ng-blur="editObjective(-1)" style="padding-left: 0">
-                                    </md-input-container>
-                                </md-list-item>
-                                <md-divider inset ng-if="!$last"></md-divider>
-                            </div>
-                        </div>
-
-                        <md-list-item class="md-1-line" style="min-height:25px" ng-if="!class.objectives.length">
-                            <p>No Objectives Created</p>
-                        </md-list-item>
-                    </md-list>
-                </div>
             </div>
-
         </md-dialog-content>
         <md-dialog-actions layout="row">
             <span flex></span>
