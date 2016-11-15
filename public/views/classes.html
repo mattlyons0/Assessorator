@@ -39,7 +39,11 @@
             <!-- Classes Container-->
             <a ng-repeat="class in classes" ng-click="viewClass(class.ID)" href="#" context-menu="classesMenu"
                class="list-group-item list-group-item-action">
-                <span class="badge">{{ getClassQuestions(class.ID) }} Question{{ getClassQuestions(class.ID)==1?'':'s' }}</span>
+                <span class="badge" ng-if="class.objectives.length">{{ class.objectives.length }} Objective{{ class.objectives.length==1?'':'s' }}</span>
+                <span class="badge" ng-if="class.topics.length-1">{{ class.topics.length-1 }} Topic{{ class.topics.length-1==1?'':'s' }}</span>
+                <span class="badge" ng-if="getClassQuestions(class.ID)">{{ getClassQuestions(class.ID) }} Question{{ getClassQuestions(class.ID)==1?'':'s' }}</span>
+                <span class="badge" ng-if="class.assessments.length">{{ class.assessments.length }} Assessment{{ class.assessments.length==1?'':'s' }}</span>
+
                 <h4 class="list-group-item-heading">{{ class.courseID }} </h4>
                 <p class="list-group-item-text">{{ class.courseName }}</p>
                 <p class="list-group-item-text">{{ class.courseSemester + " " + class.courseYear }}</p>
