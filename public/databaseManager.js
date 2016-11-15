@@ -303,13 +303,17 @@ function repairPointers(course){
     for(let rule of assessment.rules){ //Topic/Objectives
       for(let i=0;i<rule.topics.length;i++){
         let oldTopic = rule.topics.splice(0,1)[0];
-        let topic = courseUtil.getTopic(oldTopic.ID);
-        rule.topics.push(topic);
+        if(oldTopic) {
+          let topic = courseUtil.getTopic(oldTopic.ID);
+          rule.topics.push(topic);
+        }
       }
       for(let i=0;i<rule.objectives.length;i++){
         let oldObjective = rule.objectives.splice(0,1)[0];
-        let objective = courseUtil.getObjective(oldObjective.ID);
-        rule.objectives.push(objective);
+        if(oldObjective) {
+          let objective = courseUtil.getObjective(oldObjective.ID);
+          rule.objectives.push(objective);
+        }
       }
     }
     for(let i=0; i<assessment.questions.length;i++){ //Manually added questions

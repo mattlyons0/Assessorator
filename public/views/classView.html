@@ -2,17 +2,13 @@
 
 <div id="classContainer" ng-controller="classViewCtrl">
     <nav class="navbar navbar-masthead navbar-default" style="margin-bottom:0">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <a class="navbar-brand">{{ class.courseID }}</a>
-            </div>
-
+        <div class="container-fluid" style="padding-left:0">
             <div class="collapse navbar-collapse bs-example-masthead-collapse-1">
                 <!-- Left Elements -->
                 <ul class="nav navbar-nav">
+                    <li class="active"><a class="navbar-brand">{{ class.courseID }}</a></li>
                     <li><a href="#" ng-click="goBack()">Course Selection</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a href="#" ng-click="about()">About</a></li>
                 </ul>
                 <!-- Right Elements -->
                 <ul class="nav navbar-nav navbar-right">

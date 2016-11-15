@@ -11,14 +11,15 @@
             <!-- Left Elements -->
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Course Selection</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="#" ng-click="about()">About</a></li>
             </ul>
             <!-- Right Elements -->
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown" uib-dropdown>
                     <a href="#" class="dropdown-toggle" uib-dropdown-toggle>Tools <span class="caret"></span></a>
                     <ul class="dropdown-menu" uib-dropdown-menu>
-                        <li><a>No Course Selection Tools yet!<br/>Try selecting a course and then checking tools.</a></li>
+                        <li><a href="javascript:UI.importJson()">Import Database</a></li>
+                        <li><a href="javascript:UI.exportJson()">Export Database</a></li>
                     </ul>
                 </li>
                 <li><a href="#">Settings</a></li>
