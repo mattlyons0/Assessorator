@@ -61,10 +61,13 @@
                                                 <uib-accordion-heading>
                                                     <div>
                                                         {{ assessment.assessmentName }}
-                                                        <span class="badge" style="margin-left:5px">
-                                                            {{ assessmentBadge(assessment) }}
-                                                        </span><br/>
-                                                        <small>{{ assessment.assessmentDescription }}</small>
+                                                        <span class="badge" ng-if="assessment.rules.length">
+                                                            {{ assessmentBadgeRules(assessment) }}
+                                                        </span>
+                                                        <span class="badge" ng-if="assessment.questions.length">
+                                                            {{ assessmentBadgeQuestions(assessment) }}
+                                                        </span><br ng-if="assessment.assessmentDescription"/>
+                                                        <small ng-if="assessment.assessmentDescription">{{ assessment.assessmentDescription }}</small>
                                                     </div>
                                                 </uib-accordion-heading>
 
@@ -114,7 +117,7 @@
                                                 <uib-accordion-heading>
                                                     <div>
                                                         {{ topic.topicName }}
-                                                        <span class="badge" style="margin-left:5px">
+                                                        <span class="badge">
                                                             {{ topicBadge(topic) }}
                                                         </span><br/>
                                                         <small>{{ topic.topicDescription }}</small>
@@ -163,7 +166,7 @@
                                                 <uib-accordion-heading>
                                                     <div>
                                                         {{ objective.objectiveText }}
-                                                        <span class="badge" style="margin-left:5px">
+                                                        <span class="badge">
                                                             {{ objectiveBadge(objective) }}
                                                         </span><br/>
                                                     </div>
@@ -212,7 +215,7 @@
                                                 <uib-accordion-heading>
                                                     <div>
                                                         {{ question.questionTitle }}
-                                                        <span class="badge" style="margin-left:5px" ng-if="question.topicID != 0">
+                                                        <span class="badge" ng-if="question.topicID != 0">
                                                             {{ questionBadgeTopic(question) }}
                                                         </span>
                                                         <span class="badge" ng-if="question.objectives.length">

@@ -196,18 +196,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
       return 'md-2-line md-1-line';
   };
 
-  $scope.assessmentBadge = function(assessment){
-    let out = '';
-    if(assessment.questions.length == 0 && assessment.rules.length == 0)
-      return '0 Questions, 0 Rules';
-    if(assessment.rules.length != 0)
-      out += assessment.rules.length+' Rule'+(assessment.rules.length!=1?'s':'');
-    if(assessment.questions.length != 0) {
-      if (out.length > 0)
-        out += ', ';
-      out += assessment.questions.length + ' Question' + (assessment.questions.length != 1 ? 's' : '');
-    }
-    return out;
+  $scope.assessmentBadgeQuestions = function(assessment){
+    return assessment.questions.length + ' Question' + (assessment.questions.length != 1 ? 's' : '');
+  };
+  $scope.assessmentBadgeRules = function(assessment){
+    return assessment.rules.length + ' Rule'+ (assessment.rules.length!=1?'s':'');
   };
 
   $scope.questionBadgeTopic = function(question){
