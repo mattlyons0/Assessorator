@@ -54,6 +54,9 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     createTab("New Question", "views/editQuestion.html","editQuestionCtrl", {callback: $scope.updateQuestionCount});
   };
   $scope.editQuestion = function(uid){
+    if(uid.topic === undefined){
+      uid = angular.fromJson(uid);
+    }
     createTab("Edit Question", "views/editQuestion.html","editQuestionCtrl",{questionID: uid.question,topicID: uid.topic, callback: $scope.updateQuestionCount});
   };
   $scope.deleteQuestion = function(uid){
@@ -207,11 +210,22 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     return out;
   };
 
-  $scope.questionBadge = function(question){
-    let out = question.answers.length + ' Answer';
+  $scope.questionBadgeTopic = function(question){
+    let courseUtil = new CourseUtils($scope.class);
+    let topic = courseUtil.getTopic(question.topicID);
+    return 'Topic: '+topic.topicName;
+  };
 
-    if(question.answers.length!=1)
+  $scope.questionBadgeObjectives = function(question){
+    let out = 'Objective';
+    if(question.objectives.length != 1)
       out+='s';
+    out+=': ';
+    for(let i=0;i<question.objectives.length;i++){
+      if(i != 0)
+        out+=', ';
+      out+=question.objectives[i].objectiveText;
+    }
 
     return out;
   };
@@ -238,8 +252,18 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
       output += ': ';
     }
     for (let i = 0; i < rule[property].length; i++) {
-      if (rule[property][i][property2])
-        output += '<i>' + rule[property][i][property2] + '</i>';
+      if (rule[property][i][property2]) {
+        let click = '';
+        if(property == 'topics'){
+          click='editTopic('+rule[property][i].ID+')';
+        } else if(property == 'objectives'){
+          click='editObjective('+rule[property][i].ID+')';
+        } else{
+          console.error('Error, property not topic or objective: '+property);
+          return;
+        }
+        output += '<a href="#" ng-click="' + click + '">' + rule[property][i][property2] + '</a>';
+      }
 
       if (i < rule[property].length - 2)
         output += ", ";
@@ -250,7 +274,8 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   };
 
   $scope.formatAssessmentQuestion = function(question) {
-    return question.questionTitle + ' ' + $scope.formatQuestionType(question);
+    let jsonUID = angular.toJson(question.UID).replace('"/g','\"');
+    return '<a href="#" ng-click=\'editQuestion('+jsonUID+')\'>'+question.questionTitle + '</a> ' + $scope.formatQuestionType(question);
   };
 
   $scope.formatQuestionType = function(question){
@@ -291,13 +316,13 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
 
   $scope.formatQuestionTopicObjectives = function(question){
     let topic = new CourseUtils($scope.class).getTopic(question.topicID);
-    let out = 'Topic: '+topic.topicName;
+    let out = 'Topic: <a href="#" ng-click="editTopic('+topic.ID+')">'+topic.topicName+'</a>';
     if(question.objectives.length){
       out+='<br/>Objectives: ';
     }
     for(let i=0;i<question.objectives.length;i++){
       let obj = question.objectives[i];
-      out+=obj.objectiveText;
+      out+='<a href="#" ng-click="editObjective('+obj.ID+')">'+obj.objectiveText+'</a>';
       if(i+1 != question.objectives.length)
         out+=', ';
     }
@@ -336,6 +361,25 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     } else{
       elem.css('border-bottom','');
     }
+  };
+
+  $scope.repairObjectives = function(){
+    //Repair Question pointers to objectives
+    for(let objective of $scope.class.objectives) {
+      objective.questionUIDs = [];
+      let objectiveUtil = new ObjectiveUtils(objective);
+      let courseUtil = new CourseUtils($scope.class);
+      for (let topic of $scope.class.topics) {
+        for (let question of topic.questions) {
+          for (let obj of question.objectives) {
+            if (obj.ID == objective.ID && question.UID !== undefined) {
+              objectiveUtil.addQuestionUID(question.UID);
+            }
+          }
+        }
+      }
+    }
+    UI.save($scope.class);
   };
 
   $scope.goBack = function () {

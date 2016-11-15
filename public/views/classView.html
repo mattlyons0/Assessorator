@@ -23,6 +23,8 @@
                             <li><a href="#" ng-click="exportAssessment()">Export Assessment</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="#" ng-click="deleteQuestions()">Delete Multiple Questions</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" ng-click="repairObjectives()">Repair Objective Relationships</a></li>
                         </ul>
                     </li>
                     <li><a href="#">Settings</a></li>
@@ -59,9 +61,9 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="assessment in class.assessments" is-open="assessmentOpen[$index]">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="assessment in class.assessments" is-open="assessmentOpen[$index]" context-menu="assessmentHeader">
                                                 <uib-accordion-heading>
-                                                    <div context-menu="assessmentHeader">
+                                                    <div>
                                                         {{ assessment.assessmentName }}
                                                         <span class="badge" style="margin-left:5px">
                                                             {{ assessmentBadge(assessment) }}
@@ -77,10 +79,10 @@
 
                                                 <!-- Rules -->
                                                 <strong ng-if="assessment.rules.length">Rules:</strong>
-                                                <p style="padding-left:5px" ng-repeat="rule in assessment.rules" ng-bind-html="formatAssessmentRule(rule)"></p>
+                                                <p style="padding-left:5px" ng-repeat="rule in assessment.rules" bind-html-compile="formatAssessmentRule(rule)"></p>
                                                 <!-- Manually Added Questions -->
                                                 <strong ng-if="assessment.questions.length">Questions:</strong>
-                                                <p style="padding-left:5px" ng-repeat="question in assessment.questions" ng-bind-html="formatAssessmentQuestion(question)"></p>
+                                                <p style="padding-left:5px" ng-repeat="question in assessment.questions" bind-html-compile="formatAssessmentQuestion(question)"></p>
 
                                                 <!-- No Rules or Questions -->
                                                 <p class="text-info" ng-if="!assessment.questions.length && !assessment.rules.length">
@@ -112,9 +114,9 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in class.topics" is-open="topicOpen[$index]">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in class.topics" is-open="topicOpen[$index]" context-menu="topicHeader">
                                                 <uib-accordion-heading>
-                                                    <div context-menu="topicHeader">
+                                                    <div>
                                                         {{ topic.topicName }}
                                                         <span class="badge" style="margin-left:5px">
                                                             {{ topicBadge(topic) }}
@@ -129,7 +131,7 @@
 
                                                 <!-- Questions -->
                                                 <strong ng-if="topic.questions.length">Questions:</strong>
-                                                <p style="padding-left:5px" ng-repeat="question in topic.questions" ng-bind-html="formatAssessmentQuestion(question)"></p>
+                                                <p style="padding-left:5px" ng-repeat="question in topic.questions" bind-html-compile="formatAssessmentQuestion(question)"></p>
 
                                                 <!-- No Questions -->
                                                 <p class="text-info" ng-if="!topic.questions.length">
@@ -161,9 +163,9 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in class.objectives" is-open="objectiveOpen[$index]">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in class.objectives" is-open="objectiveOpen[$index]" context-menu="objectiveHeader">
                                                 <uib-accordion-heading>
-                                                    <div context-menu="objectiveHeader">
+                                                    <div>
                                                         {{ objective.objectiveText }}
                                                         <span class="badge" style="margin-left:5px">
                                                             {{ objectiveBadge(objective) }}
@@ -177,7 +179,7 @@
 
                                                 <!-- Questions -->
                                                 <strong ng-if="objective.questionUIDs.length">Questions:</strong>
-                                                <p style="padding-left:5px" ng-repeat="questionUID in objective.questionUIDs" ng-bind-html="formatObjectiveQuestion(questionUID)"></p>
+                                                <p style="padding-left:5px" ng-repeat="questionUID in objective.questionUIDs" bind-html-compile="formatObjectiveQuestion(questionUID)"></p>
 
                                                 <!-- No Questions -->
                                                 <p class="text-info" ng-if="!objective.questionUIDs.length">
@@ -210,14 +212,17 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="question in getAllQuestions()" is-open="questionOpen[$index]">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="question in getAllQuestions()" is-open="questionOpen[$index]" context-menu="questionHeader">
                                                 <uib-accordion-heading>
-                                                    <div context-menu="questionHeader">
+                                                    <div>
                                                         {{ question.questionTitle }}
-                                                        <span class="badge" style="margin-left:5px">
-                                                            {{ questionBadge(question) }}
-                                                        </span><br/>
-                                                        <small>{{ question.questionDescription }}</small>
+                                                        <span class="badge" style="margin-left:5px" ng-if="question.topicID != 0">
+                                                            {{ questionBadgeTopic(question) }}
+                                                        </span>
+                                                        <span class="badge" ng-if="question.objectives.length">
+                                                            {{ questionBadgeObjectives(question) }}
+                                                        </span><br ng-if="question.questionDescription"/>
+                                                        <small ng-if="question.questionDescription">{{ question.questionDescription }}</small>
                                                     </div>
                                                 </uib-accordion-heading>
 
@@ -226,10 +231,10 @@
                                                 </div>
 
                                                 <!-- Question Topic and Objectives -->
-                                                <p ng-bind-html="formatQuestionTopicObjectives(question)"></p>
+                                                <p bind-html-compile="formatQuestionTopicObjectives(question)"></p>
 
                                                 <!-- Question Type -->
-                                                <strong ng-bind-html="formatQuestionType(question)"></strong>
+                                                <strong bind-html-compile="formatQuestionType(question)"></strong>
 
                                                 <!-- Answers -->
                                                 <p style="padding-left:5px" ng-if="question.answers" ng-bind-html="formatQuestionAnswers(question)"></p>
