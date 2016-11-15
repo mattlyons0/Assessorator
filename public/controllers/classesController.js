@@ -1,5 +1,5 @@
 "use strict";
-app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
+app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
   $scope.readingDisk = true;
   $scope.readError = undefined;
 
@@ -14,27 +14,25 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
     $scope.classes = UI.getClasses();
     $scope.readingDisk = false;
   }
-  
-  $scope.rightMenu = function ($mdOpenMenu, event) {
-    $mdOpenMenu();
-  };
 
-  var closeTo = angular.element(document.querySelector('md-list-item:last-child'));
   $scope.addClass = function (event,id) {
     let scope = $scope.$new(); //Makes current scope parent
     if(id != undefined) {
       scope.classID = id;
       scope.edit = true;
     }
-    $mdDialog.show({
-      controller: CreateClassController,
+
+    $uibModal.open({
       templateUrl: 'views/editClass.html',
-      parent: angular.element(document.body),
-      targetEvent: event,
-      clickOutsideToClose: false,
-      fullscreen: true,
+      controller: CreateClassController,
+      bindings: {
+        close: '&',
+        dismiss: '&'
+      },
       scope: scope,
-      closeTo: closeTo
+      keyboard: false,
+      backdrop: 'static',
+      size: 'lg'
     });
   };
   $scope.editClass = function(event,id){
@@ -42,7 +40,7 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
   };
   $scope.deleteClass = function(id){
     let course = UI.getClassById(id);
-    let topics = course.topics.length;
+    let topics = course.topics.length-1;
     let objectives = course.objectives.length;
     let assessments = course.assessments.length;
     let questions = 0;
@@ -75,19 +73,35 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
       deleteStr = courseDescrip;
       courseDescrip = "";
     }
-    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete '+ course.courseID +'?')
-      .htmlContent(courseDescrip + '<br/><br/>This will delete: '+deleteStr)
-      .ok('Delete all of this data').cancel('Cancel').theme('warn');
-    $mdDialog.show(confirm).then(function(){
-      let finalConfirm = $mdDialog.confirm().title('Are you sure you would like to delete '+ course.courseID +'?')
-        .textContent('This operation cannot be reversed.').ok('Yes I am sure').cancel('Cancel').theme('warn');
-      $mdDialog.show(finalConfirm).then(function(){
+    let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-danger"><h3 style="margin-top:10px">'
+          +'<h3>Are you sure you want to delete '+ course.courseID +'?</h3></div><li class="list-group-item">';
+    let html = courseDescrip + '<br/><br/><div class="text-danger">This will delete: '+deleteStr+'</div></li>';
+    let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" class="btn btn-default" ng-click="dismiss()">Cancel</button>'
+      +'<button type="button" class="btn btn-danger" ng-click="close()">Delete</button></div>';
+    let confirm = $uibModal.open({
+      template: header+html+buttons,
+      controller: function($scope,$uibModalInstance){
+        $scope.close = $uibModalInstance.close;
+        $scope.dismiss = $uibModalInstance.dismiss;
+      }
+    });
+    confirm.result.then(function(){
+      html='<div class="text-danger">This operation cannot be reversed. '+courseDescrip+' will be deleted.</div></li>';
+      let lastChance = $uibModal.open({
+        template: header+html+buttons,
+        controller: function($scope,$uibModalInstance){
+          $scope.close = $uibModalInstance.close;
+          $scope.dismiss = $uibModalInstance.dismiss;
+        }
+      });
+      lastChance.result.then(function(){
         UI.deleteClass(id);
-      }, function(){
-        //You backed out
-      })
+      },
+      function(){
+        //Didn't delete
+      });
     }, function(){
-      //You didn't delete it.
+      //Didn't delete
     });
   };
 
@@ -119,19 +133,19 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce) {
         "<a href='javascript:document.location.reload()'>Retry</a>.");
     } else if(errorType == 'version'){
       $scope.readErrorText = $sce.trustAsHtml("Error opening database, invalid version. See " +
-        "<a href='javascript:require(\"remote\").getCurrentWindow().toggleDevTools();'>console</a> for more information.");
+        "<a href='javascript:require(\"electron\").remote.getCurrentWindow().toggleDevTools();'>console</a> for more information.");
     } else if(errorType == 'blocked'){
       $scope.readErrorText = $sce.trustAsHtml("Error opening database. Please ensure no other instances of "+name+" are open then " +
         "<a href='javascript:document.location.reload()'>Retry</a>.");
     } else if(errorType == 'unknown'){
       $scope.readErrorText = $sce.trustAsHtml("Error opening database. See " +
-        "<a href='javascript:require(\"remote\").getCurrentWindow().toggleDevTools();'>console</a> for more information. " +
+        "<a href='javascript:require(\"electron\").remote.getCurrentWindow().toggleDevTools();'>console</a> for more information. " +
         "<a href='javascript:document.location.reload()'>Retry</a>")
     }
   };
 });
 
-function CreateClassController($scope, $mdDialog) {
+function CreateClassController($scope, $uibModalInstance) {
   if($scope.classID == undefined) {
     $scope.class = {
       name: "",
@@ -167,10 +181,14 @@ function CreateClassController($scope, $mdDialog) {
 
         UI.save(course);
       }
-      $mdDialog.hide();
+      $uibModalInstance.close();
+    } else{
+      angular.element(document.querySelector('#classID')).css('border-color','red');
+      angular.element(document.querySelector('#classID')).css('background-color','lightPink');
+      angular.element(document.querySelector('#classID')).attr('placeholder','Required')
     }
   };
   $scope.cancel = function (event) {
-    $mdDialog.cancel();
+    $uibModalInstance.dismiss();
   };
 }

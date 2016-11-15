@@ -1,51 +1,42 @@
-<md-dialog id="editClassContainer">
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h2>
-                <span>{{edit?'Edit':'Create'}} Class</span>
-            </h2>
-        </div>
-    </md-toolbar>
-    <form name="classForm" ng-submit="submit()">
-        <md-dialog-content layout-padding>
-            <div>
-                <div layout-gt-xs="row" style="height:60px">
-                    <md-input-container class="md-block" flex-gt-xs>
-                        <label>Course Name</label>
-                        <input id="classNameField" name="className" ng-model="class.name"
-                               md-auto-focus/>
-                    </md-input-container>
-                </div>
-
-                <div layout-gt-xs="row" style="height:60px">
-                    <md-input-container class="md-block" flex>
-                        <label>Course ID</label>
-                        <input required name="classID" ng-model="class.id"/>
-                        <div ng-messages="classForm.class.id.$error">
-                            <div ng-message="required">Course ID is required.</div>
-                        </div>
-                    </md-input-container>
-                    <md-input-container class="md-block" flex>
-                        <label>Semester</label>
-                        <md-select ng-model="class.semester">
-                            <md-option ng-repeat="semester in semesters" value="{{semester}}">
-                                {{semester}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
-                    <md-input-container class="md-block" flex>
-                        <label>Year</label>
-                        <input type="number" ng-model="class.year"/>
-                    </md-input-container>
-                </div>
+<div class="list-group flex" style="margin-bottom:0">
+    <div class="list-group-item active" style="box-shadow:none">
+        <h3 style="margin-top:10px">
+            <span>{{edit?'Edit':'Create'}} Class</span>
+        </h3>
+    </div>
+    <li class="list-group-item">
+        <form ng-submit="submit()" class="form-inline" style="margin-bottom:15px">
+            <div class="form-group" style="width:100%">
+                <label style="padding-right:5px">Course Name:</label>
+                <input id="classNameField" name="className" ng-model="class.name" class="form-control" style="width:80%"/>
             </div>
-        </md-dialog-content>
-        <md-dialog-actions layout="row">
-            <span flex></span>
-            <md-button ng-click="cancel()">Cancel</md-button>
-            <md-button type="submit" class="md-primary">
-                {{edit?'Modify':'Create'}}
-            </md-button>
-        </md-dialog-actions>
-    </form>
-</md-dialog>
+
+            <button type="submit" style="display:none">Submit</button>
+        </form>
+
+        <form class="form-inline" style="text-align: center;" ng-submit="submit()">
+            <div class="form-group">
+                <label>Course ID:</label>
+                <input required id="classID" name="classID" ng-model="class.id" class="form-control"/>
+
+                <label>Semester:</label>
+                <select class="form-control">
+                    <option ng-repeat="semester in semesters" value="{{semester}}">
+                        {{semester}}
+                    </option>
+                </select>
+
+                <label>Year:</label>
+                <input type="number" ng-model="class.year" maxlength="4" class="form-control" style="width:75px"/>
+            </div>
+
+            <button type="submit" style="display:none">Submit</button>
+        </form>
+    </li>
+    <div style="padding: 5px; text-align:right">
+        <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="submit()">
+            {{edit?'Modify':'Create'}}
+        </button>
+    </div>
+</div>
