@@ -53,7 +53,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="assessmentAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('assessmentFloatingButtons','assessmentAccordionScroll')">
+                                    <div id="assessmentAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('assessmentAccordionScroll')">
                                         <div class="container-fluid" ng-if="!class.assessments.length">
                                             <h4 class="text-info">No Assessments</h4>
                                         </div>
@@ -109,7 +109,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="topicAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('topicFloatingButtons','topicAccordionScroll')">
+                                    <div id="topicAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('topicAccordionScroll')">
                                         <div class="container-fluid" ng-if="!class.topics.length">
                                             <h4 class="text-info">No Topics</h4>
                                         </div>
@@ -158,7 +158,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="objectiveAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('objectiveFloatingButtons','objectiveAccordionScroll')">
+                                    <div id="objectiveAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('objectiveAccordionScroll')">
                                         <div class="container-fluid" ng-if="!class.objectives.length">
                                             <h4 class="text-info">No Objectives</h4>
                                         </div>
@@ -198,16 +198,35 @@
                                     Questions  ({{ getClassQuestions() }})
                                 </uib-tab-heading>
 
-                                <div class="tab-pane" style="padding:5px;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
-                                    <div id="questionFloatingButtons" class="container-fluid" style="padding-bottom:5px;">
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <button type="button" class="btn btn-primary" ng-click="createQuestion()">Create New</button>
-                                            <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion(questionOpen,true,questionCount)">Expand All</button>
-                                            <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion(questionOpen,false,questionCount)">Collapse All</button>
+                                <div class="tab-pane" style="padding:5px 0 5px 0;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
+                                    <div id="questionFloatingButtons" style="padding-bottom:5px;">
+                                        <div class="container-fluid" style="padding:0 5px">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-primary" ng-click="createQuestion()">Create New</button>
+                                                <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion(questionOpen,true,questionCount)">Expand All</button>
+                                                <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion(questionOpen,false,questionCount)">Collapse All</button>
+                                            </div>
+
+                                            <div class="btn-group btn-group-sm" style="float:right">
+                                                <button type="button" class="btn btn-default" data-toggle="button"
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="questionsFilter.open = !questionsFilter.open">
+                                                    <span class="glyphicon glyphicon-filter"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Filter Dropdown -->
+                                        <div ng-if="questionsFilter.open">
+
+                                            <ul class="list-group" style="margin-bottom:0;padding-bottom:5px;box-shadow:none;">
+                                                <li class="list-group-item" role="menuitem"
+                                                    style="padding:2px;border-radius:0;margin:2px 0 0 0;border-left:none; border-right:none;">Hi</li>
+                                            </ul>
                                         </div>
                                     </div>
 
-                                    <div id="questionAccordionScroll" autoscroll="255" ng-scroll="floatingScrollListener('questionFloatingButtons','questionAccordionScroll')">
+                                    <div id="questionAccordionScroll" autoscroll="{{ 255 + (questionsFilter.open?33:0) }}" ng-scroll="floatingScrollListener('questionAccordionScroll')"
+                                         style="margin: 0 5px 0 5px">
                                         <div class="container-fluid" ng-if="!questionCount">
                                             <h4 class="text-info">No Questions</h4>
                                         </div>

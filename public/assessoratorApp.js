@@ -30,6 +30,9 @@ app.directive('autoscroll', ['$window', function($window) { //Used to make thing
     angular.element($window).bind('resize', function(){
       calcMaxHeight();
     });
+    attrs.$observe('autoscroll',function(){
+      calcMaxHeight();
+    });
 
     function calcMaxHeight(){
       let maxHeight = $window.innerHeight - Number(attrs.autoscroll);

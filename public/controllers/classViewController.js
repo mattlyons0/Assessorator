@@ -13,6 +13,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   $scope.objectiveOpen = [];
   $scope.questionOpen = [];
 
+  //Used for filters
+  $scope.questionsFilter = {
+    open: true
+  };
+
   $scope.createTopic = function(){
     createTab("New Topic","views/editTopic.html","editTopicCtrl");
 
@@ -346,13 +351,12 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     }
   };
 
-  $scope.floatingScrollListener = function(cssChangeElem,srcElem){
-    let elem = angular.element(document.querySelector('#'+cssChangeElem));
-    let src = angular.element(document.querySelector('#'+srcElem))[0];
-    if (src.scrollTop != 0) {
-      elem.css('border-bottom', '1px solid #ddd');
+  $scope.floatingScrollListener = function(srcElem){
+    let src = angular.element(document.querySelector('#'+srcElem));
+    if (src[0].scrollTop != 0) {
+      src.css('border-top', '1px solid #ddd');
     } else{
-      elem.css('border-bottom','');
+      src.css('border-top','');
     }
   };
 
