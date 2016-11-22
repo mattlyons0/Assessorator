@@ -15,7 +15,59 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
 
   //Used for filters
   $scope.questionsFilter = {
-    open: true
+    open: false,
+
+    query: '',
+    topic: '',
+    objective: '',
+
+    searchQuestions: true,
+    searchDescriptions: false,
+    searchAnswers: false,
+    caseSensitive: false
+  };
+
+  $scope.filterQuestionsTopics = function(){
+    let out = [];
+    for(let topic of $scope.class.topics){
+      if(topic.topicName.toLowerCase().includes($scope.questionsFilter.topic.toLowerCase()))
+        out.push(topic);
+    }
+    return out;
+  };
+
+  $scope.callb = function(item){
+    console.log(item);
+  }
+
+  $scope.filterQuestions = function(){
+    // console.log($scope.questionsFilter.topic)
+    let questions = $scope.getAllQuestions();
+    if(!$scope.questionsFilter.open || $scope.questionsFilter.query === '')
+      return questions;
+
+    let out = new Set(); //Doesn't allow duplicates
+    for(let question of questions) {
+      if ($scope.questionsFilter.searchQuestions) {
+        if ($scope.questionsFilter.caseSensitive && question.questionTitle.includes($scope.questionsFilter.query) ||
+          (!$scope.questionsFilter.caseSensitive && question.questionTitle.toLowerCase().includes($scope.questionsFilter.query.toLowerCase())))
+          out.add(question);
+      }
+      if ($scope.questionsFilter.searchDescriptions){
+        if ($scope.questionsFilter.caseSensitive && question.questionDescription.includes($scope.questionsFilter.query) ||
+          (!$scope.questionsFilter.caseSensitive && question.questionDescription.toLowerCase().includes($scope.questionsFilter.query.toLowerCase())))
+          out.add(question);
+      }
+      if ($scope.questionsFilter.searchAnswers){
+        for(let answer of question.answers){
+          if ($scope.questionsFilter.caseSensitive && answer.answerText.includes($scope.questionsFilter.query) ||
+            (!$scope.questionsFilter.caseSensitive && answer.answerText.toLowerCase().includes($scope.questionsFilter.query.toLowerCase())))
+            out.add(question);
+        }
+      }
+    }
+
+    return Array.from(out);
   };
 
   $scope.createTopic = function(){

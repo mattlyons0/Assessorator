@@ -198,16 +198,16 @@
                                     Questions  ({{ getClassQuestions() }})
                                 </uib-tab-heading>
 
-                                <div class="tab-pane" style="padding:5px 0 5px 0;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
-                                    <div id="questionFloatingButtons" style="padding-bottom:5px;">
-                                        <div class="container-fluid" style="padding:0 5px">
+                                <div class="tab-pane" style="padding:5px;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
+                                    <div class="container-fluid" style="padding-bottom:5px">
+                                        <div id="questionFloatingButtons" style="padding-bottom:5px;">
                                             <div class="btn-group btn-group-sm" role="group">
                                                 <button type="button" class="btn btn-primary" ng-click="createQuestion()">Create New</button>
                                                 <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion(questionOpen,true,questionCount)">Expand All</button>
                                                 <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion(questionOpen,false,questionCount)">Collapse All</button>
                                             </div>
 
-                                            <div class="btn-group btn-group-sm" style="float:right">
+                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="questionsFilter.open = !questionsFilter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
@@ -217,11 +217,35 @@
 
                                         <!-- Filter Dropdown -->
                                         <div ng-if="questionsFilter.open">
+                                            <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Filter Questions" ng-model="questionsFilter.query">
+                                                    <span class="input-group-addon">
+                                                        <label>
+                                                            <input type="checkbox" ng-model="questionsFilter.searchQuestions" style="position:relative;top:2px"/>
+                                                            Search Questions
+                                                        </label>
 
-                                            <ul class="list-group" style="margin-bottom:0;padding-bottom:5px;box-shadow:none;">
-                                                <li class="list-group-item" role="menuitem"
-                                                    style="padding:2px;border-radius:0;margin:2px 0 0 0;border-left:none; border-right:none;">Hi</li>
-                                            </ul>
+                                                        <label>
+                                                            <input type="checkbox" ng-model="questionsFilter.searchDescriptions" style="position:relative;top:2px"/>
+                                                            Search Descriptions
+                                                        </label>
+
+                                                        <label>
+                                                            <input type="checkbox" ng-model="questionsFilter.searchAnswers" style="position:relative;top:2px"/>
+                                                            Search Answers
+                                                        </label>
+
+                                                        <label>
+                                                            <input type="checkbox" ng-model="questionsFilter.caseSensitive" style="position:relative;top:2px"/>
+                                                            Case Sensitive
+                                                        </label>
+                                                    </span>
+                                                    <!--<input type="text" class="form-control" placeholder="Topic" ng-model="questionsFilter.topic" style="width:50%"-->
+                                                           <!--uib-typeahead="topic for topic in filterQuestionsTopics()">-->
+                                                    <!--<input type="text" class="form-control" placeholder="Objective" ng-model="questionsFilter.objective" style="width:50%">-->
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -232,7 +256,7 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="question in getAllQuestions()" is-open="questionOpen[$index]" context-menu="questionHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="question in filterQuestions()" is-open="questionOpen[$index]" context-menu="questionHeader">
                                                 <uib-accordion-heading>
                                                     <div>
                                                         {{ question.questionTitle }}
