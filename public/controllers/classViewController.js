@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $sce) {
+app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $sce, $filter) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   let nextID = 0;
@@ -15,11 +15,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
 
   //Used for filters
   $scope.questionsFilter = {
-    open: false,
+    open: true,
 
     query: '',
-    topic: '',
-    objective: '',
+    topicQuery: '',
+    objectiveQuery: '',
 
     searchQuestions: true,
     searchDescriptions: false,
@@ -27,22 +27,35 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     caseSensitive: false
   };
 
-  $scope.filterQuestionsTopics = function(){
-    let out = [];
-    for(let topic of $scope.class.topics){
-      if(topic.topicName.toLowerCase().includes($scope.questionsFilter.topic.toLowerCase()))
-        out.push(topic);
-    }
-    return out;
-  };
-
-  $scope.callb = function(item){
-    console.log(item);
-  }
-
   $scope.filterQuestions = function(){
-    // console.log($scope.questionsFilter.topic)
-    let questions = $scope.getAllQuestions();
+    let questions;
+    if($scope.questionsFilter.topicQuery){
+      questions = [];
+      for(let topic of $scope.class.topics){
+        if(topic.ID == $scope.questionsFilter.topicQuery.ID){
+          for(let question of topic.questions){
+            questions.push(question);
+          }
+        }
+      }
+    } else{
+      questions = $scope.getAllQuestions();
+    }
+    if($scope.questionsFilter.objectiveQuery){
+      for(let i=0;i<questions.length;i++){
+        let containsObj = false;
+        for(let obj of questions[i].objectives){
+          if(obj.ID == $scope.questionsFilter.objectiveQuery.ID) {
+            containsObj = true;
+            break;
+          }
+        }
+        if(!containsObj){
+          questions.splice(i, 1); //Delete current index
+          i--;
+        }
+      }
+    }
     if(!$scope.questionsFilter.open || $scope.questionsFilter.query === '')
       return questions;
 
@@ -353,7 +366,10 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   $scope.formatQuestionAnswers = function(question){
     let out = '';
     for(let answer of question.answers){
-      out+=answer.answerText;
+      if($scope.questionsFilter.open && $scope.questionsFilter.searchAnswers)
+        out+=$filter('highlight')(answer.answerText,$scope.questionsFilter.query,$scope.questionsFilter.caseSensitive);
+      else
+        out+=answer.answerText;
       if(answer.correct)
         out+='<span class="badge" style="margin-left:5px; background-color:#337ab7">Correct</span>';
       if(answer.pinned)
@@ -366,13 +382,22 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
 
   $scope.formatQuestionTopicObjectives = function(question){
     let topic = new CourseUtils($scope.class).getTopic(question.topicID);
-    let out = 'Topic: <a href="#" ng-click="editTopic('+topic.ID+')">'+topic.topicName+'</a>';
+    let out = 'Topic: ';
+    if($scope.questionsFilter.topicQuery)
+      out+='<span class="ui-select-highlight">';
+    out+='<a href="#" ng-click="editTopic('+topic.ID+')">'+topic.topicName+'</a>';
+    if($scope.questionsFilter.topicQuery)
+      out+='</span>';
     if(question.objectives.length){
       out+='<br/>Objectives: ';
     }
     for(let i=0;i<question.objectives.length;i++){
       let obj = question.objectives[i];
+      if($scope.questionsFilter.open && $scope.questionsFilter.objectiveQuery && $scope.questionsFilter.objectiveQuery.ID == obj.ID)
+        out+='<span class="ui-select-highlight">';
       out+='<a href="#" ng-click="editObjective('+obj.ID+')">'+obj.objectiveText+'</a>';
+      if($scope.questionsFilter.open && $scope.questionsFilter.objectiveQuery && $scope.questionsFilter.objectiveQuery.ID == obj.ID)
+        out+='</span>';
       if(i+1 != question.objectives.length)
         out+=', ';
     }

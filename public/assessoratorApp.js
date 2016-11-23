@@ -1,6 +1,6 @@
 "use strict";
 
-var app = angular.module("assessoratorApp", ['ui.bootstrap','ui.bootstrap.contextMenu','ngMaterial', 'ngMessages','ngSanitize']);
+var app = angular.module("assessoratorApp", ['ui.bootstrap','ui.bootstrap.contextMenu','ngMaterial', 'ngMessages','ngSanitize', 'ui.select']);
 
 app.config(function($mdThemingProvider) {
   $mdThemingProvider.theme('warn')
@@ -56,6 +56,7 @@ app.directive('ngWheel', []).directive('ngScroll', ['$parse', function($parse) {
   }
 }]);
 
+//https://github.com/incuna/angular-bind-html-compile
 app.directive('bindHtmlCompile', ['$compile', function ($compile) {
   return {
     restrict: 'A',
@@ -77,3 +78,23 @@ app.directive('bindHtmlCompile', ['$compile', function ($compile) {
     }
   };
 }]);
+
+
+/**
+ * Highlights text that matches $select.search.
+ *
+ * Taken from AngularUI Bootstrap Typeahead
+ * See https://github.com/angular-ui/bootstrap/blob/0.10.0/src/typeahead/typeahead.js#L340
+ */
+app.filter('highlight', function() {
+    function escapeRegexp(queryToEscape) {
+      return ('' + queryToEscape).replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+    }
+
+    return function(matchItem, query, caseSensitive) {
+      let mod = 'g';
+      if(!caseSensitive)
+        mod+='i';
+      return query && matchItem ? ('' + matchItem).replace(new RegExp(escapeRegexp(query), mod), '<span class="ui-select-highlight">$&</span>') : matchItem;
+    };
+  });

@@ -217,8 +217,8 @@
 
                                         <!-- Filter Dropdown -->
                                         <div ng-if="questionsFilter.open">
-                                            <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);">
-                                                <div class="input-group">
+                                            <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex">
+                                                <div class="input-group" style="width:65%;margin-right:2px">
                                                     <input type="text" class="form-control" placeholder="Filter Questions" ng-model="questionsFilter.query">
                                                     <span class="input-group-addon">
                                                         <label>
@@ -241,9 +241,39 @@
                                                             Case Sensitive
                                                         </label>
                                                     </span>
-                                                    <!--<input type="text" class="form-control" placeholder="Topic" ng-model="questionsFilter.topic" style="width:50%"-->
-                                                           <!--uib-typeahead="topic for topic in filterQuestionsTopics()">-->
-                                                    <!--<input type="text" class="form-control" placeholder="Objective" ng-model="questionsFilter.objective" style="width:50%">-->
+                                                </div>
+                                                <div style="width:35%; display:inherit">
+                                                    <div class="input-group" style="width:50%;margin-right:2px">
+                                                        <ui-select allow-clear ng-model="questionsFilter.topicQuery" theme="bootstrap">
+                                                            <ui-select-match placeholder="Filter Topic">
+                                                                {{$select.selected.topicName}}
+                                                            </ui-select-match>
+                                                            <ui-select-choices repeat="topic in class.topics | filter: { topicName: $select.search }">
+                                                                <div ng-bind-html="topic.topicName | highlight: $select.search"></div>
+                                                                <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
+                                                            </ui-select-choices>
+                                                        </ui-select>
+                                                        <span class="input-group-btn">
+                                                          <button type="button" ng-click="questionsFilter.topicQuery = undefined" class="btn btn-default" ng-disabled="!questionsFilter.topicQuery">
+                                                            <span class="glyphicon glyphicon-remove"></span>
+                                                          </button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="input-group" style="width:50%">
+                                                        <ui-select ng-model="questionsFilter.objectiveQuery" theme="bootstrap">
+                                                            <ui-select-match placeholder="Filter Objective">
+                                                                {{$select.selected.objectiveText}}
+                                                            </ui-select-match>
+                                                            <ui-select-choices repeat="objective in class.objectives | filter: { objectiveText: $select.search }">
+                                                                <span ng-bind-html="objective.objectiveText | highlight: $select.search"></span>
+                                                            </ui-select-choices>
+                                                        </ui-select>
+                                                        <span class="input-group-btn">
+                                                          <button type="button" ng-click="questionsFilter.objectiveQuery = undefined" class="btn btn-default" ng-disabled="!questionsFilter.objectiveQuery">
+                                                            <span class="glyphicon glyphicon-remove"></span>
+                                                          </button>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -254,19 +284,22 @@
                                         <div class="container-fluid" ng-if="!questionCount">
                                             <h4 class="text-info">No Questions</h4>
                                         </div>
+                                        <div class="container-fluid" ng-if="questionCount && !filterQuestions().length">
+                                            <h4 class="text-info">No results, try adjusting your filters.</h4>
+                                        </div>
 
                                         <uib-accordion close-others="false">
                                             <div uib-accordion-group class="panel-default" ng-repeat="question in filterQuestions()" is-open="questionOpen[$index]" context-menu="questionHeader">
                                                 <uib-accordion-heading>
                                                     <div>
-                                                        {{ question.questionTitle }}
+                                                        <span ng-bind-html="(questionsFilter.searchQuestions && questionsFilter.open)?(question.questionTitle | highlight: questionsFilter.query:questionsFilter.caseSensitive):(question.questionTitle)"></span>
                                                         <span class="badge" ng-if="question.topicID != 0">
                                                             {{ questionBadgeTopic(question) }}
                                                         </span>
                                                         <span class="badge" ng-if="question.objectives.length">
                                                             {{ questionBadgeObjectives(question) }}
                                                         </span><br ng-if="question.questionDescription"/>
-                                                        <small ng-if="question.questionDescription">{{ question.questionDescription }}</small>
+                                                        <small ng-if="question.questionDescription" ng-bind-html="(questionsFilter.searchDescriptions && questionsFilter.open)?(question.questionDescription | highlight: questionsFilter.query:questionsFilter.caseSensitive):(question.questionDescription)"></small>
                                                     </div>
                                                 </uib-accordion-heading>
 

@@ -97,3 +97,19 @@ div[uib-accordion-group] > div {
     position: relative;
     top: -1px;
 }
+
+/* Select Lib */
+
+.ui-select-bootstrap .ui-select-choices-row>span {
+    white-space: normal !important;
+    /*display:block !important;*/
+    /*line-height: 12px !important;*/
+}
+.ui-select-bootstrap .ui-select-choices-row>span>small {
+    display:block !important;
+    line-height: 12px !important;
+}
+
+.ui-select-bootstrap .ui-select-choices-row.active>span>small.text-muted {
+    color: #ececec !important;
+}
