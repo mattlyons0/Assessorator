@@ -21,6 +21,8 @@ class Topic {
      * @type {Question[]} */
     this.questions = [];
     this.questionUID = 0;
+
+    this.creationDate = Date.now();
   }
 }
 

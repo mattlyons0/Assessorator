@@ -23,6 +23,8 @@ class Assessment {
     /** List of Rules
      * @type {{}[]} */
     this.rules = [];
+
+    this.creationDate = Date.now();
   }
 }
 

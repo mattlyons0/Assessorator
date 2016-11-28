@@ -16,6 +16,8 @@ class Objective {
     this.questionUIDs = []; //An array of Question UIDs
 
     this.ID = genID;
+
+    this.creationDate = Date.now();
   }
 }
 

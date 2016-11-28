@@ -54,6 +54,10 @@
                                             </div>
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
+                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
+                                                        uib-tooltip="{{ 'Sort By: '+assessmentsSort.name }}" ng-click="incrementSortMode('assessmentsSort')">
+                                                    <span class="glyphicon {{assessmentsSort.icon}}"></span>
+                                                </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="assessmentsFilter.open = !assessmentsFilter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
@@ -186,6 +190,10 @@
                                             </div>
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
+                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
+                                                        uib-tooltip="{{ 'Sort By: '+topicsSort.name }}" ng-click="incrementSortMode('topicsSort')">
+                                                    <span class="glyphicon {{topicsSort.icon}}"></span>
+                                                </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="topicsFilter.open = !topicsFilter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
@@ -226,7 +234,7 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in filterTopics()" is-open="topicOpen[$index]" context-menu="topicHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in (filterTopics()|sort:getSortParams('topics',topicsSort))" is-open="topicOpen[$index]" context-menu="topicHeader">
                                                 <uib-accordion-heading>
                                                     <div>
                                                         <span ng-bind-html="(topicsFilter.open && topicsFilter.searchTopics)?(topic.topicName|highlight:topicsFilter.query:topicsFilter.caseSensitive):topic.topicName"></span>
@@ -270,6 +278,10 @@
                                             </div>
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
+                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
+                                                        uib-tooltip="{{ 'Sort By: '+objectivesSort.name }}" ng-click="incrementSortMode('objectivesSort')">
+                                                    <span class="glyphicon {{objectivesSort.icon}}"></span>
+                                                </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="objectivesFilter.open = !objectivesFilter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
@@ -302,7 +314,7 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in filterObjectives()" is-open="objectiveOpen[$index]" context-menu="objectiveHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in (filterObjectives()|sort:getSortParams('objectives',objectivesSort))" is-open="objectiveOpen[$index]" context-menu="objectiveHeader">
                                                 <uib-accordion-heading>
                                                     <div>
                                                         <span ng-bind-html="objectivesFilter.open?(objective.objectiveText | highlight: objectivesFilter.query:objectivesFilter.caseSensitive):(objective.objectiveText)"></span>

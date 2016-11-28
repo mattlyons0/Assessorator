@@ -246,8 +246,10 @@ function getCourses(callback) {
     let cursor = event.target.result;
     if (cursor) {
       courses.push(cursor.value);
-      updateDataFormat(cursor.value);
+      let needsSave = updateDataFormat(cursor.value);
       repairPointers(cursor.value); //Relink assessment and objective pointers
+      if(needsSave)
+        UI.save(cursor.value);
       cursor.continue();
     } else { //We have finished querying the objectStore
       callback(courses);
@@ -263,11 +265,13 @@ function getCourses(callback) {
  * @param course {Course} course data
  */
 function updateDataFormat(course) {
+  let didUpdate = false;
   //Check for Question.UID field and populate if doesn't exist
   for (let topic of course.topics) {
     for (let question of topic.questions) {
       if (!question.UID) {
         new QuestionUtils(question).createUID();
+        didUpdate = true;
       }
     }
   }
@@ -281,6 +285,7 @@ function updateDataFormat(course) {
           for (let obj of question.objectives) {
             if (obj.ID == objective.ID) {
               objective.questionUIDs.push(question.UID);
+              didUpdate = true;
               break;
             }
           }
@@ -296,9 +301,36 @@ function updateDataFormat(course) {
         console.log('Database has been upgraded to add creation dates to assessments. ' +
           'All assessments from prior versions will have the same creation date.');
         question.creationDate = Date.now();
+        didUpdate = true;
       }
     }
   }
+
+  //Check for objective.creationDate field and populate with current date and time if it doesn't exist
+  for(let objective of course.objectives){
+    if(!objective.creationDate){
+      objective.creationDate = Date.now();
+      didUpdate = true;
+    }
+  }
+
+  //Check for topic.creationDate field and populate with current date and time if it doesn't exist
+  for(let topic of course.topics){
+    if(!topic.creationDate){
+      topic.creationDate = Date.now();
+      didUpdate = true;
+    }
+  }
+
+  //Check for assessment.creationDate field and populate with current date and time if it doesn't exist
+  for(let assessment of course.assessments){
+    if(!assessment.creationDate){
+      assessment.creationDate = Date.now();
+      didUpdate = true;
+    }
+  }
+
+  return didUpdate;
 }
 
 function repairPointers(course) {

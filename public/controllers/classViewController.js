@@ -61,6 +61,10 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     {name: 'Date Added (Old-New)', icon: 'glyphicon-sort-by-order-alt', ascending: true, fieldIndex: 1}
   ];
   $scope.sortFieldsQuestions = ['questionTitle', 'creationDate'];
+  $scope.sortFieldsObjectives = ['objectiveText', 'creationDate'];
+  $scope.sortFieldsTopics = ['topicName', 'creationDate'];
+  $scope.sortFieldsAssessments = ['assessmentName', 'creationDate'];
+
   $scope.questionsSort = $scope.sortModes[0];
   $scope.objectivesSort = $scope.sortModes[0];
   $scope.topicsSort = $scope.sortModes[0];
@@ -77,6 +81,12 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     let key,mode;
     if(tabType === 'questions'){
       key=$scope.sortFieldsQuestions[sortMode.fieldIndex];
+    } else if(tabType === 'objectives'){
+      key=$scope.sortFieldsObjectives[sortMode.fieldIndex];
+    } else if(tabType === 'topics'){
+      key=$scope.sortFieldsTopics[sortMode.fieldIndex];
+    } else if(tabType === 'assessments'){
+      key=$scope.sortFieldsAssessments[sortMode.fieldIndex];
     }
 
     return {key: key, mode: sortMode};

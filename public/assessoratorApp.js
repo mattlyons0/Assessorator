@@ -108,10 +108,14 @@ app.filter('sort', function(){
       let objA = a[params.key];
       let objB = b[params.key];
       if (objA > objB)
-        return mult;
+        return 2 * mult;
       if (objA < objB)
-        return -1 * mult;
-      return 0;
+        return -2 * mult;
+      //Sort based on ID for stability if key matches
+      if(a.ID > b.ID)
+        return 1;
+      else
+        return -1;
     });
   };
 });
