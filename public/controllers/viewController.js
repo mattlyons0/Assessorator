@@ -25,7 +25,7 @@ app.controller("viewCtrl", function ($scope, $uibModal, $document,$mdToast) {
   };
 
   $scope.about = function(){
-    let authorHtml = '<span style="float:right">Written by Matt Lyons &lt;matt@mattlyons.net&gt;</span>';
+    let authorHtml = '<span style="float:right">Developed by Matt Lyons &lt;matt@mattlyons.net&gt;</span>';
     let versionHtml = '<span style="float: left">Version: '+pkg.version+'</span>';
     let html = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item active"><h2 style="margin-top:10px">'+pkg.name+'</h2></div>'
       +'<li class="list-group-item" style="height:40px">'+versionHtml+authorHtml+'</li>'+'<li class="list-group-item">'+pkg.description+

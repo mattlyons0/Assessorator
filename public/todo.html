@@ -25,7 +25,12 @@
         <li>Importing large databases doesn't always delete old database</li>
         <li>When saving data pointers are cloned (change to just using needed ID's instead of pointers), this will decrease startup time (no need to repair pointers) as well as decrease filesize</li>
         <li>At very small width the course selection button goes away from the header (along with others)</li>
-        <li>Correct accordion doesn't stay open when filtering</li>
+        <li>Correct accordion doesn't stay open when filtering (remembers index not actual question)</li>
+        <li>Dropdown for filter questions by topic and objective get cut off by scrollbar when there are no results (appending to body is broken in the lib, investigate changing autoscroll val when open)</li>
+        <li>Assessment generation is broken</li>
+        <li>Handle different types of quotes in filter, " and the angled ones as the same</li>\
+        <li>Courses on homepage cannot be rearranged</li>
+        <li>Indicate deleted objectives and topics used in rules of assessments more clearly (although currently do an adequate job)</li>
     </ul>
 
     <h2>Features</h2>
@@ -33,32 +38,21 @@
         <li>UI Revamp</li>
         <ul>
             <li>Remove Angular Deps other than (Angular, Angular-animate, Angular-touch) (Possibly others I use?)</li>
-            <li></li>
         </ul>
         <li>Polished UI</li>
         <ul>
-            <li>Fix text not wrapping to next line but instead doing ... in some places</li>
-            <li>Make sure objectives don't have ... at the end to cut them off</li>
-            <li>fix font not being roboto in all places</li>
-            <li>Consider Right click <a href="https://github.com/electron/electron/blob/master/docs/api/menu.md">Context Menus</a></li>
-            <li>Create Preview for Assessment</li>
             <li>Don't allow duplicate tabs w/ same info, open one that exists already</li>
-            <li>Denser Information (Either scale or new theme)</li>
             <li>Allow question dragging to reorder in question creation</li>
             <li>Alert via toast when low on storage space</li>
             <li>Remember last window size and open with that size and location</li>
 
             <li>Class View</li>
             <ul>
-                <li>Allow sorting/searching of card headers</li>
-                <ul>
-                    <li>Button to click before + which will dropdown a filter menu (see V on console)</li>
-                </ul>
+                <li>Focus query field when clicking filter</li>
+                <li>make sort dropdown similar to filter dropdown</li>
                 <li>Sort data alphabetically by default in cards</li>
-                <li>Show number of questions w/ topic next to topics</li>
-                <li>Show objectives under topics and make selectable just like a topic</li>
             </ul>
-            <li>Retrieve classes and incrementally update the UI as they are received</li>
+            <li>Retrieve classes and incrementally update the UI as they are received (instead of doing them all at once)</li>
         </ul>
         <li>edX format Importing</li>
         <ul>
@@ -81,6 +75,7 @@
         <li>Database Export/Import</li>
         <ul>
             <li>Export Individual Questions?</li>
+            <li>Import individual classes instead of replacing database</li>
         </ul>
         <li>Performance</li>
         <ul>
@@ -109,10 +104,6 @@
         <li>Replace libs with min versions</li>
     </ul>
     <a href="http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html">edX Question Formats</a>
-    <h2>Deps</h2>
-    <ul>
-        <li><a href="https://github.com/Templarian/ui.bootstrap.contextMenu">Bootstrap Context Menu</li>
-    </ul>
 
 </ul>
 </body>

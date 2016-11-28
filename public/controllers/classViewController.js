@@ -15,7 +15,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
 
   //Used for filters
   $scope.questionsFilter = {
-    open: true,
+    open: false,
 
     query: '',
     topicQuery: '',
@@ -26,10 +26,136 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     searchAnswers: false,
     caseSensitive: false
   };
+  $scope.objectivesFilter = {
+    open: false,
+
+    query: '',
+    caseSensitive: false
+  };
+  $scope.topicsFilter = {
+    open: false,
+
+    query: '',
+    searchTopics: true,
+    searchDescriptions: false,
+    caseSensitive: false
+  };
+  $scope.assessmentsFilter = {
+    open: false,
+
+    query: '',
+    topicQuery: '',
+    objectiveQuery: '',
+
+    searchNames: true,
+    searchDescriptions: false,
+    searchQuestions: false,
+    caseSensitive: false
+  };
+
+
+  $scope.filterTopics = function(){
+    let topics = $scope.class.topics;
+    if(!$scope.topicsFilter.open || !$scope.topicsFilter.query)
+      return topics;
+    let out = new Set();
+    for(let topic of topics){
+      if($scope.topicsFilter.searchTopics){
+        if($scope.topicsFilter.caseSensitive && topic.topicName.includes($scope.topicsFilter.query) ||
+            !$scope.topicsFilter.caseSensitive && topic.topicName.toLowerCase().includes($scope.topicsFilter.query.toLowerCase()))
+          out.add(topic);
+      }
+      if($scope.topicsFilter.searchDescriptions){
+        if($scope.topicsFilter.caseSensitive && topic.topicDescription.includes($scope.topicsFilter.query) ||
+          !$scope.topicsFilter.caseSensitive && topic.topicDescription && topic.topicDescription.toLowerCase().includes($scope.topicsFilter.query.toLowerCase()))
+          out.add(topic);
+      }
+    }
+    return Array.from(out);
+  };
+
+  $scope.filterObjectives = function(){
+    let objectives = $scope.class.objectives;
+    if(!$scope.objectivesFilter.open || !$scope.objectivesFilter.query)
+      return objectives;
+    let out = [];
+    for(let objective of objectives){
+      if($scope.objectivesFilter.caseSensitive && objective.objectiveText.includes($scope.objectivesFilter.query) ||
+          !$scope.objectivesFilter.caseSensitive && objective.objectiveText.toLowerCase().includes($scope.objectivesFilter.query.toLowerCase()))
+        out.push(objective);
+    }
+    return out;
+  };
+
+  $scope.filterAssessments = function(){
+    let assessments = $scope.class.assessments;
+    if(!$scope.assessmentsFilter.open || (!$scope.assessmentsFilter.query && !$scope.assessmentsFilter.topicQuery && !$scope.assessmentsFilter.objectiveQuery))
+      return assessments;
+
+    let remain = [];
+    if($scope.assessmentsFilter.topicQuery){
+      for(let assessment of assessments){
+        let found = false;
+        for(let rule of assessment.rules){
+          if(found)
+            break;
+          for(let topic of rule.topics){
+            if(topic.ID == $scope.assessmentsFilter.topicQuery.ID) {
+              remain.push(assessment);
+              found = true;
+              break;
+            }
+          }
+        }
+      }
+    } else{
+      remain = assessments;
+    }
+    if($scope.assessmentsFilter.objectiveQuery) {
+      for (let i=0;i<remain.length;i++) {
+        let assessment = remain[i];
+        let found = false;
+        for (let rule of assessment.rules){
+          for(let objective of rule.objectives){
+            if(objective.ID == $scope.assessmentsFilter.objectiveQuery.ID){
+              found = true;
+            }
+          }
+        }
+        if(!found){
+          remain.splice(i,1);
+          i--;
+        }
+      }
+    }
+
+    let out = new Set(); //Doesn't allow duplicates
+    for(let assessment of remain) {
+      if ($scope.assessmentsFilter.searchNames) {
+        if ($scope.assessmentsFilter.caseSensitive && assessment.assessmentName.includes($scope.assessmentsFilter.query) ||
+          (!$scope.assessmentsFilter.caseSensitive && assessment.assessmentName.toLowerCase().includes($scope.assessmentsFilter.query.toLowerCase())))
+          out.add(assessment);
+      }
+      if ($scope.assessmentsFilter.searchDescriptions){
+        if ($scope.assessmentsFilter.caseSensitive && assessment.assessmentDescription.includes($scope.assessmentsFilter.query) ||
+          (!$scope.assessmentsFilter.caseSensitive && assessment.assessmentDescription.toLowerCase().includes($scope.assessmentsFilter.query.toLowerCase())))
+          out.add(assessment);
+      }
+      if ($scope.assessmentsFilter.searchQuestions){
+        for(let question of assessment.questions){
+          if ($scope.assessmentsFilter.caseSensitive && question.questionTitle.includes($scope.assessmentsFilter.query) ||
+            (!$scope.assessmentsFilter.caseSensitive && question.questionTitle.toLowerCase().includes($scope.assessmentsFilter.query.toLowerCase())))
+            out.add(assessment);
+        }
+      }
+    }
+
+    return Array.from(out);
+  };
 
   $scope.filterQuestions = function(){
     let questions;
-    if($scope.questionsFilter.topicQuery){
+    if($scope.questionsFilter.open && $scope.questionsFilter.topicQuery){
       questions = [];
       for(let topic of $scope.class.topics){
         if(topic.ID == $scope.questionsFilter.topicQuery.ID){
@@ -41,7 +167,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     } else{
       questions = $scope.getAllQuestions();
     }
-    if($scope.questionsFilter.objectiveQuery){
+    if($scope.questionsFilter.open && $scope.questionsFilter.objectiveQuery){
       for(let i=0;i<questions.length;i++){
         let containsObj = false;
         for(let obj of questions[i].objectives){
@@ -56,7 +182,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
         }
       }
     }
-    if(!$scope.questionsFilter.open || $scope.questionsFilter.query === '')
+    if(!$scope.questionsFilter.open || !$scope.questionsFilter.query)
       return questions;
 
     let out = new Set(); //Doesn't allow duplicates
@@ -237,7 +363,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   $scope.updateQuestionCount = function(){
     $scope.questionCount = new CourseUtils($scope.class).countQuestions();
   };
-  
+
   $scope.getAllQuestions = function(){
     return UI.getAllQuestionsForClass($scope.class.ID);
   };
@@ -254,11 +380,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   $scope.importQuestions = function(){
     createTab("Import Questions", "views/importQuestions.html","importQuestionsCtrl");
   };
-  
+
   $scope.exportAssessment = function(assessmentID){
     createTab("Export Assessment", "views/exportAssessment.html","exportAssessmentCtrl",{assessmentID: assessmentID});
   };
-  
+
   $scope.determineListClass = function(var2){
     if(var2)
       return 'md-2-line';
@@ -267,10 +393,17 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   };
 
   $scope.assessmentBadgeQuestions = function(assessment){
-    return assessment.questions.length + ' Question' + (assessment.questions.length != 1 ? 's' : '');
+    return assessment.questions.length + ' Added Question' + (assessment.questions.length != 1 ? 's' : '');
   };
   $scope.assessmentBadgeRules = function(assessment){
     return assessment.rules.length + ' Rule'+ (assessment.rules.length!=1?'s':'');
+  };
+  $scope.assessmentTotalQuestions = function(assessment){
+    let sum = 0;
+    for(let rule of assessment.rules)
+      sum+=rule.numRequired;
+    sum+=assessment.questions.length;
+    return sum + ' Total Question' + (sum != 1? 's':'');
   };
 
   $scope.questionBadgeTopic = function(question){
@@ -336,7 +469,13 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     return output;
   };
 
-  $scope.formatAssessmentQuestion = function(question) {
+  $scope.formatAssessmentQuestion = function(question){
+    let jsonUID = angular.toJson(question.UID).replace('"/g','\"');
+    let highlighted = $filter('highlight')(question.questionTitle,$scope.assessmentsFilter.query,$scope.assessmentsFilter.caseSensitive);
+    return '<a href="#" ng-click=\'editQuestion('+jsonUID+')\'>'+ highlighted + '</a> ' + $scope.formatQuestionType(question);
+  };
+
+  $scope.formatQuestion = function(question) {
     let jsonUID = angular.toJson(question.UID).replace('"/g','\"');
     return '<a href="#" ng-click=\'editQuestion('+jsonUID+')\'>'+question.questionTitle + '</a> ' + $scope.formatQuestionType(question);
   };
@@ -499,7 +638,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   function createTab(tabName,contentURL,ctrl,data){
     if(!data)
       data = {};
-    
+
     let tab = {
       id: nextID,
       name: tabName,
@@ -509,7 +648,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     };
     nextID++;
     $scope.tabs.push(tab);
-    
+
     return tab.id;
   }
 

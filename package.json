@@ -1,7 +1,7 @@
 {
   "name": "Assessorator",
   "version": "0.6.1",
-  "description": "An application designed to generate assessments in edX format based on multiple choice questions.",
+  "description": "An application designed manage multiple choice question banks, generate assessments and export in edX format.",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
