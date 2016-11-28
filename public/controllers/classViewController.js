@@ -53,6 +53,35 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     caseSensitive: false
   };
 
+  //Used for sorting
+  $scope.sortModes = [
+    {name:'Alphabetical (A-Z)', icon: 'glyphicon-sort-by-alphabet', ascending: true, fieldIndex: 0},
+    {name: 'Alphabetical (Z-A)', icon: 'glyphicon-sort-by-alphabet-alt', ascending: false, fieldIndex: 0},
+    {name: 'Date Added (New-Old)', icon: 'glyphicon-sort-by-order', ascending: false, fieldIndex: 1},
+    {name: 'Date Added (Old-New)', icon: 'glyphicon-sort-by-order-alt', ascending: true, fieldIndex: 1}
+  ];
+  $scope.sortFieldsQuestions = ['questionTitle', 'creationDate'];
+  $scope.questionsSort = $scope.sortModes[0];
+  $scope.objectivesSort = $scope.sortModes[0];
+  $scope.topicsSort = $scope.sortModes[0];
+  $scope.assessmentsSort = $scope.sortModes[0];
+
+  $scope.incrementSortMode = function(keyval){
+    let index = $scope.sortModes.indexOf($scope[keyval]);
+    index++;
+    if(index >= $scope.sortModes.length)
+      index = 0;
+    $scope[keyval] = $scope.sortModes[index];
+  };
+  $scope.getSortParams = function(tabType,sortMode){
+    let key,mode;
+    if(tabType === 'questions'){
+      key=$scope.sortFieldsQuestions[sortMode.fieldIndex];
+    }
+
+    return {key: key, mode: sortMode};
+  };
+
 
   $scope.filterTopics = function(){
     let topics = $scope.class.topics;

@@ -135,10 +135,6 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       document.querySelector('#topicChooserInput').focus();
       showToast('Only One Topic may be selected.',$mdToast);
     }
-    if ($scope.question.answers.length < 3){ //Counting ghost answer
-      showToast('A Question must have at least two answers.',$mdToast);
-      return;
-    }
     if ($scope.question.answers.length > 1){
       let correct = false;
       for(let x=0;x<$scope.question.answers.length - 1;x++){ //Last one is always ghost answer

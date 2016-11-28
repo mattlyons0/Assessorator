@@ -98,3 +98,20 @@ app.filter('highlight', function() {
       return query && matchItem ? ('' + matchItem).replace(new RegExp(escapeRegexp(query), mod), '<span class="ui-select-highlight">$&</span>') : matchItem;
     };
   });
+
+app.filter('sort', function(){
+  return function(arr,params){
+    let mult = 1;
+    if(!params.mode.ascending)
+      mult = -1;
+    return arr.sort(function (a, b) {
+      let objA = a[params.key];
+      let objB = b[params.key];
+      if (objA > objB)
+        return mult;
+      if (objA < objB)
+        return -1 * mult;
+      return 0;
+    });
+  };
+});

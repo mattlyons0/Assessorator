@@ -29,6 +29,8 @@ class Question {
     /** List of pointers to objective objects
      * @type {Objective[]} */
     this.objectives = [];
+
+    this.creationDate = Date.now();
   }
 }
 

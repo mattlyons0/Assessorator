@@ -288,6 +288,17 @@ function updateDataFormat(course) {
       }
     }
   }
+
+  //Check for question.creationDate field and populate with current date and time if doesn't exist
+  for (let topic of course.topics){
+    for(let question of topic.questions){
+      if(!question.creationDate){
+        console.log('Database has been upgraded to add creation dates to assessments. ' +
+          'All assessments from prior versions will have the same creation date.');
+        question.creationDate = Date.now();
+      }
+    }
+  }
 }
 
 function repairPointers(course) {
@@ -314,14 +325,16 @@ function repairPointers(course) {
         let oldTopic = rule.topics.splice(0, 1)[0];
         if (oldTopic) {
           let topic = courseUtil.getTopic(oldTopic.ID);
-          rule.topics.push(topic);
+          if(topic) //Handle if it was a dangling reference
+            rule.topics.push(topic);
         }
       }
       for (let i = 0; i < rule.objectives.length; i++) {
         let oldObjective = rule.objectives.splice(0, 1)[0];
         if (oldObjective) {
           let objective = courseUtil.getObjective(oldObjective.ID);
-          rule.objectives.push(objective);
+          if(objective) //Handle if it was a dangling reference
+            rule.objectives.push(objective);
         }
       }
     }
@@ -329,7 +342,8 @@ function repairPointers(course) {
       let oldQuestion = assessment.questions.splice(i, 1)[0];
       if (oldQuestion) {
         let question = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID)).getQuestion(oldQuestion.ID);
-        assessment.questions.push(question); //Repair pointer
+        if(question) //Handle if it was a dangling reference
+          assessment.questions.push(question); //Repair pointer
       }
     }
   }

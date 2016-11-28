@@ -10,7 +10,6 @@
     <h2>Bugs</h2>
     <ul>
         <li>There are some areas which don't scroll/scrolling offset is wrong</li>
-        <li>Using per tab style tags doesn't work because it applies the rule from the tab which has loaded most recently</li>
         <li>Objectives to Questions don't get modified when the objective is modified</li>
         <li>Pointers that need to be repaired are a waste of storage space. Store ID's instead (although be careful to store topic id of questions)</li>
         <li>Exporting large databases crashes the window (out of memory)</li>
@@ -30,11 +29,14 @@
         <li>Assessment generation is broken</li>
         <li>Handle different types of quotes in filter, " and the angled ones as the same</li>\
         <li>Courses on homepage cannot be rearranged</li>
-        <li>Indicate deleted objectives and topics used in rules of assessments more clearly (although currently do an adequate job)</li>
+        <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning </li>
+        <li>Upon deletion of questions used as manual questions within assessments delete those manual questions and provide warning</li>
+        <li>Filtering and alphabetizing is done very inefficiently by angular (sorting is redone every scroll, filtering might be too)</li>
     </ul>
 
     <h2>Features</h2>
     <ul>
+        <li>Cycle backwards through sorting modes when right clicking</li>
         <li>UI Revamp</li>
         <ul>
             <li>Remove Angular Deps other than (Angular, Angular-animate, Angular-touch) (Possibly others I use?)</li>
@@ -101,6 +103,7 @@
             <li>Option to duplicate course?</li>
             <li>Year Ranges?</li>
         </ul>
+        <li>Add a way to find incomplete questions (questions without at least 2 answers or without a correct answer)</li>
         <li>Replace libs with min versions</li>
     </ul>
     <a href="http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html">edX Question Formats</a>

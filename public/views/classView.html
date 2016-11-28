@@ -346,6 +346,10 @@
                                             </div>
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
+                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
+                                                        uib-tooltip="{{ 'Sort By: '+questionsSort.name }}" ng-click="incrementSortMode('questionsSort')">
+                                                    <span class="glyphicon {{questionsSort.icon}}"></span>
+                                                </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="questionsFilter.open = !questionsFilter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
@@ -427,7 +431,7 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="question in filterQuestions()" is-open="questionOpen[$index]" context-menu="questionHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="question in (filterQuestions()|sort:getSortParams('questions',questionsSort))" is-open="questionOpen[$index]" context-menu="questionHeader">
                                                 <uib-accordion-heading>
                                                     <div>
                                                         <span ng-bind-html="(questionsFilter.searchQuestions && questionsFilter.open)?(question.questionTitle | highlight: questionsFilter.query:questionsFilter.caseSensitive):(question.questionTitle)"></span>
