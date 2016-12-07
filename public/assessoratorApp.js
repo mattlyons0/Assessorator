@@ -119,3 +119,21 @@ app.filter('sort', function(){
     });
   };
 });
+
+//Unused atm
+app.filter('alphabetize', function(){
+  return function(arr,key){
+    return arr.sort(function(a,b){
+      if(a[key] > b[key]){
+        return 2;
+      } else if(a[key] < b[key]){
+        return -2;
+      } else{
+        if(a.ID > b.ID)
+          return 1;
+        else
+          return -1;
+      }
+    });
+  };
+});
