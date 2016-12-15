@@ -330,6 +330,27 @@ function updateDataFormat(course) {
     }
   }
 
+  //Check
+  if(course.topics[0].ID !== 0){
+    let noTopicIndex = -1;
+    for(let i=0;i<course.topics.length;i++){
+      if(course.topics[i].ID === 0){
+        noTopicIndex = i;
+        break;
+      }
+    }
+    if(noTopicIndex == -1){
+      console.error('No Topic not found!');
+    } else{
+      let noTopic = course.topics[noTopicIndex];
+      course.topics.splice(noTopicIndex,1);
+      course.topics.splice(0,0,noTopic);
+
+      console.log('Fixed "No Topic" Index');
+      didUpdate = true;
+    }
+  }
+
   return didUpdate;
 }
 

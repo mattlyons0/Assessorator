@@ -240,8 +240,13 @@
                                                         <span ng-bind-html="(topicsFilter.open && topicsFilter.searchTopics)?(topic.topicName|highlight:topicsFilter.query:topicsFilter.caseSensitive):topic.topicName"></span>
                                                         <span class="badge">
                                                             {{ topicBadge(topic) }}
-                                                        </span><br/>
-                                                        <small ng-bind-html="(topicsFilter.open && topicsFilter.searchDescriptions)?(topic.topicDescription|highlight:topicsFilter.query:topicsFilter.caseSensitive):topic.topicDescription"></small>
+                                                        </span>
+                                                        <span class="badge" ng-if="topic.ID == 0" tooltip-placement="right"
+                                                              uib-tooltip="Questions without a set topic will be assigned this topic">
+                                                            Default Topic
+                                                        </span>
+                                                        <br ng-if="topic.topicDescription" />
+                                                        <small ng-if="topic.topicDescription" ng-bind-html="(topicsFilter.open && topicsFilter.searchDescriptions)?(topic.topicDescription|highlight:topicsFilter.query:topicsFilter.caseSensitive):topic.topicDescription"></small>
                                                     </div>
                                                 </uib-accordion-heading>
 

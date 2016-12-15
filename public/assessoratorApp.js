@@ -101,6 +101,8 @@ app.filter('highlight', function() {
 
 app.filter('sort', function(){
   return function(arr,params){
+    arr = arr.slice(); //Shallow copy so we don't change the order of the actual array
+
     let mult = 1;
     if(!params.mode.ascending)
       mult = -1;
