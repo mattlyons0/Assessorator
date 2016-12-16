@@ -192,6 +192,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
         if(i<len){
           question.answers[i].answerText = $scope.question.answers[i].text;
           question.answers[i].correct = $scope.question.answers[i].correct;
+          question.answers[i].pinned = $scope.question.answers[i].pinned;
         } else{
           new QuestionUtils(question).createAnswer($scope.question.answers[i].text, $scope.question.answers[i].correct, $scope.question.answers[i].pinned);
         }
