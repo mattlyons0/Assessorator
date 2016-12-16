@@ -417,7 +417,7 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   };
 
   $scope.importQuestions = function(){
-    createTab("Import Questions", "views/importQuestions.html","importQuestionsCtrl");
+    createTab("Import Questions", "views/importQuestions.html","importQuestionsCtrl",{callback: $scope.updateQuestionCount});
   };
 
   $scope.exportAssessment = function(assessmentID){

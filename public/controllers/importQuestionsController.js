@@ -171,6 +171,9 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
   };
 
   $scope.cleanup = function () {
+    if($scope.tabData.callback){
+      $scope.tabData.callback();
+    }
     $scope.$parent.closeTab($scope.tabID);
   };
 
