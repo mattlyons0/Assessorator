@@ -32,7 +32,10 @@
         <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning </li>
         <li>Upon deletion of questions used as manual questions within assessments delete those manual questions and provide warning</li>
         <li>Filtering and alphabetizing is done very inefficiently by angular (sorting is redone every scroll, filtering might be too)</li>
-        <li>Pins aren't saving</li>
+        <li>Objectives tab elements aren't alphabetized</li>
+        <li>Topics tab elements aren't alphabetized</li>
+        <li>Window icon on windows is the default electron icon</li>
+        <li>Importing questions by file adds ? symbols to every quote</li>
     </ul>
 
     <h2>Features</h2>
@@ -40,6 +43,7 @@
         <li>UI Revamp</li>
         <ul>
             <li>Remove Angular Deps other than (Angular, Angular-animate, Angular-touch) (Possibly others I use?)</li>
+
         </ul>
         <li>Polished UI</li>
         <ul>
@@ -52,6 +56,17 @@
             <ul>
                 <li>Focus query field when clicking filter</li>
                 <li>Cycle backwards through sorting modes when right clicking</li>
+                <li>Still needs to be denser for Tom (reduce margins)</li>
+                <li>Store expanded questions by question not position</li>
+                <li>Expand all and collapse all respect filters (only expand or colapse those shown currently)</li>
+                <li>Bulk editing mode</li>
+                <ul>
+                    <li>Button to select all (which respects filters)</li>
+                    <li>bulk delete</li>
+                    <li>bulk set topic</li>
+                    <li>bulk add objective</li>
+                    <li>bulk remove objective</li>
+                </ul>
             </ul>
             <li>Retrieve classes and incrementally update the UI as they are received (instead of doing them all at once)</li>
         </ul>
