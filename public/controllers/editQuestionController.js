@@ -133,13 +133,13 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       return;
     if($scope.topic.selected.length > 1){
       document.querySelector('#topicChooserInput').focus();
-      showToast('Only One Topic may be selected.',$mdToast);
+      showToast('Only One Topic may be selected.');
     }
     if ($scope.question.answers.length > 1){
       let correct = false;
       for(let x=0;x<$scope.question.answers.length - 1;x++){ //Last one is always ghost answer
         if(!$scope.question.answers[x].text){
-          showToast('An Answer cannot be empty.',$mdToast);
+          showToast('An Answer cannot be empty.');
           document.querySelector('#questionAnswer'+x).focus();
           return;
         }
@@ -147,7 +147,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
           correct=true;
       }
       if(!correct){
-        showToast('A Question must have a correct answer.',$mdToast);
+        showToast('A Question must have a correct answer.');
         return;
       }
     }

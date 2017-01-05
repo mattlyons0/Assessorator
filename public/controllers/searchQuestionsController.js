@@ -264,17 +264,17 @@ function CreateRuleController($scope, $mdDialog, $mdToast) {
   $scope.submit = function () {
     if(!$scope.rule.selector) {
       document.getElementById("ruleSelector").focus();
-      showToast('A data source is required.',$mdToast);
+      showToast('A data source is required.');
       return;
     }
     if(!$scope.rule.condition){
       document.getElementById("ruleCondition").focus();
-      showToast('A condition is required.',$mdToast);
+      showToast('A condition is required.');
       return;
     }
     if($scope.rule.value.length == 0){
       document.getElementById("inputChooser").focus();
-      showToast('You must choose at least one '+$scope.rule.selector.toLowerCase()+'.',$mdToast);
+      showToast('You must choose at least one '+$scope.rule.selector.toLowerCase()+'.');
       return;
     }
 

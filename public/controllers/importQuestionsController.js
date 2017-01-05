@@ -52,7 +52,7 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
 
   $scope.import = function () {
     if (!$scope.input.data) {
-      showToast('No text entered.', $mdToast);
+      showToast('No text entered.');
       return;
     }
     let topic = $scope.topic.selected[0]; //Topic object
@@ -140,11 +140,11 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
     }
 
     if (!questions.length) {
-      showToast('No questions found.', $mdToast);
+      showToast('No questions found.');
       return [];
     }
     if (earlyAnswerError) {
-      showToast('Found answer before question!', $mdToast);
+      showToast('Found answer before question!');
     }
     let answerLess = [];
     for (let question of questions) {
@@ -158,13 +158,13 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
         }
       }
       if (correct == false) {
-        showToast('At least one question does not have a correct answer.', $mdToast);
+        showToast('At least one question does not have a correct answer.');
         return [];
       }
     }
     if (answerLess.length > 0) {
       showToast('There ' + (answerLess.length > 1 ? 'are' : 'is') + ' ' + answerLess.length + ' question' + (answerLess.length > 1 ? 's' : '') +
-        ' with less than 2 answers',$mdToast,5);
+        ' with less than 2 answers','','',5);
     }
 
     return questions;
@@ -206,7 +206,7 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       for (let selectedFile of selectedFiles) {
         fs.readFile(selectedFile,'utf8', function(err,data){
           if(err){
-            showToast('Error reading file: '+selectedFile,$mdToast);
+            showToast('Error reading file: '+selectedFile);
             console.error('Error reading file "'+selectedFile+'"\n'+err);
           } else{
             $scope.input.data+=data;

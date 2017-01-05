@@ -96,7 +96,7 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
 
     if(incompleteRules.length > 0){
       showToast(incompleteRules.length+" rule"+(incompleteRules.length>1?'s':'')+" could not be satisfied for this assessment. " +
-        "The assessment generated is incomplete.",$mdToast,7);
+        "The assessment generated is incomplete.",'','',7);
     }
 
     let out = "";
@@ -136,7 +136,7 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
 
   $scope.saveToFile = function(){
     if(!$scope.output.data || !$scope.output.data.trim()){
-      showToast('An assessment must be generated to be able to save it.',$mdToast);
+      showToast('An assessment must be generated to be able to save it.');
       return;
     }
 
@@ -150,10 +150,10 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
     if(saveDirectory){
       fs.writeFile(saveDirectory,$scope.output.data, function(err){
         if(err){
-          showToast('Error saving file.',$mdToast);
+          showToast('Error saving file.');
           console.error('Error saving file "'+saveDirectory+'"\n'+err);
         } else{
-          showToast("File Saved to '"+saveDirectory+"'",$mdToast);
+          showToast("File Saved to '"+saveDirectory+"'");
           // require('electron').shell.showItemInFolder(saveDirectory);
         }
       });

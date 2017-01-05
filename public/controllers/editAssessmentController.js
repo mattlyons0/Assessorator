@@ -219,7 +219,7 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
       }
       for(let topic of rule.topics){
         if(allTopicRules.has(topic)){
-          showToast("Topic '"+topic.topicName+"' conflicts with other requirements",$mdToast);
+          showToast("Topic '"+topic.topicName+"' conflicts with other requirements");
           return true;
         }
       }
@@ -233,7 +233,7 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
       }
       for(let objective of rule.objectives){
         if(allTopicRules.has(objective)){
-          showToast("Objective '"+objective.objectiveText+"' conflicts with other requirements",$mdToast);
+          showToast("Objective '"+objective.objectiveText+"' conflicts with other requirements");
           return true;
         }
       }

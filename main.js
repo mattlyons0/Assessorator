@@ -1,6 +1,7 @@
 'use strict';
 
 const electron = require('electron');
+const autoUpdater = require('electron-auto-updater').autoUpdater;
 const app = electron.app; // Module to control application life.
 const BrowserWindow = electron.BrowserWindow; // Module to create native browser window.
 const dialog = electron.dialog;
@@ -10,6 +11,37 @@ const pkg = require('./package.json');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+function registerUpdater(){
+  //Don't autoupdate dev env or linux
+  // if(process.env.NODE_ENV === 'dev' || os.platform() === 'linux') {
+  //   return;
+  // }
+  const version = app.getVersion();
+
+  autoUpdater.addListener('update-available', function(event) {
+    showToast('A update is available');
+  });
+  autoUpdater.addListener('update-downloaded', function(event,releaseNotes,releaseName,releaseDate,updateURL){
+    showToast('A new update is ready to install. Version '+ releaseName +' released on '+ releaseDate +' will be automatically installed on Quit');
+    showToast('Changes: '+releaseNotes+'\nURL: '+updateURL);
+  });
+  autoUpdater.addListener('error', function(error){
+    showToast('Error within autoUpdater.','','error');
+    showToast(error);
+  });
+  autoUpdater.addListener('checking-for-update', function(event){
+    showToast('Checking for update...');
+  });
+  autoUpdater.addListener('update-not-available', function(){
+    showToast('Update not available');
+  });
+
+  mainWindow.webContents.once('did-frame-finish-load', function(event){
+    showToast('trigger update check');
+    autoUpdater.checkForUpdates();
+  });
+}
 
 function createWindow() {
   // Create the browser window.
@@ -41,7 +73,7 @@ function createWindow() {
 
     dialog.showMessageBox({type: "question", buttons: buttons, title: name+" has become unresponsive",
     message: "Would you like to restart the application or wait?"}, function(response){
-      if(response == 0){ //Kill the window
+      if(response === 0){ //Kill the window
         mainWindow.destroy();
         createWindow();
 
@@ -52,10 +84,15 @@ function createWindow() {
   })
 }
 
+function showToast(title,content,level){
+  mainWindow.send('toast',title,content,level);
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
   createWindow();
+  registerUpdater();
 });
 
 // Quit when all windows are closed.

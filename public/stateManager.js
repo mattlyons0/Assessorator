@@ -118,37 +118,6 @@ UI.printData = function () {
   console.log(state);
 };
 
-let toastQueue = [];
-let currentToast = false;
-var showToast = function (textContent, $mdToast,delay) {
-  let hideDelay = 3 * 1000;
-  if(delay > 0){
-    hideDelay = delay * 1000;
-  }
-  if (!$mdToast) {
-    console.error("showToast was called without a $mdToast variable");
-    return;
-  }
-  toastQueue.push({
-    call: $mdToast.simple().textContent(textContent).position("bottom right").hideDelay(hideDelay),
-    mdToast: $mdToast
-  });
-  if (!currentToast)
-    processToastQueue();
-};
-function processToastQueue() {
-  currentToast = toastQueue.length > 0;
-
-  for (let x = 0; x < toastQueue.length; x++) {
-    toastQueue[x].mdToast.show(toastQueue[x].call);
-    toastQueue.splice(0, 1);
-    setInterval(function () {
-      processToastQueue();
-    }, 3000);
-    return;
-  }
-}
-
 //If a string is too long will append ...
 var strLimit = function (str) {
   let limit = 30; //limit in characters
@@ -209,22 +178,22 @@ UI.importJson = function(){
       let toast = angular.element(document.querySelector('#container')).scope().$mdToast;
 
       if(selectedFile && selectedFile[0]) {
-        showToast("Importing Database...",toast,10);
+        showToast("Importing Database...",'','',10);
         fs.readFile(selectedFile[0],'utf8', function(err,data){
           if(err){
-            showToast('Import Aborted. Error reading file: '+selectedFile[0],toast,5);
+            showToast('Import Aborted. Error reading file: '+selectedFile[0],'','',5);
             console.error('Error reading file "'+selectedFile[0]+'"\n'+err);
           } else{
             json=data;
             if(!json || !json.trim()){
-              showToast("Import Aborted, selected file is empty.",toast);
+              showToast("Import Aborted, selected file is empty.");
               return;
             }
 
             let parsedJSON = JSON.parse(json);
             if(parsedJSON.courseList === undefined || parsedJSON.courseUID === undefined){
               let title = require('../package.json').name;
-              showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title,toast,5);
+              showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title,'','',5);
               return;
             }
             openJSON(parsedJSON);
@@ -249,21 +218,21 @@ function saveJSON(location){
     let err = fs.writeFileSync(location,json);
     let scope = angular.element(document.querySelector('#container')).scope();
     if(err){
-      showToast('Error saving Database.',scope.$mdToast);
+      showToast('Error saving Database.');
       console.error('Error saving Database "'+saveDirectory+'"\n'+err);
     } else{
       let data = fs.readFileSync(location,'utf8');
       if(err){
-        showToast("Error verifying saved Database.",scope.$mdToast);
+        showToast("Error verifying saved Database.");
         if(callback)
           callback();
         return;
       }
 
       if(md5(data) === md5(json)) {
-        showToast("Database Saved to '" + location + "'", scope.$mdToast);
+        showToast("Database Saved to '" + location + "'");
       } else{
-        showToast("Database Saved in Invalid State!! (Checksum of saved file did not match original)",scope.$mdToast,10);
+        showToast("Database Saved in Invalid State!! (Checksum of saved file did not match original)",'','',10);
       }
     }
   }
@@ -327,4 +296,24 @@ makeDir(dir.userData(),function(err){
   if(err){
     console.error('Error creating directory for backup file\n'+err);
   }
+});
+
+//Handle webcontents.send('toast',...) requests from main process
+var showToast = function(title,content,level,delay){
+  switch(level){
+    case 'error':
+      console.error(title);
+      break;
+    case 'warn':
+      console.warn(title);
+      break;
+    default:
+      console.log(title);
+      break;
+  }
+  if(content)
+    console.log(content);
+};
+require('electron').ipcRenderer.on('toast', function(event, title, content, level){
+  showToast(title,content,level);
 });
