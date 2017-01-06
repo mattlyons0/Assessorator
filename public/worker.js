@@ -28,6 +28,7 @@ function save(course){
     request.onsuccess = () => {
       self.postMessage('success');
       console.log('Saved');
-    }
+    };
+    db.close();
   };
 }

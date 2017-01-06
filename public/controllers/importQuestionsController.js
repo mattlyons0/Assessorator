@@ -52,7 +52,7 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
 
   $scope.import = function () {
     if (!$scope.input.data) {
-      showToast('No text entered.');
+      showToast('No text entered', {level: 'danger'});
       return;
     }
     let topic = $scope.topic.selected[0]; //Topic object
@@ -140,31 +140,30 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
     }
 
     if (!questions.length) {
-      showToast('No questions found.');
+      showToast('No questions found' , {level: 'danger'});
       return [];
     }
     if (earlyAnswerError) {
-      showToast('Found answer before question!');
+      showToast('Found answer before question! This could indicate incomplete or invalid parsing', {level: 'danger', delay: 10});
     }
     let answerLess = [];
+    let questionsWithAnswersCount = 0;
     for (let question of questions) {
       if (question.answers.length < 2)
         answerLess.push(question);
-      let correct = false;
       for (let answer of question.answers) {
-        if (answer.correct == true) {
-          correct = true;
+        if (answer.correct === true) {
+          questionsWithAnswersCount++;
           break;
         }
       }
-      if (correct == false) {
-        showToast('At least one question does not have a correct answer.');
-        return [];
-      }
     }
+    let answerlessCount = questions.length - questionsWithAnswersCount;
+    if(answerlessCount > 0)
+      showToast(answerlessCount + ' question'+(answerlessCount!==1?'s':'')+' imported do'+(answerlessCount!==1?'':'es')+' not have a correct answer.', {level: 'warning', delay: 10});
     if (answerLess.length > 0) {
-      showToast('There ' + (answerLess.length > 1 ? 'are' : 'is') + ' ' + answerLess.length + ' question' + (answerLess.length > 1 ? 's' : '') +
-        ' with less than 2 answers','','',5);
+      showToast('Imported ' + answerLess.length + ' question' + (answerLess.length !== 1 ? 's' : '') +
+        ' with less than 2 answers',{level: 'warning', delay:10});
     }
 
     return questions;
@@ -206,11 +205,12 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       for (let selectedFile of selectedFiles) {
         fs.readFile(selectedFile,'utf8', function(err,data){
           if(err){
-            showToast('Error reading file: '+selectedFile);
-            console.error('Error reading file "'+selectedFile+'"\n'+err);
+            showToast('Error reading file: '+selectedFile, {level: 'danger'});
+            console.log(err);
           } else{
             $scope.input.data+=data;
           }
+          $scope.$apply();
         });
       }
     }

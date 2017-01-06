@@ -7,6 +7,8 @@
 let appD = require('appdirectory');
 let dir = new appD("Assessorator");
 let makeDir = require('mkdirp');
+const electron = require('electron');
+let scope = undefined;
 
 var UI = {};
 
@@ -17,6 +19,9 @@ var TopicUtils = require('../data/utils/TopicUtils');
 
 let State = require('../data/State');
 let state = undefined;
+let ngToast = undefined;
+let savedToasts = [];
+let sce = undefined;
 
 let createCallbacks = [];
 
@@ -175,25 +180,27 @@ UI.importJson = function(){
         filters: [{name: 'JSON', extensions: ['json']}]
       });
 
-      let toast = angular.element(document.querySelector('#container')).scope().$mdToast;
-
       if(selectedFile && selectedFile[0]) {
-        showToast("Importing Database...",'','',10);
+        let tid = showToast('<p style="text-align:center">Importing Database...<br/><img src="img/ajax-loader.gif" style="height:19px;width:220px;margin-left:auto;margin-right:auto;opacity:.75"/></p>',
+          {keepOpen: true, disallowClose: true, compile: true});
         fs.readFile(selectedFile[0],'utf8', function(err,data){
           if(err){
-            showToast('Import Aborted. Error reading file: '+selectedFile[0],'','',5);
+            ngToast.dismiss(tid);
+            showToast('Import Aborted. Error reading file: '+selectedFile[0],{level: 'danger', delay: 10});
             console.error('Error reading file "'+selectedFile[0]+'"\n'+err);
           } else{
             json=data;
             if(!json || !json.trim()){
-              showToast("Import Aborted, selected file is empty.");
+              ngToast.dismiss(tid);
+              showToast("Import Aborted, selected file is empty.", {level: 'danger', delay:10});
               return;
             }
 
             let parsedJSON = JSON.parse(json);
             if(parsedJSON.courseList === undefined || parsedJSON.courseUID === undefined){
               let title = require('../package.json').name;
-              showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title,'','',5);
+              ngToast.dismiss(tid);
+              showToast("Import Aborted, "+title+" structure not found. File is either corrupt or not from "+title, {level: 'danger', delay: 10});
               return;
             }
             openJSON(parsedJSON);
@@ -218,21 +225,25 @@ function saveJSON(location){
     let err = fs.writeFileSync(location,json);
     let scope = angular.element(document.querySelector('#container')).scope();
     if(err){
-      showToast('Error saving Database.');
-      console.error('Error saving Database "'+saveDirectory+'"\n'+err);
+      showToast('Error saving Database.',{level: 'danger',delay:10});
+      console.error('Error saving Database "'+saveDirectory+'"\n');
+      console.log(err);
     } else{
       let data = fs.readFileSync(location,'utf8');
       if(err){
-        showToast("Error verifying saved Database.");
+        showToast("Error verifying saved Database.",{level: 'danger', delay:10});
         if(callback)
           callback();
         return;
       }
 
       if(md5(data) === md5(json)) {
-        showToast("Database Saved to '" + location + "'");
+        showToast("Database Saved to <i>"+location+"</i>"+
+          '<p class="btn btn-default" onclick="require(\'electron\').shell.showItemInFolder(\''+location+'\')" ' +
+          'style="opacity:.75;margin-left:10px; margin-bottom: 0 !important;">Open in Folder</p>',
+          {level: 'success', compile: true, keepOpen: true, apply: true, noClick: true});
       } else{
-        showToast("Database Saved in Invalid State!! (Checksum of saved file did not match original)",'','',10);
+        showToast("<b>Database Saved in Invalid State!</b> (Checksum of saved file did not match original)",{level: 'danger', keepOpen: true});
       }
     }
   }
@@ -248,6 +259,7 @@ function openJSON(parsedJSON){
         UI.save(course,function(){
           callbacks++;
           if(callbacks === count){
+            Database.closeDatabase();
             document.location.reload();
           }
         });
@@ -299,21 +311,94 @@ makeDir(dir.userData(),function(err){
 });
 
 //Handle webcontents.send('toast',...) requests from main process
-var showToast = function(title,content,level,delay){
-  switch(level){
-    case 'error':
-      console.error(title);
+UI.setToastVar = function(toastVar,$sce){
+  ngToast = toastVar;
+  sce = $sce;
+};
+//Options:
+//  'level': success,info,warning,danger. Undefined defaults to info.
+//  'delay': value in seconds, 0 or undefined defaults to 4.
+//  'keepOpen': if true toast will not be automatically dismissed. Defaults to false
+//  'disallowClose': if true closing will not be allowed. Defaults to false
+//  'compile': if true contents will be signed with $sce and compiled by angular if needed. Defaults to false
+//  'apply': if true will invoke $apply after showing notification (generally needed when showing toast after system dialog). Defaults to false
+//  'noClick': if true will disable closing notification on click. Defaults to false
+//TIDName: name to store tid under, accessible from modifyToast
+var showToast = function(content,options,tidName){
+  if(ngToast === undefined){
+    console.error('Called showToast before defining ngToast!');
+    console.log(content);
+    return;
+  }
+
+  if(options == undefined || options == '')
+    options = {};
+  if(options.level == undefined || options.level == '')
+    options.level = 'info';
+  if(options.delay == undefined)
+    options.delay = 4000;
+  else
+    options.delay *= 1000;
+  if(options.keepOpen !== true)
+    options.keepOpen = false;
+  if(options.disallowClose !== true)
+    options.disallowClose = false;
+  if(options.compile !== true)
+    options.compile = false;
+  if(options.apply !== true)
+    options.apply = false;
+  if(options.noClick !== true)
+    options.noClick = false;
+
+  let toastID = ngToast.create({
+    className: options.level,
+    content: options.compile?sce.trustAsHtml(content):content,
+    dismissOnTimeout: !options.keepOpen,
+    dismissButton: options.keepOpen && !options.disallowClose,
+    dismissOnClick: !(options.disallowClose || options.noClick),
+    timeout: options.delay,
+    compileContent: options.compile
+  });
+  switch(options.level){
+    case 'danger':
+      console.error(content);
       break;
-    case 'warn':
-      console.warn(title);
-      break;
-    default:
-      console.log(title);
+    case 'warning':
+      console.warn(content);
       break;
   }
-  if(content)
-    console.log(content);
+
+  if(tidName)
+    savedToasts[tidName] = toastID;
+
+  scope = angular.element(document.querySelector('#container')).scope();
+  if(options.apply || scope.page.URL.includes('classes.html')) //This page has problems detecting the digest for some reason
+    scope.$apply(); //Force update
+  return toastID;
 };
-require('electron').ipcRenderer.on('toast', function(event, title, content, level){
-  showToast(title,content,level);
+var modifyToast = function(tidName,newContent){
+  let toastMessage = undefined;
+  for(let message of ngToast.messages){
+    if(message.id === savedToasts[tidName]){
+      toastMessage = message;
+      break;
+    }
+  }
+  if(toastMessage !== undefined) {
+    toastMessage.content= sce.trustAsHtml(newContent);
+    scope.$apply(); //Force update
+  } else{
+    console.warn('Cannot find toast id \''+tidName);
+    console.warn(savedToasts);
+  }
+};
+
+electron.ipcRenderer.on('toast', function(event, content, options,tidName){
+  showToast(content,options,tidName);
+});
+electron.ipcRenderer.on('editToast', function(event,tid,newContent){
+  modifyToast(tid,newContent);
+});
+electron.ipcRenderer.on('dismissToast', function(event,tName){
+  ngToast.dismiss(savedToasts[tName].id);
 });

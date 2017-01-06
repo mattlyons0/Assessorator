@@ -96,7 +96,7 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
 
     if(incompleteRules.length > 0){
       showToast(incompleteRules.length+" rule"+(incompleteRules.length>1?'s':'')+" could not be satisfied for this assessment. " +
-        "The assessment generated is incomplete.",'','',7);
+        "The assessment generated is incomplete.", {level: 'warning', delay: 7});
     }
 
     let out = "";
@@ -136,7 +136,7 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
 
   $scope.saveToFile = function(){
     if(!$scope.output.data || !$scope.output.data.trim()){
-      showToast('An assessment must be generated to be able to save it.');
+      showToast('An assessment must be generated to be able to save it', {level: 'danger'});
       return;
     }
 
@@ -150,11 +150,14 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
     if(saveDirectory){
       fs.writeFile(saveDirectory,$scope.output.data, function(err){
         if(err){
-          showToast('Error saving file.');
-          console.error('Error saving file "'+saveDirectory+'"\n'+err);
+          showToast('Error saving file', {level: 'danger', keepOpen: true});
+          console.error('Error saving file "'+saveDirectory+'"');
+          console.log(err);
         } else{
-          showToast("File Saved to '"+saveDirectory+"'");
-          // require('electron').shell.showItemInFolder(saveDirectory);
+          showToast("File Saved to '"+saveDirectory+"'"+
+            '<p class="btn btn-default" onclick="require(\'electron\').shell.showItemInFolder(\''+saveDirectory+'\')" ' +
+            'style="opacity:.75;margin-left:10px; margin-bottom: 0 !important;">Open in Folder</p>',
+            {level: 'success', compile: true, keepOpen: true, apply: true, noClick: true});
         }
       });
     }

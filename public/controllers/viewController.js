@@ -1,7 +1,7 @@
 "use strict";
-app.controller("viewCtrl", function ($scope, $uibModal, $document,$mdToast) {
-  $scope.$mdToast = $mdToast;
+app.controller("viewCtrl", function ($scope, $uibModal, $document,$mdToast, ngToast, $sce) {
   var process = require('process');
+  UI.setToastVar(ngToast,$sce);
 
   let pkg = require('../package.json');
 
@@ -25,7 +25,7 @@ app.controller("viewCtrl", function ($scope, $uibModal, $document,$mdToast) {
   };
 
   $scope.about = function(){
-    let authorHtml = '<span style="float:right">Developed by Matt Lyons &lt;matt@mattlyons.net&gt;</span>';
+    let authorHtml = '<span style="float:right">Developed by Matt Lyons &lt;<a href="mailto:matt@mattlyons.net">matt@mattlyons.net</a>&gt;</span>';
     let versionHtml = '<span style="float: left">Version: '+pkg.version+'</span>';
     let html = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item active"><h2 style="margin-top:10px">'+pkg.name+'</h2></div>'
       +'<li class="list-group-item" style="height:40px">'+versionHtml+authorHtml+'</li>'+'<li class="list-group-item">'+pkg.description+

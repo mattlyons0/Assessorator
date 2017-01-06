@@ -1,12 +1,14 @@
 "use strict";
 
-var app = angular.module("assessoratorApp", ['ui.bootstrap','ui.bootstrap.contextMenu','ngMaterial', 'ngMessages','ngSanitize', 'ui.select']);
+var app = angular.module("assessoratorApp", ['ui.bootstrap','ui.bootstrap.contextMenu','ngMaterial', 'ngMessages','ngSanitize', 'ui.select', 'ngToast', 'ngAnimate']);
 
-app.config(function($mdThemingProvider) {
-  $mdThemingProvider.theme('warn')
-    .primaryPalette('red')
-    .accentPalette('red');
-});
+app.config(['ngToastProvider',function(ngToastProvider){
+  ngToastProvider.configure({
+    animation: 'fade',
+    verticalPosition: 'bottom',
+    combineDuplications: true
+  });
+}]);
 
 app.directive('dynamicCtrl', ['$compile', '$parse',function($compile, $parse) { //Used for a dynamic controller
   return {

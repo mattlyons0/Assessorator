@@ -41,7 +41,7 @@ function loadDatabase(callback, errorCallback) {
     let newVersion = e.newVersion;
     console.log("Upgrading Database from version " + oldVersion + ' to ' + newVersion);
 
-    if (oldVersion == 0) { //This is a new database
+    if (oldVersion === 0) { //This is a new database
       let courseStore = e.target.result.createObjectStore("courses", {keyPath: "ID"});
       courseStore.transaction.oncomplete = function (event) {
         console.log('Created courseStore');
@@ -110,7 +110,7 @@ function loadDatabase(callback, errorCallback) {
       //   }
       // }
     }
-  }
+  };
   openRequest.onsuccess = function (e) {
     console.log("Database opened successfully.");
     db = e.target.result;
@@ -145,7 +145,7 @@ function loadDatabase(callback, errorCallback) {
 
     openRequest.onblocked = function (event) {
       console.error('Error opening Database. Blocked.');
-      console.error(event); //TODO fix this not occuring (chromium bug?)
+      console.error(event); //TODO fix this not occurring (chromium bug?)
       if (errorCallback) {
         errorCallback('blocked');
       }
@@ -205,16 +205,25 @@ function getStorageUsage() {
 //   });
 // }
 
+function closeDatabase(){
+  db.close();
+}
+
 function deleteDatabase(callback) {
   var deleteDbRequest = indexedDB.deleteDatabase(DB_NAME);
   deleteDbRequest.onsuccess = function (event) {
-    console.log('Database Deleted')
+    console.log('Database Deleted');
     if (callback)
       callback();
   };
   deleteDbRequest.onerror = function (e) {
-    console.log("Database error: " + e.target.errorCode);
+    console.log("Database deletion error: " + e.target.errorCode);
   };
+  deleteDbRequest.onblocked = function(e){
+    console.log("Database delete blocked: ");
+    console.log(e);
+  };
+
   db.close();
   // fs.unlink(versionFile,function(err){
   //   if(err && err.code != 'ENOENT'){
@@ -242,22 +251,39 @@ function getCourses(callback) {
   let courseStore = db.transaction('courses', 'readonly').objectStore('courses');
   let openCursor = courseStore.openCursor();
   let courses = [];
+  let dataUpdateReturn = [];
   openCursor.onsuccess = (event) => {
     let cursor = event.target.result;
     if (cursor) {
       courses.push(cursor.value);
-      let needsSave = updateDataFormat(cursor.value);
+      let dataReturn = updateDataFormat(cursor.value);
+      dataUpdateReturn.push(dataReturn);
+      let needsSave = dataReturn.needsSave;
       repairPointers(cursor.value); //Relink assessment and objective pointers
       if(needsSave)
         UI.save(cursor.value);
       cursor.continue();
     } else { //We have finished querying the objectStore
+      postDataFormatUpdate(dataUpdateReturn);
       callback(courses);
     }
   };
   openCursor.onerror = (error) => {
     console.error('Error getting courses from disk:\n' + error);
   };
+}
+
+function postDataFormatUpdate(updateReturn){
+  let updateDate = false;
+  for(let ret of updateReturn){
+    if(ret.updateDate)
+      updateDate = true;
+  }
+
+  if(updateDate){
+    showToast('Database has been upgraded to add creation dates to assessments.<br/>' +
+      'All assessments from prior versions will have the same creation date.', {keepOpen: true});
+  }
 }
 
 /**
@@ -283,7 +309,7 @@ function updateDataFormat(course) {
       for (let topic of course.topics) {
         for (let question of topic.questions) {
           for (let obj of question.objectives) {
-            if (obj.ID == objective.ID) {
+            if (obj.ID === objective.ID) {
               objective.questionUIDs.push(question.UID);
               didUpdate = true;
               break;
@@ -295,11 +321,11 @@ function updateDataFormat(course) {
   }
 
   //Check for question.creationDate field and populate with current date and time if doesn't exist
+  let updateDate = false;
   for (let topic of course.topics){
     for(let question of topic.questions){
       if(!question.creationDate){
-        console.log('Database has been upgraded to add creation dates to assessments. ' +
-          'All assessments from prior versions will have the same creation date.');
+        updateDate = true;
         question.creationDate = Date.now();
         didUpdate = true;
       }
@@ -351,7 +377,7 @@ function updateDataFormat(course) {
     }
   }
 
-  return didUpdate;
+  return {needsSave: didUpdate, updateDate: updateDate};
 }
 
 function repairPointers(course) {
@@ -432,5 +458,6 @@ Database.addCourse = addCourse;
 Database.getCourses = getCourses;
 Database.modifyCourse = modifyCourse;
 Database.deleteCourse = deleteCourse;
+Database.closeDatabase = closeDatabase;
 
 module.exports = Database;

@@ -219,7 +219,7 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
       }
       for(let topic of rule.topics){
         if(allTopicRules.has(topic)){
-          showToast("Topic '"+topic.topicName+"' conflicts with other requirements");
+          showToast("Topic '"+topic.topicName+"' is already used in a different requirement", {level: 'danger'});
           return true;
         }
       }
@@ -233,7 +233,7 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
       }
       for(let objective of rule.objectives){
         if(allTopicRules.has(objective)){
-          showToast("Objective '"+objective.objectiveText+"' conflicts with other requirements");
+          showToast("Objective '"+objective.objectiveText+"' is already used in a different requirement", {level: 'danger'});
           return true;
         }
       }
@@ -243,19 +243,19 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
 
   $scope.submit = function () {
     if($scope.questions.rules[$scope.index].type == 'Topic' && !$scope.questions.rules[$scope.index].topics.length){
-      showToast("At least one topic must be selected",$mdToast);
+      showToast("At least one topic must be selected",{level: 'danger'});
       document.getElementById('inputChooser').focus();
       return;
     } else if($scope.questions.rules[$scope.index].type == 'Objective' && !$scope.questions.rules[$scope.index].objectives.length){
-      showToast("At least one objective must be selected", $mdToast);
+      showToast("At least one objective must be selected", {level: 'danger'});
       document.getElementById('inputChooser').focus();
       return;
     } else if(!$scope.questions.rules[$scope.index].type){
-      showToast("A type must be selected", $mdToast);
+      showToast("A type must be selected", {level: 'danger'});
       document.getElementById('reqType').focus();
       return;
     } else if($scope.questions.rules[$scope.index].numRequired < 1){
-      showToast("Number of questions must be greater than 0",$mdToast);
+      showToast("Number of questions must be greater than 0",{level: 'danger'});
       document.getElementById('numQuestions').focus();
       return;
     }

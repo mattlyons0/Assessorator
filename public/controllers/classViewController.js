@@ -264,14 +264,14 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   };
   $scope.deleteTopic = function(id){
     let topic = new CourseUtils($scope.class).getTopic(id);
-    if(id == 0){
-      showToast("Cannot delete '"+topic.topicName+"' as it is the topic questions without a topic are shown under.");
+    if(id === 0){
+      showToast("Cannot delete '"+topic.topicName+"' as it is the topic questions without a topic are shown under.", {level: 'warning', delay: 7});
       return;
     }
 
     if(topic.questions.length > 0){
       showToast("'"+topic.topicName+"' contains "+topic.questions.length+" question"+(topic.questions.length>1?'s':'')+
-        ". All questions must be "+"removed from a topic before it can be deleted.");
+        ".All questions must be "+"removed from a topic before it can be deleted.",{level: 'warning', delay:10});
       return;
     }
     let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Topic \''+topic.topicName+'\'?')

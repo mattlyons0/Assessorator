@@ -6,6 +6,8 @@
 
     <link rel="stylesheet" href="theme.css"/>
     <link rel="stylesheet" href="libs/angular-material.css"/>
+    <link rel="stylesheet" href="libs/ngToast.css"/>
+    <link rel="stylesheet" href="libs/ngToast-animations.css">
     <link rel="stylesheet" href="libs/select.css"/>
     <link rel="stylesheet" href="libs/bootstrap.css">
     <link rel="stylesheet" href="libs/bootstrap-theme.css">
@@ -28,11 +30,13 @@ See http://stackoverflow.com/questions/15538125/angularjs-in-head-vs-body -->
 <script src="libs/ui-bootstrap-tpls.js"></script>
 <script src="libs/contextMenu.js"></script>
 <script src="libs/select.js"></script>
+<script src="libs/ngToast.js"></script>
 
 
 <script src="assessoratorApp.js"></script>
 <script src="controllers/viewController.js"></script>
 <script src="controllers/classesController.js"></script>
+
 <!--TODO figure out why this won't load in classView.html-->
 <script src="controllers/classViewController.js"></script>
 <script src="controllers/editTopicController.js"></script>
@@ -46,6 +50,7 @@ See http://stackoverflow.com/questions/15538125/angularjs-in-head-vs-body -->
 <script src="databaseManager.js"></script>
 
 <div ng-app="assessoratorApp" ng-controller="viewCtrl" id="container" class="greyBackground" style="height:100%">
+    <toast></toast>
 
     <div ng-include="'views/'+page.URL"></div>
 
@@ -57,5 +62,6 @@ See http://stackoverflow.com/questions/15538125/angularjs-in-head-vs-body -->
         <md-button onclick="UI.freeze()">UnresponsiveTest</md-button>
     </p>
 </div>
+
 </body>
 </html>
