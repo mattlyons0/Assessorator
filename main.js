@@ -22,7 +22,7 @@ function registerUpdater(){
   autoUpdater.addListener('update-available', function(event) {
     showToast('A update is available and will be downloaded in the background shortly.');
     showToast('<p style="text-align:center">Downloading at 0.00 mbps<p/>'+
-      '<div class="progress progress-striped active"><div class="progress-bar" style="width:1%"</div>',
+      '<div class="progress progress-striped active"><div class="progress-bar progress-bar-info" style="width:100%">Starting Download...</div>',
       {level: 'success', keepOpen: true, noClick: true, disallowClose: true},'downloadProgress');
 
   });
@@ -33,9 +33,9 @@ function registerUpdater(){
       '<div style="text-align:center"><p class="btn btn-default" onclick="require(\'electron\').ipcRenderer.send(\'installUpdate\')" ' +
       'style="opacity:.75; margin 0 !important;">Restart and Install Now</p></div>', {level: 'success', keepOpen: true, noClick: true, compile: true});
   });
-  autoUpdater.addListener('download-progress', function(event,data){
+  autoUpdater.addListener('download-progress', function(data){
     editToast('downloadProgress','<p style="text-align:center">Downloading at '+ (data.bytesPerSecond/125000.0).toFixed(2) +' mbps</p>'+
-      '<div class="progress progress-striped active"><div class="progress-bar" style="width:'+data.percent+'%"</div>');
+      '<div class="progress progress-striped active"><div class="progress-bar" style="width:'+data.percent+'%">'+(data.percent).toFixed(2)+'%</div>');
   });
   autoUpdater.addListener('error', function(error){
     showToast('Error checking for updates.',{level: 'warning', delay:10});
@@ -55,7 +55,10 @@ function registerUpdater(){
 
 function createWindow() {
   //Save window location and make sure it is visible on screen
-  let mainState = new windowState({defaultWidth:1280,defaultHeight:720});
+  const widthMult = 0.9;
+  const heightMult = 0.85
+  let mainDisplay = electron.screen.getPrimaryDisplay();
+  let mainState = new windowState({defaultWidth:mainDisplay.size.width * 0.9,defaultHeight:mainDisplay.size.height * 0.85});
   let x = mainState.x;
   let y = mainState.y;
   let width = mainState.width;
@@ -98,8 +101,8 @@ function createWindow() {
   mainWindow.on('close',function(e){
     // mainWindow.hide(); //Appear as the window is closed
 
-    // e.preventDefault(); //Delay closing until onClose finishes
-    // mainWindow.webContents.executeJavaScript("UI.onClose()",function(){mainWindow.destroy();}); //Execute UI.onClose() then destroy the window
+    e.preventDefault(); //Delay closing until onClose finishes
+    mainWindow.webContents.executeJavaScript("UI.onClose()"); //Execute UI.onClose() which will destroy the window
   });
 
   // Emitted when the window is closed.
@@ -131,8 +134,14 @@ function showToast(content,options,tidName){
 function editToast(tidName,newContent){
   mainWindow.send('editToast',tidName,newContent);
 }
+//Called by autoupdate tooltip once update is done downloading
 electron.ipcMain.on('installUpdate', function(){
   autoUpdater.quitAndInstall();
+});
+
+//Called by UI.onClose() once close scripts are done running
+electron.ipcMain.on('destroy', function(){
+  mainWindow.destroy();
 });
 
 // This method will be called when Electron has finished

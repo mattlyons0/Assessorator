@@ -151,10 +151,31 @@ UI.stressTest = function () {
 };
 
 //Called when the window is closed, will wait to close process until this function is done executing
-UI.onClose = function(callback){
-  saveJSON(dir.userData()+'/dbBackup.json',callback);
+UI.onClose = function(){
+  try {
+    let courses = state.courseList;
+    let coursesSaved = 0;
+    if (courses && courses.length) {
+      for (let course of courses) {
+        UI.save(course, function () {
+          coursesSaved++;
+          if (coursesSaved === courses.length) {
+            saveJSON(dir.userData() + '/dbBackup.json', UI.destroy());
+          }
+        });
+      }
+    } else {
+      UI.destroy();
+    }
+  } catch(err){
+    UI.destroy();
+  }
 };
 
+//Will destroy the main window process
+UI.destroy = function(){
+  require('electron').ipcRenderer.send('destroy');
+};
 
 UI.exportJson = function(){
   const dialog = require('electron').remote.dialog;

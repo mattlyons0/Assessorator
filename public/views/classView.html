@@ -18,8 +18,6 @@
                             <li><a href="#" ng-click="importQuestions()">Import Questions</a></li>
                             <li><a href="#" ng-click="exportAssessment()">Export Assessment</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#" ng-click="deleteQuestions()">Delete Multiple Questions</a></li>
-                            <li role="separator" class="divider"></li>
                             <li tooltip-placement="left" uib-tooltip="Use this if the questions listed under specific objectives are wrong (or acting funny).">
                                 <a href="#" ng-click="repairObjectives()">Repair Objective Relationships</a>
                             </li>
@@ -27,8 +25,8 @@
                     </li>
                     <li tooltip-placement="bottom" uib-tooltip="Nothing here yet!"><a href="#">Settings</a></li>
                 </ul>
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
+            </div>
+        </div>
     </nav>
 
     <md-content>
@@ -37,7 +35,7 @@
                 <div autoscroll="130">
                     <md-content class="md-padding greyBackground" layout="column" layout-gt-sm="row">
 
-                        <uib-tabset justified="true">
+                        <uib-tabset justified="true" active="classView.openedTab">
                             <!-- Assessments Tab -->
                             <uib-tab index="0" context-menu="assessmentsHeading">
                                 <uib-tab-heading>
@@ -55,46 +53,46 @@
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+assessmentsSort.name }}" ng-click="incrementSortMode('assessmentsSort')">
-                                                    <span class="glyphicon {{assessmentsSort.icon}}"></span>
+                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.assessments.sort].name }}" ng-click="incrementSortMode('assessments')">
+                                                    <span class="glyphicon {{sortModes[classView.assessments.sort].icon}}"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
-                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="assessmentsFilter.open = !assessmentsFilter.open">
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.assessments.filter.open = !classView.assessments.filter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
                                             </div>
                                         </div>
 
                                         <!-- Filter Dropdown -->
-                                        <div ng-if="assessmentsFilter.open">
+                                        <div ng-if="classView.assessments.filter.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex">
                                                 <div class="input-group" style="width:65%;margin-right:2px">
-                                                    <input type="text" class="form-control" placeholder="Filter Assessments" ng-model="assessmentsFilter.query">
+                                                    <input type="text" class="form-control" placeholder="Filter Assessments" ng-model="classView.assessments.filter.query">
                                                     <span class="input-group-addon">
                                                             <label>
-                                                                <input type="checkbox" ng-model="assessmentsFilter.searchNames" style="position:relative;top:2px"/>
+                                                                <input type="checkbox" ng-model="classView.assessments.filter.searchNames" style="position:relative;top:2px"/>
                                                                 Search Names
                                                             </label>
 
                                                             <label>
-                                                                <input type="checkbox" ng-model="assessmentsFilter.searchDescriptions" style="position:relative;top:2px"/>
+                                                                <input type="checkbox" ng-model="classView.assessments.filter.searchDescriptions" style="position:relative;top:2px"/>
                                                                 Search Descriptions
                                                             </label>
 
                                                             <label>
-                                                                <input type="checkbox" ng-model="assessmentsFilter.searchQuestions" style="position:relative;top:2px"/>
+                                                                <input type="checkbox" ng-model="classView.assessments.filter.searchQuestions" style="position:relative;top:2px"/>
                                                                 Search Questions
                                                             </label>
 
                                                             <label>
-                                                                <input type="checkbox" ng-model="assessmentsFilter.caseSensitive" style="position:relative;top:2px"/>
+                                                                <input type="checkbox" ng-model="classView.assessments.filter.caseSensitive" style="position:relative;top:2px"/>
                                                                 Case Sensitive
                                                             </label>
                                                         </span>
                                                 </div>
                                                 <div style="width:35%; display:inherit">
                                                     <div class="input-group" style="width:50%;margin-right:2px">
-                                                        <ui-select allow-clear ng-model="assessmentsFilter.topicQuery" theme="bootstrap">
+                                                        <ui-select allow-clear ng-model="assessmentsQuery.topic" theme="bootstrap">
                                                             <ui-select-match placeholder="Filter Topic">
                                                                 {{$select.selected.topicName}}
                                                             </ui-select-match>
@@ -104,13 +102,13 @@
                                                             </ui-select-choices>
                                                         </ui-select>
                                                         <span class="input-group-btn">
-                                                              <button type="button" ng-click="assessmentsFilter.topicQuery = undefined" class="btn btn-default" ng-disabled="!assessmentsFilter.topicQuery">
+                                                              <button type="button" ng-click="assessmentsQuery.topic = null" class="btn btn-default" ng-disabled="!assessmentsQuery.topic">
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                               </button>
                                                             </span>
                                                     </div>
                                                     <div class="input-group" style="width:50%">
-                                                        <ui-select ng-model="assessmentsFilter.objectiveQuery" theme="bootstrap" ng-disabled="!class.objectives.length">
+                                                        <ui-select ng-model="assessmentsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
                                                             <ui-select-match placeholder="Filter Objective">
                                                                 {{$select.selected.objectiveText}}
                                                             </ui-select-match>
@@ -119,7 +117,7 @@
                                                             </ui-select-choices>
                                                         </ui-select>
                                                         <span class="input-group-btn">
-                                                              <button type="button" ng-click="assessmentsFilter.objectiveQuery = undefined" class="btn btn-default" ng-disabled="!assessmentsFilter.objectiveQuery">
+                                                              <button type="button" ng-click="assessmentsQuery.objective = null" class="btn btn-default" ng-disabled="!assessmentsQuery.objective">
                                                                 <span class="glyphicon glyphicon-remove"></span>
                                                               </button>
                                                             </span>
@@ -129,7 +127,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="assessmentAccordionScroll" autoscroll="{{ 256 + (assessmentsFilter.open?47:0) }}" ng-scroll="floatingScrollListener('assessmentAccordionScroll')">
+                                    <div id="assessmentAccordionScroll" autoscroll="{{ 256 + (classView.assessments.filter.open?46:0) }}" ng-scroll="floatingScrollListener('assessmentAccordionScroll')">
                                         <div class="container-fluid" ng-if="!class.assessments.length">
                                             <h4 class="text-info">No Assessments</h4>
                                         </div>
@@ -138,10 +136,10 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="assessment in filterAssessments()" is-open="assessmentOpen[$index]" context-menu="assessmentHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="assessment in (filterAssessments()|sort:getSortParams('assessments',classView.assessments.sort))" is-open="assessmentOpen[$index]" context-menu="assessmentHeader">
                                                 <uib-accordion-heading>
                                                     <div>
-                                                        <span ng-bind-html="(assessmentsFilter.open && assessmentsFilter.searchNames)?(assessment.assessmentName|highlight:assessmentsFilter.query:assessmentsFilter.caseSensitive):assessment.assessmentName"></span>
+                                                        <span ng-bind-html="(classView.assessments.filter.open && classView.assessments.filter.searchNames)?(assessment.assessmentName|highlight:classView.assessments.filter.query:classView.assessments.filter.caseSensitive):assessment.assessmentName"></span>
                                                         <span class="badge" ng-bind-html="assessmentTotalQuestions(assessment)"></span>
                                                         <span class="badge" ng-if="assessment.rules.length" style="background-color:lightgrey">
                                                             {{ assessmentBadgeRules(assessment) }}
@@ -149,7 +147,7 @@
                                                         <span class="badge" ng-if="assessment.questions.length">
                                                             {{ assessmentBadgeQuestions(assessment) }}
                                                         </span><br ng-if="assessment.assessmentDescription"/>
-                                                        <small ng-if="assessment.assessmentDescription" ng-bind-html="(assessmentsFilter.open && assessmentsFilter.searchDescriptions)?(assessment.assessmentDescription|highlight:assessmentsFilter.query:assessmentsFilter.caseSensitive):assessment.assessmentDescription">{{ assessment.assessmentDescription }}</small>
+                                                        <small ng-if="assessment.assessmentDescription" ng-bind-html="(classView.assessments.filter.open && classView.assessments.filter.searchDescriptions)?(assessment.assessmentDescription|highlight:classView.assessments.filter.query:classView.assessments.filter.caseSensitive):assessment.assessmentDescription">{{ assessment.assessmentDescription }}</small>
                                                     </div>
                                                 </uib-accordion-heading>
 
@@ -191,32 +189,32 @@
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+topicsSort.name }}" ng-click="incrementSortMode('topicsSort')">
-                                                    <span class="glyphicon {{topicsSort.icon}}"></span>
+                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.topics.sort].name }}" ng-click="incrementSortMode('topics')">
+                                                    <span class="glyphicon {{sortModes[classView.topics.sort].icon}}"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
-                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="topicsFilter.open = !topicsFilter.open">
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.topics.filter.open = !classView.topics.filter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
                                             </div>
                                         </div>
 
                                         <!-- Filter Dropdown -->
-                                        <div ng-if="topicsFilter.open">
+                                        <div ng-if="classView.topics.filter.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex;width:100%">
                                                 <div class="input-group" style="width:100%">
-                                                    <input type="text" class="form-control" placeholder="Filter Topics" ng-model="topicsFilter.query">
+                                                    <input type="text" class="form-control" placeholder="Filter Topics" ng-model="classView.topics.filter.query">
                                                     <span class="input-group-addon">
                                                         <label>
-                                                            <input type="checkbox" ng-model="topicsFilter.searchTopics" style="position:relative;top:2px"/>
+                                                            <input type="checkbox" ng-model="classView.topics.filter.searchTopics" style="position:relative;top:2px"/>
                                                             Search Topics
                                                         </label>
                                                         <label>
-                                                            <input type="checkbox" ng-model="topicsFilter.searchDescriptions" style="position:relative;top:2px"/>
+                                                            <input type="checkbox" ng-model="classView.topics.filter.searchDescriptions" style="position:relative;top:2px"/>
                                                             Search Descriptions
                                                         </label>
                                                         <label>
-                                                            <input type="checkbox" ng-model="topicsFilter.caseSensitive" style="position:relative;top:2px"/>
+                                                            <input type="checkbox" ng-model="classView.topics.filter.caseSensitive" style="position:relative;top:2px"/>
                                                             Case Sensitive
                                                         </label>
                                                     </span>
@@ -225,7 +223,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="topicAccordionScroll" autoscroll="{{ 256 + (topicsFilter.open?47:0) }}" ng-scroll="floatingScrollListener('topicAccordionScroll')">
+                                    <div id="topicAccordionScroll" autoscroll="{{ 256 + (classView.topics.filter.open?46:0) }}" ng-scroll="floatingScrollListener('topicAccordionScroll')">
                                         <div class="container-fluid" ng-if="!class.topics.length">
                                             <h4 class="text-info">No Topics</h4>
                                         </div>
@@ -234,10 +232,10 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in (filterTopics()|sort:getSortParams('topics',topicsSort))" is-open="topicOpen[$index]" context-menu="topicHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in (filterTopics()|sort:getSortParams('topics',classView.topics.sort))" is-open="topicOpen[$index]" context-menu="topicHeader">
                                                 <uib-accordion-heading>
                                                     <div>
-                                                        <span ng-bind-html="(topicsFilter.open && topicsFilter.searchTopics)?(topic.topicName|highlight:topicsFilter.query:topicsFilter.caseSensitive):topic.topicName"></span>
+                                                        <span ng-bind-html="(classView.topics.filter.open && classView.topics.filter.searchTopics)?(topic.topicName|highlight:classView.topics.filter.query:classView.topics.filter.caseSensitive):topic.topicName"></span>
                                                         <span class="badge">
                                                             {{ topicBadge(topic) }}
                                                         </span>
@@ -246,7 +244,7 @@
                                                             Default Topic
                                                         </span>
                                                         <br ng-if="topic.topicDescription" />
-                                                        <small ng-if="topic.topicDescription" ng-bind-html="(topicsFilter.open && topicsFilter.searchDescriptions)?(topic.topicDescription|highlight:topicsFilter.query:topicsFilter.caseSensitive):topic.topicDescription"></small>
+                                                        <small ng-if="topic.topicDescription" ng-bind-html="(classView.topics.filter.open && classView.topics.filter.searchDescriptions)?(topic.topicDescription|highlight:classView.topics.filter.query:classView.topics.filter.caseSensitive):topic.topicDescription"></small>
                                                     </div>
                                                 </uib-accordion-heading>
 
@@ -284,24 +282,24 @@
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+objectivesSort.name }}" ng-click="incrementSortMode('objectivesSort')">
-                                                    <span class="glyphicon {{objectivesSort.icon}}"></span>
+                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.objectives.sort].name }}" ng-click="incrementSortMode('objectives')">
+                                                    <span class="glyphicon {{sortModes[classView.objectives.sort].icon}}"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
-                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="objectivesFilter.open = !objectivesFilter.open">
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.objectives.filter.open = !classView.objectives.filter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
                                             </div>
                                         </div>
 
                                         <!-- Filter Dropdown -->
-                                        <div ng-if="objectivesFilter.open">
+                                        <div ng-if="classView.objectives.filter.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex;width:100%">
                                                 <div class="input-group" style="width:100%">
-                                                    <input type="text" class="form-control" placeholder="Filter Objectives" ng-model="objectivesFilter.query">
+                                                    <input type="text" class="form-control" placeholder="Filter Objectives" ng-model="classView.objectives.filter.query">
                                                     <span class="input-group-addon">
                                                         <label>
-                                                            <input type="checkbox" ng-model="objectivesFilter.caseSensitive" style="position:relative;top:2px"/>
+                                                            <input type="checkbox" ng-model="classView.objectives.filter.caseSensitive" style="position:relative;top:2px"/>
                                                             Case Sensitive
                                                         </label>
                                                     </span>
@@ -310,7 +308,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="objectiveAccordionScroll" autoscroll="{{ 256 + (objectivesFilter.open?47:0) }}" ng-scroll="floatingScrollListener('objectiveAccordionScroll')">
+                                    <div id="objectiveAccordionScroll" autoscroll="{{ 256 + (classView.objectives.filter.open?46:0) }}" ng-scroll="floatingScrollListener('objectiveAccordionScroll')">
                                         <div class="container-fluid" ng-if="!class.objectives.length">
                                             <h4 class="text-info">No Objectives</h4>
                                         </div>
@@ -319,10 +317,10 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in (filterObjectives()|sort:getSortParams('objectives',objectivesSort))" is-open="objectiveOpen[$index]" context-menu="objectiveHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in (filterObjectives()|sort:getSortParams('objectives',classView.objectives.sort))" is-open="objectiveOpen[$index]" context-menu="objectiveHeader">
                                                 <uib-accordion-heading>
                                                     <div>
-                                                        <span ng-bind-html="objectivesFilter.open?(objective.objectiveText | highlight: objectivesFilter.query:objectivesFilter.caseSensitive):(objective.objectiveText)"></span>
+                                                        <span ng-bind-html="classView.objectives.filter.open?(objective.objectiveText | highlight: classView.objectives.filter.query:classView.objectives.filter.caseSensitive):(objective.objectiveText)"></span>
                                                         <span class="badge">
                                                             {{ objectiveBadge(objective) }}
                                                         </span><br/>
@@ -364,46 +362,50 @@
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+questionsSort.name }}" ng-click="incrementSortMode('questionsSort')">
-                                                    <span class="glyphicon {{questionsSort.icon}}"></span>
+                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.questions.sort].name }}" ng-click="incrementSortMode('questions')">
+                                                    <span class="glyphicon {{sortModes[classView.questions.sort].icon}}"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="top"
+                                                        uib-tooltip="Bulk Operations" ng-click="classView.questions.bulk.open = !classView.questions.bulk.open;">
+                                                    <span class="glyphicon glyphicon-check"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
-                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="questionsFilter.open = !questionsFilter.open">
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.questions.filter.open = !classView.questions.filter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
                                             </div>
                                         </div>
 
                                         <!-- Filter Dropdown -->
-                                        <div ng-if="questionsFilter.open">
+                                        <div ng-if="classView.questions.filter.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex">
                                                 <div class="input-group" style="width:65%;margin-right:2px">
-                                                    <input type="text" class="form-control" placeholder="Filter Questions" ng-model="questionsFilter.query">
+                                                    <input type="text" class="form-control" placeholder="Filter Questions" ng-model="classView.questions.filter.query">
                                                     <span class="input-group-addon">
                                                         <label>
-                                                            <input type="checkbox" ng-model="questionsFilter.searchQuestions" style="position:relative;top:2px"/>
+                                                            <input type="checkbox" ng-model="classView.questions.filter.searchQuestions" style="position:relative;top:2px"/>
                                                             Search Questions
                                                         </label>
 
                                                         <label>
-                                                            <input type="checkbox" ng-model="questionsFilter.searchDescriptions" style="position:relative;top:2px"/>
+                                                            <input type="checkbox" ng-model="classView.questions.filter.searchDescriptions" style="position:relative;top:2px"/>
                                                             Search Descriptions
                                                         </label>
 
                                                         <label>
-                                                            <input type="checkbox" ng-model="questionsFilter.searchAnswers" style="position:relative;top:2px"/>
+                                                            <input type="checkbox" ng-model="classView.questions.filter.searchAnswers" style="position:relative;top:2px"/>
                                                             Search Answers
                                                         </label>
 
                                                         <label>
-                                                            <input type="checkbox" ng-model="questionsFilter.caseSensitive" style="position:relative;top:2px"/>
+                                                            <input type="checkbox" ng-model="classView.questions.filter.caseSensitive" style="position:relative;top:2px"/>
                                                             Case Sensitive
                                                         </label>
                                                     </span>
                                                 </div>
                                                 <div style="width:35%; display:inherit">
                                                     <div class="input-group" style="width:50%;margin-right:2px">
-                                                        <ui-select allow-clear ng-model="questionsFilter.topicQuery" theme="bootstrap">
+                                                        <ui-select allow-clear ng-model="questionsQuery.topic" theme="bootstrap">
                                                             <ui-select-match placeholder="Filter Topic">
                                                                 {{$select.selected.topicName}}
                                                             </ui-select-match>
@@ -413,13 +415,13 @@
                                                             </ui-select-choices>
                                                         </ui-select>
                                                         <span class="input-group-btn">
-                                                          <button type="button" ng-click="questionsFilter.topicQuery = undefined" class="btn btn-default" ng-disabled="!questionsFilter.topicQuery">
+                                                          <button type="button" ng-click="questionsQuery.topic = null" class="btn btn-default" ng-disabled="!questionsQuery.topic">
                                                             <span class="glyphicon glyphicon-remove"></span>
                                                           </button>
                                                         </span>
                                                     </div>
                                                     <div class="input-group" style="width:50%">
-                                                        <ui-select ng-model="questionsFilter.objectiveQuery" theme="bootstrap" ng-disabled="!class.objectives.length">
+                                                        <ui-select ng-model="questionsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
                                                             <ui-select-match placeholder="Filter Objective">
                                                                 {{$select.selected.objectiveText}}
                                                             </ui-select-match>
@@ -428,7 +430,7 @@
                                                             </ui-select-choices>
                                                         </ui-select>
                                                         <span class="input-group-btn">
-                                                          <button type="button" ng-click="questionsFilter.objectiveQuery = undefined" class="btn btn-default" ng-disabled="!questionsFilter.objectiveQuery">
+                                                          <button type="button" ng-click="questionsQuery.objective = null" class="btn btn-default" ng-disabled="!questionsQuery.objective">
                                                             <span class="glyphicon glyphicon-remove"></span>
                                                           </button>
                                                         </span>
@@ -436,9 +438,35 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Bulk Dropdown -->
+                                        <div ng-if="classView.questions.bulk.open">
+                                            <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205)">
+                                                <div class="input-group" style="width:65%;margin-right:2px">
+
+                                                    <div class="btn-group btn-group-sm" role="group" style="padding-right:5px">
+                                                        <button type="button" class="btn btn-default">Select All</button>
+                                                        <button type="button" class="btn btn-default">Deselect All</button>
+                                                    </div>
+                                                    <div style="display:inline;margin-top:5px;padding-right:2px">$1 selected</div>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button type="button" class="btn btn-danger">Delete</button>
+                                                        <button type="button" class="btn btn-primary">Change Topic</button>
+                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length">Add Objective</button>
+                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length">Remove Objective</button>
+                                                    </div>
+                                                </div>
+                                                <div style="width:35%; display:inherit">
+                                                    <div class="input-group" style="width:50%;margin-right:2px">
+                                                    </div>
+                                                    <div class="input-group" style="width:50%">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div id="questionAccordionScroll" autoscroll="{{ 256 + (questionsFilter.open?47:0) }}" ng-scroll="floatingScrollListener('questionAccordionScroll')"
+                                    <div id="questionAccordionScroll" autoscroll="{{ 256 + (classView.questions.filter.open?46:0) + (classView.questions.bulk.open?46:0) }}" ng-scroll="floatingScrollListener('questionAccordionScroll')"
                                          style="margin: 0 5px 0 5px">
                                         <div class="container-fluid" ng-if="!questionCount">
                                             <h4 class="text-info">No Questions</h4>
@@ -448,17 +476,18 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="question in (filterQuestions()|sort:getSortParams('questions',questionsSort))" is-open="questionOpen[$index]" context-menu="questionHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="question in (filterQuestions()|sort:getSortParams('questions',classView.questions.sort))" is-open="questionOpen[$index]" context-menu="questionHeader" template-url="html/accordion-group.html">
                                                 <uib-accordion-heading>
                                                     <div>
-                                                        <span ng-bind-html="(questionsFilter.searchQuestions && questionsFilter.open)?(question.questionTitle | highlight: questionsFilter.query:questionsFilter.caseSensitive):(question.questionTitle)"></span>
+                                                        <input class="bigCheckbox" type="checkbox" ng-if="classView.questions.bulk.open" ng-click="$event.stopPropagation()"/>
+                                                        <span ng-bind-html="(classView.questions.filter.searchQuestions && classView.questions.filter.open)?(question.questionTitle | highlight: classView.questions.filter.query:classView.questions.filter.caseSensitive):(question.questionTitle)"></span>
                                                         <span class="badge" ng-if="question.topicID != 0">
                                                             {{ questionBadgeTopic(question) }}
                                                         </span>
                                                         <span class="badge" ng-if="question.objectives.length">
                                                             {{ questionBadgeObjectives(question) }}
                                                         </span><br ng-if="question.questionDescription"/>
-                                                        <small ng-if="question.questionDescription" ng-bind-html="(questionsFilter.searchDescriptions && questionsFilter.open)?(question.questionDescription | highlight: questionsFilter.query:questionsFilter.caseSensitive):(question.questionDescription)"></small>
+                                                        <small ng-if="question.questionDescription" ng-bind-html="(classView.questions.filter.searchDescriptions && classView.questions.filter.open)?(question.questionDescription | highlight: classView.questions.filter.query:classView.questions.filter.caseSensitive):(question.questionDescription)"></small>
                                                     </div>
                                                 </uib-accordion-heading>
 

@@ -37,6 +37,70 @@ class Course {
      * @type {Topic[]} */
     this.topics = [];
     this.topicUID = 0;
+
+    /* User Preferences and remembered settings
+     */
+    this.prefs = {
+      classView: {
+        openedTab: 0, //Index of open tab
+
+        assessments: {
+          sort: 0,
+          filter: {
+            open: false,
+
+            query: '',
+            topicQuery: null,
+            objectiveQuery: null,
+
+            searchNames: true,
+            searchDescriptions: false,
+            searchQuestions: false,
+            caseSensitive: false
+          }
+        },
+        topics: {
+          sort: 0,
+          filter: {
+            open: false,
+
+            query: '',
+            searchTopics: true,
+            searchDescriptions: false,
+            caseSensitive: false
+          }
+        },
+        objectives: {
+          sort: 0,
+          filter: {
+            open: false,
+
+            query: '',
+            caseSensitive: false
+          }
+        },
+        questions: {
+          sort: 0,
+          filter: {
+            open: false,
+
+            query: '',
+            topicQuery: null,
+            objectiveQuery: null,
+
+            searchQuestions: true,
+            searchDescriptions: false,
+            searchAnswers: false,
+            caseSensitive: false
+          },
+          bulk: {
+            open: false,
+
+            selectionQIDs: [], //Unused, need to decide how to model this
+          }
+        },
+      }
+    }
   }
 }
 

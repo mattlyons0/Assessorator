@@ -124,7 +124,7 @@ app.filter('sort', function(){
   };
 });
 
-//Unused atm
+//Unused but may be useful in the future
 app.filter('alphabetize', function(){
   return function(arr,key){
     return arr.sort(function(a,b){

@@ -1,0 +1,14 @@
+<div ng-controller="aboutCtrl" class="list-group flex" style="margin-bottom:0">
+    <div class="list-group-item active">
+        <h2 style="margin-top:10px">
+            {{pkg.name}}
+        </h2>
+    </div>
+    <li class="list-group-item" style="height:40px">
+        <span style="float: left">Version: {{pkg.version}}</span>
+        <span style="float:right">Developed by Matt Lyons &lt;<a href="mailto:matt@mattlyons.net">matt@mattlyons.net</a>&gt;</span>
+    </li>
+    <li class="list-group-item">
+        {{pkg.description}}
+    </li>
+</div>

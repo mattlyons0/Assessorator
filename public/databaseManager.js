@@ -6,11 +6,10 @@ let versionFile = versionFolder + '/DBVersion';
 
 let fs = require('fs');
 let mkdirp = require('mkdirp');
+let Course = require('../data/Course.js');
 
 let DB_NAME = "AssessoratorDataStore";
-
 let db = undefined; //Opened DB Object
-
 let db_version = 1;
 
 // getDBVersion(loadDatabase); //Open DB
@@ -356,7 +355,7 @@ function updateDataFormat(course) {
     }
   }
 
-  //Check
+  //Check no topic index is 0 (was broken in one update, so this will fix it)
   if(course.topics[0].ID !== 0){
     let noTopicIndex = -1;
     for(let i=0;i<course.topics.length;i++){
@@ -365,7 +364,7 @@ function updateDataFormat(course) {
         break;
       }
     }
-    if(noTopicIndex == -1){
+    if(noTopicIndex === -1){
       console.error('No Topic not found!');
     } else{
       let noTopic = course.topics[noTopicIndex];
@@ -375,6 +374,43 @@ function updateDataFormat(course) {
       console.log('Fixed "No Topic" Index');
       didUpdate = true;
     }
+  }
+
+  //Deeply check if all properties in optimal are defined in current. If they are not copy the values from current
+  let defineAllProps = function(optimal,current){
+    if(optimal === undefined || optimal === null || !Object.keys(optimal).length) {
+      return;
+    }
+    //Define new properties
+    for(let property in optimal){
+      if(optimal.hasOwnProperty(property)){
+        if(!current.hasOwnProperty(property)) {
+          current[property] = optimal[property];
+          console.log('Added prefs property: \''+property+'\' with value \''+optimal[property]+'\'');
+          didUpdate = true;
+        } else {
+          defineAllProps(optimal[property], current[property]);
+        }
+      }
+    }
+    // Remove old properties
+    for(let property in current){
+      if(current.hasOwnProperty(property)){
+        if(!optimal.hasOwnProperty(property)){
+          delete current[property];
+          console.log('Deleted prefs property: \''+property+'\'');
+          didUpdate=true;
+        }
+      }
+    }
+  };
+  let defaultCoursePrefs = new Course().prefs;
+  if(!course.prefs){
+    course.prefs = new Course().prefs;
+    didUpdate = true;
+    console.log('Created Course Prefs');
+  } else{
+    defineAllProps(defaultCoursePrefs,course.prefs);
   }
 
   return {needsSave: didUpdate, updateDate: updateDate};

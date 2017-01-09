@@ -113,3 +113,24 @@ div[uib-accordion-group] > div {
 .ui-select-bootstrap .ui-select-choices-row.active>span>small.text-muted {
     color: #ececec !important;
 }
+input[type=checkbox].bigCheckbox {
+    transform: scale(1.5);
+    margin-right: 2px;
+    margin-bottom: 0;
+    bottom: -2px;
+    position: relative;
+}
+
+.underlineHover:hover {
+    text-decoration: underline;
+}
+
+/* Compact Density (overrides bootstrap)*/
+span[uib-accordion-header] > div {
+    padding: 2px 8px !important;
+    line-height:1.1 !important;
+}
+.panel-body {
+    padding: 5px !important;
+    line-height: 15px !important;
+}

@@ -7,13 +7,13 @@
   "scripts": {
     "start": "electron main.js",
     "pack": "build --dir",
-    "dist": "build --windows"
+    "dist": "build --windows --linux"
   },
   "dependencies": {
     "appdirectory": "~0.1.0",
     "md5": "~2.2.1",
     "mkdirp": "~0.5.1",
-    "electron-auto-updater": "~0.10.0",
+    "electron-auto-updater": "~0.10.1",
     "electron-window-state": "~4.0.1"
   },
   "devDependencies": {
@@ -29,7 +29,6 @@
     ],
     "asar": true,
     "compression": "maximum",
-    "warningsAsErrors": "true",
     "publish": {
       "provider": "generic",
       "owner": "Matt Lyons",
