@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $sce, $filter) {
+app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $sce, $filter) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   let nextID = 0;
@@ -41,11 +41,21 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
 
   $scope.assessmentsSort = $scope.sortModes[0];
 
-  $scope.incrementSortMode = function(keyval){
+  $scope.sortModeMouseDown = function(event,keyval){
+    //Increment or Decrement index based on which mouse button was pressed
     let index = classView[keyval].sort;
-    index++;
-    if(index >= $scope.sortModes.length)
-      index = 0;
+    if(event.which === 1) { //Left Click
+      index++;
+      if(index >= $scope.sortModes.length)
+        index = 0;
+    }
+    else if(event.which === 3) { //Right Click
+      index--;
+      if(index < 0)
+        index = $scope.sortModes.length-1;
+    }
+
+    //Change Sort Mode
     classView[keyval].sort = index;
   };
   $scope.getSortParams = function(tabType,sortMode){
@@ -222,29 +232,29 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   };
 
   $scope.createTopic = function(){
-    createTab("New Topic","views/editTopic.html","editTopicCtrl");
+    createTab('New Topic','views/editTopic.html','editTopicCtrl');
 
     //Remove popup from new question topic chooser UI
-    if(document.querySelector("#topicChooserInput")) {
+    if(document.querySelector('#topicChooserInput')) {
       $timeout(function () { //Delay until after current $apply
-        document.querySelector("#topicChooserInput").blur();
+        document.querySelector('#topicChooserInput').blur();
         angular.element(document.querySelector('md-virtual-repeat-container')).triggerHandler('mouseleave');
       }, 50); //Less than this seems to screw with the animation
     }
   };
   $scope.editTopic = function(id){
-    createTab("Edit Topic","views/editTopic.html","editTopicCtrl",{topicID: id});
+    createTab('Edit Topic','views/editTopic.html','editTopicCtrl',{topicID: id});
   };
   $scope.deleteTopic = function(id){
     let topic = new CourseUtils($scope.class).getTopic(id);
     if(id === 0){
-      showToast("Cannot delete '"+topic.topicName+"' as it is the topic questions without a topic are shown under.", {level: 'warning', delay: 7});
+      showToast('Cannot delete \''+topic.topicName+'\' as it is the topic questions without a topic are shown under.', {level: 'warning', delay: 7});
       return;
     }
 
     if(topic.questions.length > 0){
-      showToast("'"+topic.topicName+"' contains "+topic.questions.length+" question"+(topic.questions.length>1?'s':'')+
-        ".All questions must be "+"removed from a topic before it can be deleted.",{level: 'warning', delay:10});
+      showToast('\''+topic.topicName+'\' contains '+topic.questions.length+' question'+(topic.questions.length>1?'s':'')+
+        '.All questions must be '+'removed from a topic before it can be deleted.',{level: 'warning', delay:10});
       return;
     }
     let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Topic \''+topic.topicName+'\'?')
@@ -259,13 +269,13 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     });
   };
   $scope.createQuestion = function(){
-    createTab("New Question", "views/editQuestion.html","editQuestionCtrl", {callback: $scope.updateQuestionCount});
+    createTab('New Question', 'views/editQuestion.html','editQuestionCtrl', {callback: $scope.updateQuestionCount});
   };
   $scope.editQuestion = function(uid){
     if(uid.topic === undefined){
       uid = angular.fromJson(uid);
     }
-    createTab("Edit Question", "views/editQuestion.html","editQuestionCtrl",{questionID: uid.question,topicID: uid.topic, callback: $scope.updateQuestionCount});
+    createTab('Edit Question', 'views/editQuestion.html','editQuestionCtrl',{questionID: uid.question,topicID: uid.topic, callback: $scope.updateQuestionCount});
   };
   $scope.deleteQuestion = function(uid){
     let courseUtil = new CourseUtils($scope.class);
@@ -282,19 +292,19 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     });
   };
   $scope.createObjective = function(){
-    createTab("New Objective","views/editObjective.html","editObjectiveCtrl");
+    createTab('New Objective','views/editObjective.html','editObjectiveCtrl');
 
     //Remove popup from new question topic chooser UI
-    if(document.querySelector("#objectiveChooserInput")) {
+    if(document.querySelector('#objectiveChooserInput')) {
       $timeout(function () { //Delay until after current $apply
-        document.querySelector("#objectiveChooserInput").blur();
+        document.querySelector('#objectiveChooserInput').blur();
         angular.element(document.querySelectorAll('md-virtual-repeat-container')[1]).triggerHandler('mouseleave');
       }, 50); //Less than this seems to screw with the animation
     }
   };
 
   $scope.editObjective = function(id){
-    createTab("New Objective","views/editObjective.html","editObjectiveCtrl", {objectiveID: id});
+    createTab('New Objective','views/editObjective.html','editObjectiveCtrl', {objectiveID: id});
   };
   $scope.deleteObjective = function(id){
     let courseUtil = new CourseUtils($scope.class);
@@ -310,10 +320,10 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
     });
   };
   $scope.createAssessment = function(){
-    createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl");
+    createTab('New Assessment', 'views/editAssessment.html','editAssessmentCtrl');
   };
   $scope.editAssessment = function(id){
-    createTab("New Assessment", "views/editAssessment.html","editAssessmentCtrl", {assessmentID: id});
+    createTab('New Assessment', 'views/editAssessment.html','editAssessmentCtrl', {assessmentID: id});
   };
   $scope.deleteAssessment = function(id){
     let assessment = new CourseUtils($scope.class).getAssessment(id);
@@ -368,8 +378,8 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   };
   $scope.searchQuestions = function(tabName,data){
     if(!tabName)
-      tabName="Search Questions";
-    createTab(tabName,"views/searchQuestions.html","searchQuestionsCtrl",data);
+      tabName='Search Questions';
+    createTab(tabName,'views/searchQuestions.html','searchQuestionsCtrl',data);
   };
 
   $scope.updateQuestionCount = function(){
@@ -390,11 +400,11 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
   };
 
   $scope.importQuestions = function(){
-    createTab("Import Questions", "views/importQuestions.html","importQuestionsCtrl",{callback: $scope.updateQuestionCount});
+    createTab('Import Questions', 'views/importQuestions.html','importQuestionsCtrl',{callback: $scope.updateQuestionCount});
   };
 
   $scope.exportAssessment = function(assessmentID){
-    createTab("Export Assessment", "views/exportAssessment.html","exportAssessmentCtrl",{assessmentID: assessmentID});
+    createTab('Export Assessment', 'views/exportAssessment.html','exportAssessmentCtrl',{assessmentID: assessmentID});
   };
 
   $scope.determineListClass = function(var2){
@@ -474,9 +484,9 @@ app.controller("classViewCtrl", function ($scope,$timeout,$mdDialog, $mdToast, $
       }
 
       if (i < rule[property].length - 2)
-        output += ", ";
+        output += ', ';
       else if (i < rule[property].length - 1)
-        output += " and ";
+        output += ' and ';
     }
     return output;
   };

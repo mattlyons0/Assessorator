@@ -53,7 +53,7 @@
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.assessments.sort].name }}" ng-click="incrementSortMode('assessments')">
+                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.assessments.sort].name }}" ng-mouseup="sortModeMouseDown($event,'assessments')">
                                                     <span class="glyphicon {{sortModes[classView.assessments.sort].icon}}"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
@@ -189,7 +189,7 @@
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.topics.sort].name }}" ng-click="incrementSortMode('topics')">
+                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.topics.sort].name }}" ng-mouseup="sortModeMouseDown($event,'topics')">
                                                     <span class="glyphicon {{sortModes[classView.topics.sort].icon}}"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
@@ -282,7 +282,7 @@
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.objectives.sort].name }}" ng-click="incrementSortMode('objectives')">
+                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.objectives.sort].name }}" ng-mouseup="sortModeMouseDown($event,'objectives')">
                                                     <span class="glyphicon {{sortModes[classView.objectives.sort].icon}}"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button"
@@ -362,7 +362,7 @@
 
                                             <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.questions.sort].name }}" ng-click="incrementSortMode('questions')">
+                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.questions.sort].name }}" ng-mouseup="sortModeMouseDown($event,'questions')">
                                                     <span class="glyphicon {{sortModes[classView.questions.sort].icon}}"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="top"

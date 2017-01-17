@@ -97,7 +97,7 @@ function createWindow() {
   }
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: width, height: height,x: x, y: y, icon: path.join(__dirname,'icon.png'), webPreferences: {"zoomFactor": 1.0}}); //If things are too big we can zoom out possibly
+  mainWindow = new BrowserWindow({width: width, height: height,x: x, y: y, icon: path.join(__dirname,'titlebarIcon.png'), webPreferences: {"zoomFactor": 1.0}}); //If things are too big we can zoom out possibly
 
   mainState.manage(mainWindow); //Hook to store location on close
 
