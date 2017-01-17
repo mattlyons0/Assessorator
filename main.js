@@ -8,10 +8,20 @@ const dialog = electron.dialog;
 const windowState = require('electron-window-state');
 const os = require('os');
 const pkg = require('./package.json');
+const path = require('path');
+const logger = require('electron-log');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+//If something causes the process to crash before opening, log that
+process.on('uncaughtException',function (error){
+  logger.error('Uncaught exception in main process:');
+  logger.error(error);
+  console.error('Uncaught exception:');
+  console.error(error);
+});
 
 function registerUpdater(){
   //Don't autoupdate dev env or linux
@@ -19,9 +29,12 @@ function registerUpdater(){
     return;
   }
 
+  autoUpdater.logger = require('electron-log');
+  autoUpdater.logger.transports.file.level = 'info';
+
   autoUpdater.addListener('update-available', function(event) {
     showToast('A update is available and will be downloaded in the background shortly.');
-    showToast('<p style="text-align:center">Downloading at 0.00 mbps<p/>'+
+    showToast('<p style="text-align:center">Downloading Update at 0.00 mbps<p/>'+
       '<div class="progress progress-striped active"><div class="progress-bar progress-bar-info" style="width:100%">Starting Download...</div>',
       {level: 'success', keepOpen: true, noClick: true, disallowClose: true},'downloadProgress');
 
@@ -34,12 +47,12 @@ function registerUpdater(){
       'style="opacity:.75; margin 0 !important;">Restart and Install Now</p></div>', {level: 'success', keepOpen: true, noClick: true, compile: true});
   });
   autoUpdater.addListener('download-progress', function(data){
-    editToast('downloadProgress','<p style="text-align:center">Downloading at '+ (data.bytesPerSecond/125000.0).toFixed(2) +' mbps</p>'+
+    editToast('downloadProgress','<p style="text-align:center">Downloading Update at '+ (data.bytesPerSecond/125000.0).toFixed(2) +' mbps</p>'+
       '<div class="progress progress-striped active"><div class="progress-bar" style="width:'+data.percent+'%">'+(data.percent).toFixed(2)+'%</div>');
   });
   autoUpdater.addListener('error', function(error){
-    showToast('Error checking for updates.',{level: 'warning', delay:10});
-    console.log(error);
+    console.warn('Error checking for updates:');
+    console.warn(error);
   });
   autoUpdater.addListener('checking-for-update', function(event){
     console.log('Checking for updates...');
@@ -56,7 +69,7 @@ function registerUpdater(){
 function createWindow() {
   //Save window location and make sure it is visible on screen
   const widthMult = 0.9;
-  const heightMult = 0.85
+  const heightMult = 0.85;
   let mainDisplay = electron.screen.getPrimaryDisplay();
   let mainState = new windowState({defaultWidth:mainDisplay.size.width * 0.9,defaultHeight:mainDisplay.size.height * 0.85});
   let x = mainState.x;
@@ -76,30 +89,26 @@ function createWindow() {
       top = display.bounds.y+display.size.height;
   }
   if(x < left || x+width > right || y+height > top || y < bottom){
-
     let newDisplay = electron.screen.getDisplayNearestPoint({x:x,y:y});
     width = Math.round(newDisplay.size.width * 0.9);
     height = Math.round(newDisplay.size.height * 0.85);
     x = (newDisplay.size.width/2)-(width/2);
     y = (newDisplay.size.height/2)-(height/2);
-    setTimeout(function(){
-      showToast('reset window',{level: 'warning'})
-    },1000)
   }
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: width, height: height,x: x, y: y, icon: './icon.png', webPreferences: {"zoomFactor": 1.0}}); //If things are too big we can zoom out possibly
+  mainWindow = new BrowserWindow({width: width, height: height,x: x, y: y, icon: path.join(__dirname,'icon.png'), webPreferences: {"zoomFactor": 1.0}}); //If things are too big we can zoom out possibly
 
-  mainState.manage(mainWindow);
+  mainState.manage(mainWindow); //Hook to store location on close
+
   mainWindow.loadURL('file://' + __dirname + '/public/index.html');
 
   if(process.env.NODE_ENV === 'dev') {
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools(); // Open the DevTools.
   }
 
   mainWindow.on('close',function(e){
-    // mainWindow.hide(); //Appear as the window is closed
+    mainWindow.hide(); //Appear as the window is closed
 
     e.preventDefault(); //Delay closing until onClose finishes
     mainWindow.webContents.executeJavaScript("UI.onClose()"); //Execute UI.onClose() which will destroy the window
