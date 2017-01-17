@@ -84,12 +84,12 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     for(let topic of topics){
       if(classView.topics.filter.searchTopics){
         if(classView.topics.filter.caseSensitive && topic.topicName.includes(classView.topics.filter.query) ||
-            !classView.topics.filter.caseSensitive && topic.topicName.toLowerCase().includes(classView.topics.filter.query.toLowerCase()))
+            !classView.topics.filter.caseSensitive && safeToLowerCase(topic.topicName).includes(safeToLowerCase(classView.topics.filter.query)))
           out.add(topic);
       }
       if(classView.topics.filter.searchDescriptions){
         if(classView.topics.filter.caseSensitive && topic.topicDescription.includes(classView.topics.filter.query) ||
-          !classView.topics.filter.caseSensitive && topic.topicDescription && topic.topicDescription.toLowerCase().includes(classView.topics.filter.query.toLowerCase()))
+          !classView.topics.filter.caseSensitive && topic.topicDescription && safeToLowerCase(topic.topicDescription).includes(safeToLowerCase(classView.topics.filter.query)))
           out.add(topic);
       }
     }
@@ -103,7 +103,7 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     let out = [];
     for(let objective of objectives){
       if(classView.objectives.filter.caseSensitive && objective.objectiveText.includes(classView.objectives.filter.query) ||
-          !classView.objectives.filter.caseSensitive && objective.objectiveText.toLowerCase().includes(classView.objectives.filter.query.toLowerCase()))
+          !classView.objectives.filter.caseSensitive && safeToLowerCase(objective.objectiveText).includes(safeToLowerCase(classView.objectives.filter.query)))
         out.push(objective);
     }
     return out;
@@ -155,18 +155,18 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     for(let assessment of remain) {
       if (classView.assessments.filter.searchNames) {
         if (classView.assessments.filter.caseSensitive && assessment.assessmentName.includes(classView.assessments.filter.query) ||
-          (!classView.assessments.filter.caseSensitive && assessment.assessmentName.toLowerCase().includes(classView.assessments.filter.query.toLowerCase())))
+          (!classView.assessments.filter.caseSensitive && safeToLowerCase(assessment.assessmentName).includes(safeToLowerCase(classView.assessments.filter.query))))
           out.add(assessment);
       }
       if (classView.assessments.filter.searchDescriptions){
         if (classView.assessments.filter.caseSensitive && assessment.assessmentDescription.includes(classView.assessments.filter.query) ||
-          (!classView.assessments.filter.caseSensitive && assessment.assessmentDescription.toLowerCase().includes(classView.assessments.filter.query.toLowerCase())))
+          (!classView.assessments.filter.caseSensitive && safeToLowerCase(assessment.assessmentDescription).includes(safeToLowerCase(classView.assessments.filter.query))))
           out.add(assessment);
       }
       if (classView.assessments.filter.searchQuestions){
         for(let question of assessment.questions){
           if (classView.assessments.filter.caseSensitive && question.questionTitle.includes(classView.assessments.filter.query) ||
-            (!classView.assessments.filter.caseSensitive && question.questionTitle.toLowerCase().includes(classView.assessments.filter.query.toLowerCase())))
+            (!classView.assessments.filter.caseSensitive && safeToLowerCase(question.questionTitle).includes(safeToLowerCase(classView.assessments.filter.query))))
             out.add(assessment);
         }
       }
@@ -208,21 +208,22 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
       return questions;
 
     let out = new Set(); //Doesn't allow duplicates
+
     for(let question of questions) {
       if (classView.questions.filter.searchQuestions) {
         if (classView.questions.filter.caseSensitive && question.questionTitle.includes(classView.questions.filter.query) ||
-          (!classView.questions.filter.caseSensitive && question.questionTitle.toLowerCase().includes(classView.questions.filter.query.toLowerCase())))
+          (!classView.questions.filter.caseSensitive && safeToLowerCase(question.questionTitle).includes(safeToLowerCase(classView.questions.filter.query))))
           out.add(question);
       }
       if (classView.questions.filter.searchDescriptions){
         if (classView.questions.filter.caseSensitive && question.questionDescription.includes(classView.questions.filter.query) ||
-          (!classView.questions.filter.caseSensitive && question.questionDescription.toLowerCase().includes(classView.questions.filter.query.toLowerCase())))
+          (!classView.questions.filter.caseSensitive && safeToLowerCase(question.questionDescription).includes(safeToLowerCase(classView.questions.filter.query))))
           out.add(question);
       }
       if (classView.questions.filter.searchAnswers){
         for(let answer of question.answers){
           if (classView.questions.filter.caseSensitive && answer.answerText.includes(classView.questions.filter.query) ||
-            (!classView.questions.filter.caseSensitive && answer.answerText.toLowerCase().includes(classView.questions.filter.query.toLowerCase())))
+            (!classView.questions.filter.caseSensitive && safeToLowerCase(answer.answerText).includes(safeToLowerCase(classView.questions.filter.query))))
             out.add(question);
         }
       }
@@ -759,3 +760,10 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   ];
 });
 
+//Safely converts toLowerCase if string, otherwise will fail a includes call
+function safeToLowerCase(str){
+  if(typeof str === String){
+    return str.toLowerCase();
+  }
+  return {includes: function() {return false}};
+}

@@ -294,7 +294,6 @@ function toJSON(){
   return angular.toJson(state);
 }
 
-
 if (Array.prototype.equals)
   console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
 // attach the .equals method to Array's prototype to call it on any array
