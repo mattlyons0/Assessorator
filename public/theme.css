@@ -116,7 +116,7 @@ div[uib-accordion-group] > div {
 input[type=checkbox].bigCheckbox {
     transform: scale(1.5);
     margin-right: 2px;
-    margin-bottom: 0;
+    margin-bottom: 5px;
     bottom: -2px;
     position: relative;
 }
@@ -133,4 +133,9 @@ span[uib-accordion-header] > div {
 .panel-body {
     padding: 5px !important;
     line-height: 15px !important;
+}
+
+/* Disable accordion animations */
+.panel-collapse {
+    transition: none !important;
 }

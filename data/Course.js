@@ -97,8 +97,8 @@ class Course {
             open: false,
 
             selectionQIDs: [], //Unused, need to decide how to model this
-          }
-        },
+          },
+        }
       }
     }
   }

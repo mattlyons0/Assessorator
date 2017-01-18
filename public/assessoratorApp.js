@@ -103,6 +103,8 @@ app.filter('highlight', function() {
 
 app.filter('sort', function(){
   return function(arr,params){
+    if(params.key === 'r')
+      console.log(arr)
     arr = arr.slice(); //Shallow copy so we don't change the order of the actual array
 
     let mult = 1;
@@ -111,12 +113,18 @@ app.filter('sort', function(){
     return arr.sort(function (a, b) {
       let objA = a[params.key];
       let objB = b[params.key];
+      if(objA === undefined || objB === undefined)
+        console.warn('Trying to sort with undefined value');
       if (objA > objB)
         return 2 * mult;
       if (objA < objB)
         return -2 * mult;
       //Sort based on ID for stability if key matches
       if(a.ID > b.ID)
+        return 1;
+      else if(a.ID < b.ID)
+        return -1;
+      else if(a.UID !== undefined && b.UID !== undefined && a.UID > b.UID)
         return 1;
       else
         return -1;

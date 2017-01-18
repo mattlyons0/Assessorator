@@ -68,7 +68,7 @@ class CourseUtils {
   deleteObjective(objectiveID){
     for(let i=0;i<this.course.objectives.length;i++){
       let obj = this.course.objectives[i];
-      if(objectiveID == obj.ID){
+      if(objectiveID === obj.ID){
         this.course.objectives.splice(i,1);
         return;
       }
@@ -126,9 +126,9 @@ class CourseUtils {
     let topicID = questionUID.topic;
 
     for(let topic of this.course.topics){
-      if(topic.ID == topicID){
+      if(topic.ID === topicID){
         for(let question of topic.questions){
-          if(question.UID.question == questionUID.question && question.UID.topic == questionUID.topic){
+          if(question.UID.question === questionUID.question && question.UID.topic === questionUID.topic){
             return question;
           }
         }

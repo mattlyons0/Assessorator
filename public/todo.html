@@ -15,19 +15,14 @@
         <li>Exporting large databases crashes the window (out of memory)</li>
         <li>Importing large databases crashes the window (out of memory)</li>
         <li>Storage usage is incorrect (Always 0MB)</li>
-        <li>Backup Data and check if any is missing on startup is disabled because exporting is buggy</li>
-        <li>Upgrade to electron-builder 3.0</li>
-        <li>Fix not closing properly</li>
         <li>There are some places in the code from before Question.topicID existed, these parts of the code are inefficient</li>
         <li>Process crash is unhandled</li>
-        <li>Unresponsive alert shows on windows when in file chooser (on windows)</li>
         <li>Importing large databases doesn't always delete old database</li>
         <li>When saving data pointers are cloned (change to just using needed ID's instead of pointers), this will decrease startup time (no need to repair pointers) as well as decrease filesize</li>
         <li>At very small width the course selection button goes away from the header (along with others)</li>
-        <li>Correct accordion doesn't stay open when filtering (remembers index not actual question)</li>
         <li>Dropdown for filter questions by topic and objective get cut off by scrollbar when there are no results (appending to body is broken in the lib, investigate changing autoscroll val when open)</li>
         <li>Assessment generation is broken</li>
-        <li>Handle different types of quotes in filter, " and the angled ones as the same</li>\
+        <li>Handle different types of quotes in filter, " and the angled ones as the same</li>
         <li>Courses on homepage cannot be rearranged</li>
         <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning </li>
         <li>Upon deletion of questions used as manual questions within assessments delete those manual questions and provide warning</li>

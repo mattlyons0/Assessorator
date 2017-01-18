@@ -39,10 +39,11 @@ class TopicUtils {
   }
 
   deleteQuestion(questionID){
+    let UID = -1;
     for(let i=0;i<this.topic.questions.length;i++){
       if(this.topic.questions[i].ID === questionID){
         let question = this.topic.questions[i];
-
+        UID = question.UID;
         //Remove objective reference to question
         for(let objective of this.topic.questions[i].objectives){
           new ObjectiveUtils(objective).removeQuestionUID(this.topic.questions[i].UID);

@@ -115,7 +115,7 @@ UI.getAllQuestionsForClass = function (classID) {
 UI.createClass = function (name, id, semester, year) {
   //Update Data Model
   let courseID = state.createCourse(name, id, year, semester);
-  new CourseUtils(UI.getClassById(courseID)).createTopic('No Topic', 'This is the topic where questions will appear under if they were not assigned to a topic.');
+  new CourseUtils(UI.getClassById(courseID)).createTopic('No Topic', 'Questions which have not been assigned a topic');
   return courseID;
 };
 

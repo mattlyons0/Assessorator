@@ -11,11 +11,25 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
 
   $scope.questionCount = courseUtils.countQuestions();
 
-  //Used for accordions
-  $scope.assessmentOpen = [];
-  $scope.topicOpen = [];
-  $scope.objectiveOpen = [];
-  $scope.questionOpen = [];
+  //Used for accordions (stores with key UID or ID)
+  $scope.assessmentOpen = {};
+  $scope.topicOpen = {};
+  $scope.objectiveOpen = {};
+  $scope.questionOpen = {}; //See UIDtoJson
+  //Helper fun for questionOpen
+  $scope.UIDtoJson = function(uid){
+    return uid.topic+' '+uid.question;
+  };
+  //Populate Accordion structures
+  for(let assessment of $scope.class.assessments)
+    $scope.assessmentOpen[assessment.ID] = false;
+  for(let topic of $scope.class.topics)
+    $scope.topicOpen[topic.ID] = false;
+  for(let objective of $scope.class.objectives)
+    $scope.objectiveOpen[objective.ID] = false;
+  let allQuestions = UI.getAllQuestionsForClass($scope.class.ID);
+  for(let question of allQuestions)
+    $scope.questionOpen[$scope.UIDtoJson(question.UID)] = false;
 
   //Used for filter angular state
   $scope.assessmentsQuery = {
@@ -131,7 +145,7 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
         }
       }
     } else{
-      remain = assessments;
+      remain = assessments.slice();
     }
     if(classView.assessments.filter.objectiveQuery !== null) {
       for (let i=0;i<remain.length;i++) {
@@ -520,6 +534,28 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     return out;
   };
 
+  $scope.formatObjectiveQuestions = function(objective){
+    let questions = [];
+    for(let questionUID of objective.questionUIDs)
+      questions.push(courseUtils.getQuestion(questionUID));
+    questions.sort(function(a,b){
+      if(a.questionTitle>b.questionTitle)
+        return 1;
+      else
+        return -1;
+    });
+
+    let lines = [];
+    for(let question of questions){
+      let line = '<p style="padding-left:5px">'+$scope.formatObjectiveQuestion(question.UID)+"</p>";
+      lines.push(line);
+    }
+    let final = '';
+    for(let l of lines){
+      final+=l;
+    }
+    return final;
+  }
   $scope.formatObjectiveQuestion = function(questionUID) {
     let courseUtil = new CourseUtils($scope.class);
     return $scope.formatAssessmentQuestion(courseUtil.getQuestion(questionUID));
@@ -584,9 +620,36 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     return out;
   };
 
-  $scope.iterateAccordion = function(accordionArray,value,count){
-    for(let i=0;i<count;i++){
-      accordionArray[i]=value;
+  $scope.iterateAccordion = function(type,value){
+    let arr, accordion;
+    switch(type){
+      case 'assessment':
+        arr = $scope.filterAssessments();
+        accordion = $scope.assessmentOpen;
+        break;
+      case 'topic':
+        arr = $scope.filterTopics();
+        accordion = $scope.topicOpen;
+        break;
+      case 'objective':
+        arr = $scope.filterObjectives();
+        accordion = $scope.objectiveOpen;
+        break;
+      case 'question':
+        arr = $scope.filterQuestions();
+        accordion = $scope.questionOpen;
+        break;
+      default:
+        console.error('Unknown type: '+type);
+        return;
+    }
+    for(let elem of arr){
+      let key;
+      if(type === 'question')
+        key = $scope.UIDtoJson(elem.UID);
+      else
+        key = elem.ID;
+      accordion[key]=value;
     }
   };
 
@@ -762,7 +825,7 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
 
 //Safely converts toLowerCase if string, otherwise will fail a includes call
 function safeToLowerCase(str){
-  if(typeof str === String){
+  if(typeof str === 'string'){
     return str.toLowerCase();
   }
   return {includes: function() {return false}};
