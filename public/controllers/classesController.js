@@ -74,9 +74,9 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
       courseDescrip = "";
     }
     let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-danger"><h3 style="margin-top:10px">'
-          +'<h3>Are you sure you want to delete '+ course.courseID +'?</h3></div><li class="list-group-item">';
+          +'<h3>Are You Sure You Would Like to Delete '+ course.courseID +'?</h3></div><li class="list-group-item">';
     let html = courseDescrip + '<br/><br/><div class="text-danger">This will delete: '+deleteStr+'</div></li>';
-    let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" class="btn btn-default" ng-click="dismiss()">Cancel</button>'
+    let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" class="btn btn-default" ng-click="dismiss()" style="margin-right:2px">Cancel</button>'
       +'<button type="button" class="btn btn-danger" ng-click="close()">Delete</button></div>';
     let confirm = $uibModal.open({
       template: header+html+buttons,

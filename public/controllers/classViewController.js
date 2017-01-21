@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $sce, $filter) {
+app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $sce, $filter, $uibModal) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   let nextID = 0;
@@ -11,25 +11,10 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
 
   $scope.questionCount = courseUtils.countQuestions();
 
-  //Used for accordions (stores with key UID or ID)
-  $scope.assessmentOpen = {};
-  $scope.topicOpen = {};
-  $scope.objectiveOpen = {};
-  $scope.questionOpen = {}; //See UIDtoJson
-  //Helper fun for questionOpen
-  $scope.UIDtoJson = function(uid){
-    return uid.topic+' '+uid.question;
-  };
-  //Populate Accordion structures
-  for(let assessment of $scope.class.assessments)
-    $scope.assessmentOpen[assessment.ID] = false;
-  for(let topic of $scope.class.topics)
-    $scope.topicOpen[topic.ID] = false;
-  for(let objective of $scope.class.objectives)
-    $scope.objectiveOpen[objective.ID] = false;
-  let allQuestions = UI.getAllQuestionsForClass($scope.class.ID);
-  for(let question of allQuestions)
-    $scope.questionOpen[$scope.UIDtoJson(question.UID)] = false;
+  //Used for accordions and bulk checkboxes (needed in miscState so it can be synced upon deletion or creation of objects)
+  let state = UI.miscState.classView;
+  $scope.state = state;
+  $scope.UIDtoJson = UI.UIDtoJson;
 
   //Used for filter angular state
   $scope.assessmentsQuery = {
@@ -357,39 +342,27 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     return courseUtil.countQuestions();
   };
 
-  $scope.deleteQuestions = function(){
-    $scope.data = {};
-    $scope.getTabByID(-1).data.searchQuestions = {};
-    $scope.searchQuestions('Delete Questions', {type: 'delete', callbackTID: -1});
-    $scope.stopWatching2 = $scope.$watch('getTabByID(-1).data.searchQuestions.complete', function () {
-      if ($scope.getTabByID(-1).data.searchQuestions.complete === true) { //Search for manual questions is complete
-        $scope.stopWatching2();
-        //Detect selected questions
-        let toDelete = [];
-        if($scope.data.searchQuestions.questions) {
-          for (let deleteQuestion of $scope.data.searchQuestions.questions) {
-            toDelete.push(deleteQuestion);
-          }
-        }
-        if(!toDelete.length){
-          return;
-        }
-
-        let confirm = $mdDialog.confirm().title('Are you sure you would like to delete '+toDelete.length+' question'+
-          (toDelete.length>1?'s':'')+'?')
-          .textContent('This action is not reversible').ok('Delete').cancel('Cancel');
-        $mdDialog.show(confirm).then(function () {
-          let courseUtil = new CourseUtils($scope.class);
-          for(let deleteQuestion of toDelete){
-            let topic = courseUtil.getTopic(deleteQuestion.topicID);
-            let topicUtil = new TopicUtils(topic);
-            topicUtil.deleteQuestion(deleteQuestion.questionID);
-          }
-        }, function () {
-          //You didn't do it.
-        });
+  $scope.deleteQuestions = function(deleteUIDs){
+    let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-danger"><h3 style="margin-top:10px">'
+      +'<h3 style="text-align:center">Are You Sure You Would Like to Delete '+ deleteUIDs.length +' Question'+(deleteUIDs.length===1?'':'s')+'?</h3></div><li class="list-group-item">';
+    let html = '<div class="text-danger">This will delete the selected questions.</div></li>';
+    let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" style="margin-right:2px" class="btn btn-default" ng-click="dismiss()">Cancel</button>'
+      +'<button type="button" class="btn btn-danger" ng-click="close()">Delete</button></div>';
+    let confirm = $uibModal.open({
+      template: header+html+buttons,
+      controller: function($scope,$uibModalInstance){
+        $scope.close = $uibModalInstance.close;
+        $scope.dismiss = $uibModalInstance.dismiss;
       }
-    })
+    });
+    confirm.result.then(function(){
+      for(let questionUID of deleteUIDs) {
+        courseUtils.deleteQuestion(questionUID);
+      }
+      UI.save($scope.class);
+    }, function(){
+      //Didn't delete
+    });
   };
   $scope.searchQuestions = function(tabName,data){
     if(!tabName)
@@ -547,7 +520,7 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
 
     let lines = [];
     for(let question of questions){
-      let line = '<p style="padding-left:5px">'+$scope.formatObjectiveQuestion(question.UID)+"</p>";
+      let line = '<p style="padding-left:5px">'+$scope.formatObjectiveQuestion(question.UID)+'</p>';
       lines.push(line);
     }
     let final = '';
@@ -620,33 +593,80 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     return out;
   };
 
-  $scope.iterateAccordion = function(type,value){
+  $scope.accordion = function(type,checked){
     let arr, accordion;
     switch(type){
       case 'assessment':
         arr = $scope.filterAssessments();
-        accordion = $scope.assessmentOpen;
+        if(!checked)
+          accordion = state.assessments.open;
+        else
+          accordion = state.assessments.checked;
         break;
       case 'topic':
         arr = $scope.filterTopics();
-        accordion = $scope.topicOpen;
+        if(!checked)
+          accordion = state.topics.open;
+        else
+          accordion = state.topics.checked;
         break;
       case 'objective':
         arr = $scope.filterObjectives();
-        accordion = $scope.objectiveOpen;
+        if(!checked)
+          accordion = state.objectives.open;
+        else
+          accordion = state.objectives.checked;
         break;
       case 'question':
         arr = $scope.filterQuestions();
-        accordion = $scope.questionOpen;
+        if(!checked)
+          accordion = state.questions.open;
+        else
+          accordion = state.questions.checked;
         break;
       default:
         console.error('Unknown type: '+type);
         return;
     }
+    return {array: arr, accordion: accordion};
+  }
+
+  $scope.countAccordion = function(type,checked){
+    let values = $scope.accordion(type,checked);
+    let count = 0;
+    for(let elem in values.accordion){
+      if(values.accordion.hasOwnProperty(elem) && values.accordion[elem] === true)
+        count++;
+    }
+    return count;
+  };
+
+  $scope.getAccordionIDs = function(type,checked){
+    let values = $scope.accordion(type,checked);
+    let arr = [];
+    for(let elem in values.accordion){
+      if(values.accordion.hasOwnProperty(elem) && values.accordion[elem] === true) {
+        let id;
+        if(type === 'question')
+          id=UI.UIDfromJson(elem);
+        else
+          id=elem;
+
+        arr.push(id);
+      }
+    }
+    return arr;
+  }
+
+  $scope.iterateAccordion = function(type,value,checked){
+    let values = $scope.accordion(type,checked);
+    let arr = values.array;
+    let accordion = values.accordion;
+
     for(let elem of arr){
       let key;
       if(type === 'question')
-        key = $scope.UIDtoJson(elem.UID);
+        key = UI.UIDtoJson(elem.UID);
       else
         key = elem.ID;
       accordion[key]=value;

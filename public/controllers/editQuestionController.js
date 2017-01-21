@@ -97,7 +97,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
     } else {
       for (let topic of $scope.class.topics) {
         if (topic.topicName.toLowerCase().indexOf(query.toLowerCase()) > -1 && topic.ID != 0) //Check if its in the search and it isn't the No Topic
-          array.push($scope.class.topics[x]);
+          array.push(topic);
       }
     }
     return array;

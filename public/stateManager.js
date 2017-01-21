@@ -11,6 +11,26 @@ const electron = require('electron');
 let scope = undefined;
 
 var UI = {};
+UI.miscState = {
+  classView: {
+    assessments: {
+      open: {}, //Used to track open accordions by ID
+      checked: {}, //Used to track checked bulk checkboxes by ID
+    },
+    topics: {
+      open: {}, //Used to track open accordions by ID
+      checked: {}, //Used to track checked bulk checkboxes by ID
+    },
+    objectives: {
+      open: {}, //Used to track open accordions by ID
+      checked: {}, //Used to track checked bulk checkboxes by ID
+    },
+    questions: { //For UID conversion see UIDtoJson and UIDfromJson
+      open: {}, //Used to track open accordions by UID
+      checked: {}, //Used to track checked bulk checkboxes by UID
+    }
+  }
+}
 
 var CourseUtils = require('../data/utils/CourseUtils');
 var QuestionUtils = require('../data/utils/QuestionUtils');
@@ -237,6 +257,15 @@ UI.freeze = function(){
   while(true)
     x+=1;
 };
+
+//Helper functions for miscState.classView.question.open and question.checked
+UI.UIDtoJson = function(uid){
+  return uid.topic+' '+uid.question;
+};
+UI.UIDfromJson = function(json){
+  let split = json.split(' ');
+  return {topic: Number(split[0]),question:Number(split[1])};
+}
 
 function saveJSON(location){
   let md5 = require('md5');

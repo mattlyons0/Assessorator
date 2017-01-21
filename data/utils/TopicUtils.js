@@ -49,10 +49,19 @@ class TopicUtils {
           new ObjectiveUtils(objective).removeQuestionUID(this.topic.questions[i].UID);
         }
 
+        //Delete Question
         this.topic.questions.splice(i,1);
+
+        //Delete question from state structures
+        let json = UI.UIDtoJson(UID);
+        delete UI.miscState.classView.questions.checked[json];
+        delete UI.miscState.classView.questions.open[json];
+
         return;
       }
     }
+
+    console.error('Error finding question to delete: '+questionID+' in topic '+this.topic.ID)
   }
 }
 

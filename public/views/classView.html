@@ -56,7 +56,7 @@
                                                         uib-tooltip="{{ 'Sort By: '+sortModes[classView.assessments.sort].name }}" ng-mouseup="sortModeMouseDown($event,'assessments')">
                                                     <span class="glyphicon {{sortModes[classView.assessments.sort].icon}}"></span>
                                                 </button>
-                                                <button type="button" class="btn btn-default" data-toggle="button"
+                                                <button type="button" ng-class="'btn btn-default'+(classView.assessments.filter.open?' active':'')" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.assessments.filter.open = !classView.assessments.filter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
@@ -136,7 +136,7 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="assessment in (filterAssessments()|sort:getSortParams('assessments',classView.assessments.sort))" is-open="assessmentOpen[assessment.ID]" context-menu="assessmentHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="assessment in (filterAssessments()|sort:getSortParams('assessments',classView.assessments.sort))" is-open="state.assessments.open[assessment.ID]" context-menu="assessmentHeader">
                                                 <uib-accordion-heading>
                                                     <div>
                                                         <span ng-bind-html="(classView.assessments.filter.open && classView.assessments.filter.searchNames)?(assessment.assessmentName|highlight:classView.assessments.filter.query:classView.assessments.filter.caseSensitive):assessment.assessmentName"></span>
@@ -192,7 +192,7 @@
                                                         uib-tooltip="{{ 'Sort By: '+sortModes[classView.topics.sort].name }}" ng-mouseup="sortModeMouseDown($event,'topics')">
                                                     <span class="glyphicon {{sortModes[classView.topics.sort].icon}}"></span>
                                                 </button>
-                                                <button type="button" class="btn btn-default" data-toggle="button"
+                                                <button type="button" ng-class="'btn btn-default'+(classView.topics.filter.open?' active':'')" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.topics.filter.open = !classView.topics.filter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
@@ -232,7 +232,7 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in (filterTopics()|sort:getSortParams('topics',classView.topics.sort))" is-open="topicOpen[topic.ID]" context-menu="topicHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="topic in (filterTopics()|sort:getSortParams('topics',classView.topics.sort))" is-open="state.topics.open[topic.ID]" context-menu="topicHeader">
                                                 <uib-accordion-heading>
                                                     <div>
                                                         <span ng-bind-html="(classView.topics.filter.open && classView.topics.filter.searchTopics)?(topic.topicName|highlight:classView.topics.filter.query:classView.topics.filter.caseSensitive):topic.topicName"></span>
@@ -285,7 +285,7 @@
                                                         uib-tooltip="{{ 'Sort By: '+sortModes[classView.objectives.sort].name }}" ng-mouseup="sortModeMouseDown($event,'objectives')">
                                                     <span class="glyphicon {{sortModes[classView.objectives.sort].icon}}"></span>
                                                 </button>
-                                                <button type="button" class="btn btn-default" data-toggle="button"
+                                                <button type="button" ng-class="'btn btn-default'+(classView.objectives.filter.open?' active':'')" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.objectives.filter.open = !classView.objectives.filter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
@@ -317,7 +317,7 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in (filterObjectives()|sort:getSortParams('objectives',classView.objectives.sort))" is-open="objectiveOpen[objective.ID]" context-menu="objectiveHeader">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="objective in (filterObjectives()|sort:getSortParams('objectives',classView.objectives.sort))" is-open="state.objectives.open[objective.ID]" context-menu="objectiveHeader">
                                                 <uib-accordion-heading>
                                                     <div>
                                                         <span ng-bind-html="classView.objectives.filter.open?(objective.objectiveText | highlight: classView.objectives.filter.query:classView.objectives.filter.caseSensitive):(objective.objectiveText)"></span>
@@ -365,11 +365,11 @@
                                                         uib-tooltip="{{ 'Sort By: '+sortModes[classView.questions.sort].name }}" ng-mouseup="sortModeMouseDown($event,'questions')">
                                                     <span class="glyphicon {{sortModes[classView.questions.sort].icon}}"></span>
                                                 </button>
-                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="top"
+                                                <button type="button" ng-class="'btn btn-default'+(classView.questions.bulk.open?' active':'')" data-toggle="button" tooltip-placement="top"
                                                         uib-tooltip="Bulk Operations" ng-click="classView.questions.bulk.open = !classView.questions.bulk.open;">
                                                     <span class="glyphicon glyphicon-check"></span>
                                                 </button>
-                                                <button type="button" class="btn btn-default" data-toggle="button"
+                                                <button type="button" ng-class="'btn btn-default'+(classView.questions.filter.open?' active':'')" data-toggle="button"
                                                         tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.questions.filter.open = !classView.questions.filter.open">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
@@ -445,15 +445,15 @@
                                                 <div class="input-group" style="width:65%;margin-right:2px">
 
                                                     <div class="btn-group btn-group-sm" role="group" style="padding-right:5px">
-                                                        <button type="button" class="btn btn-default">Select All</button>
-                                                        <button type="button" class="btn btn-default">Deselect All</button>
+                                                        <button type="button" class="btn btn-default" ng-disabled="countAccordion('question',true) === questionCount" ng-click="iterateAccordion('question',true,true)">Select All</button>
+                                                        <button type="button" class="btn btn-default" ng-disabled="countAccordion('question',true) === 0" ng-click="iterateAccordion('question',false,true)">Deselect All</button>
                                                     </div>
-                                                    <div style="display:inline;margin-top:5px;padding-right:2px">$1 selected</div>
+                                                    <div style="display:inline;padding-right:5px">{{countAccordion('question',true)}} selected</div>
                                                     <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-danger">Delete</button>
-                                                        <button type="button" class="btn btn-primary">Change Topic</button>
-                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length">Add Objective</button>
-                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length">Remove Objective</button>
+                                                        <button type="button" class="btn btn-danger" ng-disabled="!countAccordion('question',true)" ng-click="deleteQuestions(getAccordionIDs('question',true))">Delete</button>
+                                                        <button type="button" class="btn btn-primary" ng-disabled="!countAccordion('question',true)">Change Topic</button>
+                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)">Add Objective</button>
+                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)">Remove Objective</button>
                                                     </div>
                                                 </div>
                                                 <div style="width:35%; display:inherit">
@@ -476,10 +476,10 @@
                                         </div>
 
                                         <uib-accordion close-others="false">
-                                            <div uib-accordion-group class="panel-default" ng-repeat="question in (filterQuestions()|sort:getSortParams('questions',classView.questions.sort))" is-open="questionOpen[UIDtoJson(question.UID)]" context-menu="questionHeader" template-url="html/accordion-group.html">
+                                            <div uib-accordion-group class="panel-default" ng-repeat="question in (filterQuestions()|sort:getSortParams('questions',classView.questions.sort))" is-open="state.questions.open[UIDtoJson(question.UID)]" context-menu="questionHeader" template-url="html/accordion-group.html">
                                                 <uib-accordion-heading>
                                                     <div>
-                                                        <input class="bigCheckbox" type="checkbox" ng-if="classView.questions.bulk.open" ng-click="$event.stopPropagation()"/>
+                                                        <input class="bigCheckbox" type="checkbox" ng-model="state.questions.checked[UIDtoJson(question.UID)]" ng-if="classView.questions.bulk.open" ng-click="$event.stopPropagation()"/>
                                                         <span ng-bind-html="(classView.questions.filter.searchQuestions && classView.questions.filter.open)?(question.questionTitle | highlight: classView.questions.filter.query:classView.questions.filter.caseSensitive):(question.questionTitle)"></span>
                                                         <span class="badge" ng-if="question.topicID != 0">
                                                             {{ questionBadgeTopic(question) }}

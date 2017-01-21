@@ -95,9 +95,7 @@ class Course {
           },
           bulk: {
             open: false,
-
-            selectionQIDs: [], //Unused, need to decide how to model this
-          },
+          }
         }
       }
     }

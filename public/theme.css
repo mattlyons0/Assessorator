@@ -117,7 +117,7 @@ input[type=checkbox].bigCheckbox {
     transform: scale(1.5);
     margin-right: 2px;
     margin-bottom: 5px;
-    bottom: -2px;
+    bottom: -1px;
     position: relative;
 }
 

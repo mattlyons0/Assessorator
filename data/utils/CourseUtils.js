@@ -3,6 +3,7 @@
 let Topic = require('../Topic');
 let Objective = require('../Objective');
 let Assessment = require('../Assessment');
+let TopicUtils = require('./TopicUtils');
 
 /**
  * Contains Functions for doing common operations on the Course data structure.
@@ -119,7 +120,7 @@ class CourseUtils {
 
   /**
    * Get a question from a UID (containing topic and question ID)
-   * @param questionUID {Number} containing topic and question ID
+   * @param questionUID containing topic and question ID
    * @returns {Question} question with given UID
    */
   getQuestion(questionUID){
@@ -132,6 +133,22 @@ class CourseUtils {
             return question;
           }
         }
+      }
+    }
+  }
+
+  /**
+   * Delete a question from a UID
+   * @param questionUID containing topic and question ID
+   */
+  deleteQuestion(questionUID){
+    let topicID = questionUID.topic;
+
+    for(let topic of this.course.topics){
+      if(topic.ID === topicID){
+        let topicUtil = new TopicUtils(topic);
+        topicUtil.deleteQuestion(questionUID.question);
+        return;
       }
     }
   }
