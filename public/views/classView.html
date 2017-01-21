@@ -96,7 +96,7 @@
                                                             <ui-select-match placeholder="Filter Topic">
                                                                 {{$select.selected.topicName}}
                                                             </ui-select-match>
-                                                            <ui-select-choices repeat="topic in class.topics | filter: { topicName: $select.search }">
+                                                            <ui-select-choices repeat="topic in (class.topics|sort:{key:'topicName',mode:'ascending'}) | filter: { topicName: $select.search }">
                                                                 <div ng-bind-html="topic.topicName | highlight: $select.search"></div>
                                                                 <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
                                                             </ui-select-choices>
@@ -112,7 +112,7 @@
                                                             <ui-select-match placeholder="Filter Objective">
                                                                 {{$select.selected.objectiveText}}
                                                             </ui-select-match>
-                                                            <ui-select-choices repeat="objective in class.objectives | filter: { objectiveText: $select.search }">
+                                                            <ui-select-choices repeat="objective in (class.objectives|sort:{key:'objectiveText',mode:'ascending'}) | filter: { objectiveText: $select.search }">
                                                                 <span ng-bind-html="objective.objectiveText | highlight: $select.search"></span>
                                                             </ui-select-choices>
                                                         </ui-select>
@@ -254,7 +254,7 @@
 
                                                 <!-- Questions -->
                                                 <strong ng-if="topic.questions.length">Questions:</strong>
-                                                <p style="padding-left:5px" ng-repeat="question in (topic.questions|sort:{key:'questionTitle',mode:{ascending:true}})" bind-html-compile="formatQuestion(question)"></p>
+                                                <p style="padding-left:5px" ng-repeat="question in (topic.questions|sort:{key:'questionTitle',mode:'ascending'})" bind-html-compile="formatQuestion(question)"></p>
 
                                                 <!-- No Questions -->
                                                 <p class="text-info" ng-if="!topic.questions.length">
@@ -409,7 +409,7 @@
                                                             <ui-select-match placeholder="Filter Topic">
                                                                 {{$select.selected.topicName}}
                                                             </ui-select-match>
-                                                            <ui-select-choices repeat="topic in class.topics | filter: { topicName: $select.search }">
+                                                            <ui-select-choices repeat="topic in (class.topics|sort:{key:'topicName',mode:'ascending'}) | filter: { topicName: $select.search }">
                                                                 <div ng-bind-html="topic.topicName | highlight: $select.search"></div>
                                                                 <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
                                                             </ui-select-choices>
@@ -425,7 +425,7 @@
                                                             <ui-select-match placeholder="Filter Objective">
                                                                 {{$select.selected.objectiveText}}
                                                             </ui-select-match>
-                                                            <ui-select-choices repeat="objective in class.objectives | filter: { objectiveText: $select.search }">
+                                                            <ui-select-choices repeat="objective in (class.objectives|sort:{key:'objectiveText',mode:'ascending'}) | filter: { objectiveText: $select.search }">
                                                                 <span ng-bind-html="objective.objectiveText | highlight: $select.search"></span>
                                                             </ui-select-choices>
                                                         </ui-select>

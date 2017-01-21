@@ -10,27 +10,23 @@
     <h2>Bugs</h2>
     <ul>
         <li>There are some areas which don't scroll/scrolling offset is wrong</li>
-        <li>Objectives to Questions don't get modified when the objective is modified</li>
         <li>Pointers that need to be repaired are a waste of storage space. Store ID's instead (although be careful to store topic id of questions)</li>
         <li>Exporting large databases crashes the window (out of memory)</li>
         <li>Importing large databases crashes the window (out of memory)</li>
         <li>Storage usage is incorrect (Always 0MB)</li>
         <li>There are some places in the code from before Question.topicID existed, these parts of the code are inefficient</li>
-        <li>Process crash is unhandled</li>
         <li>Importing large databases doesn't always delete old database</li>
         <li>When saving data pointers are cloned (change to just using needed ID's instead of pointers), this will decrease startup time (no need to repair pointers) as well as decrease filesize</li>
         <li>At very small width the course selection button goes away from the header (along with others)</li>
         <li>Dropdown for filter questions by topic and objective get cut off by scrollbar when there are no results (appending to body is broken in the lib, investigate changing autoscroll val when open)</li>
-        <li>Assessment generation is broken</li>
         <li>Handle different types of quotes in filter, " and the angled ones as the same</li>
-        <li>Courses on homepage cannot be rearranged</li>
         <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning </li>
         <li>Upon deletion of questions used as manual questions within assessments delete those manual questions and provide warning</li>
-        <li>Filtering and alphabetizing is done very inefficiently by angular (sorting is redone every scroll, filtering might be too)</li>
-        <li>Objectives tab elements aren't alphabetized</li>
-        <li>Topics tab elements aren't alphabetized</li>
         <li>Importing questions by file adds ? symbols to every quote</li>
-        <li>Filter topic and filter objective dropdowns arent sorted</li>
+        <li>Topic and Objective dropdowns in EditQuestion arent alphabetized</li>
+        <li>Topic and Objective Dropdowns in CreateRequirement aren't alphabetized</li>
+        <li>Sometimes md-scroll-mask sticks (solve by removing all md-overlays)</li>
+        <li>Workers are not closed properly? (workers stay open in sources threads view)</li>
     </ul>
 
     <h2>Features</h2>
@@ -42,18 +38,15 @@
         </ul>
         <li>Polished UI</li>
         <ul>
+            <li>Determine what to do with the tab system (keep or remove)</li>
             <li>Don't allow duplicate tabs w/ same info, open one that exists already</li>
             <li>Allow question dragging to reorder in question creation</li>
             <li>Alert via toast when low on storage space</li>
-            <li>Remember last window size and open with that size and location</li>
+            <li>Courses on homepage cannot be rearranged</li>
 
             <li>Class View</li>
             <ul>
                 <li>Focus query field when clicking filter</li>
-                <li>Cycle backwards through sorting modes when right clicking</li>
-                <li>Still needs to be denser for Tom (reduce margins)</li>
-                <li>Store expanded questions by question not position</li>
-                <li>Expand all and collapse all respect filters (only expand or colapse those shown currently)</li>
                 <li>Bulk editing mode</li>
                 <ul>
                     <li>Button to select all (which respects filters)</li>
@@ -64,6 +57,10 @@
                 </ul>
             </ul>
             <li>Retrieve classes and incrementally update the UI as they are received (instead of doing them all at once)</li>
+        </ul>
+        <li>Export View Redesign</li>
+        <ul>
+            Show a rich preview of the exported assessment instead of the text output
         </ul>
         <li>edX format Importing</li>
         <ul>
@@ -97,6 +94,7 @@
                 <li>Make virtually repeating for class view so it isnt laggy</li>
                 <li>Make virtually repeating for search so it isnt laggy</li>
                 <li>Move all IO to a web worker (for now saving is moved)</li>
+                <li>Filtering and alphabetizing is done very inefficiently by angular (sorting is redone every scroll, filtering might be too)</li>
             </ul>
             <li>1k topics/objectives</li>
             <ul>

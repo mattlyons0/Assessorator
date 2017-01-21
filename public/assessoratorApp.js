@@ -103,12 +103,10 @@ app.filter('highlight', function() {
 
 app.filter('sort', function(){
   return function(arr,params){
-    if(params.key === 'r')
-      console.log(arr)
     arr = arr.slice(); //Shallow copy so we don't change the order of the actual array
 
     let mult = 1;
-    if(!params.mode.ascending)
+    if(params.mode !== 'ascending' && !params.mode.ascending)
       mult = -1;
     return arr.sort(function (a, b) {
       let objA = a[params.key];
