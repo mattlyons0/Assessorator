@@ -58,20 +58,25 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     classView[keyval].sort = index;
   };
   $scope.getSortParams = function(tabType,sortMode){
-    let key;
+    let key, fallback;
     sortMode = $scope.sortModes[sortMode];
+    let fallbackIdx = sortMode.fieldIndex?0:1;
 
     if(tabType === 'questions'){
       key=$scope.sortFieldsQuestions[sortMode.fieldIndex];
+      fallback = $scope.sortFieldsQuestions[fallbackIdx];
     } else if(tabType === 'objectives'){
       key=$scope.sortFieldsObjectives[sortMode.fieldIndex];
+      fallback = $scope.sortFieldsObjectives[fallbackIdx];
     } else if(tabType === 'topics'){
       key=$scope.sortFieldsTopics[sortMode.fieldIndex];
+      fallback = $scope.sortFieldsTopics[fallbackIdx];
     } else if(tabType === 'assessments'){
       key=$scope.sortFieldsAssessments[sortMode.fieldIndex];
+      fallback = $scope.sortFieldsAssessments[fallbackIdx];
     }
 
-    return {key: key, mode: sortMode};
+    return {key: key, fallback: fallback, mode: sortMode};
   };
 
 
@@ -343,17 +348,16 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   };
 
   $scope.deleteQuestions = function(deleteUIDs){
-    let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-danger"><h3 style="margin-top:10px">'
-      +'<h3 style="text-align:center">Are You Sure You Would Like to Delete '+ deleteUIDs.length +' Question'+(deleteUIDs.length===1?'':'s')+'?</h3></div><li class="list-group-item">';
-    let html = '<div class="text-danger">This will delete the selected questions.</div></li>';
-    let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" style="margin-right:2px" class="btn btn-default" ng-click="dismiss()">Cancel</button>'
-      +'<button type="button" class="btn btn-danger" ng-click="close()">Delete</button></div>';
+    let scope = $scope.$new();
+    scope.alertType = 'danger';
+    scope.title = 'Are You Sure You Would Like to Delete '+ deleteUIDs.length +' Question'+(deleteUIDs.length===1?'':'s')+'?';
+    scope.description = 'This will delete the selected questions.';
+    scope.confirmText = '<b>Delete ' + deleteUIDs.length + ' Question'+(deleteUIDs.length===1?'':'s')+'</b>';
+
     let confirm = $uibModal.open({
-      template: header+html+buttons,
-      controller: function($scope,$uibModalInstance){
-        $scope.close = $uibModalInstance.close;
-        $scope.dismiss = $uibModalInstance.dismiss;
-      }
+      templateUrl: 'html/modalTemplate.html',
+      size: 'lg',
+      scope: scope
     });
     confirm.result.then(function(){
       for(let questionUID of deleteUIDs) {
@@ -364,6 +368,91 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
       //Didn't delete
     });
   };
+
+  $scope.changeTopics = function(selectedUIDs){
+    let selectedTopics = {}; //Count of each question with a specified topic indexed by topic id
+    for(let selectedUID of selectedUIDs){
+      let topicID = courseUtils.getQuestion(selectedUID).topicID;
+      if(!selectedTopics.hasOwnProperty(topicID))
+        selectedTopics[topicID] = 0;
+      selectedTopics[topicID]++;
+    }
+    //Sort by times appeared then alphabetically
+    let arr = [];
+    for(let prop in selectedTopics) {
+      if (selectedTopics.hasOwnProperty(prop)) {
+        arr.push([prop, selectedTopics[prop]])
+      }
+    }
+    arr.sort(function(a,b){
+      let diff = b[1] - a[1];
+      if (diff === 0 && courseUtils.getTopic(Number(a[0])).topicName > courseUtils.getTopic(Number(b[0])).topicName)
+        diff = 1;
+      else if(diff === 0)
+        diff = -1;
+      return diff;
+    });
+    //Show Data
+    let underDropdown = '<b>Old Topic'+(arr.length===1?'':'s')+':</b> ';
+    let first = true;
+    for(let topic of arr){
+      if(!first)
+        underDropdown += ', '
+      else
+        first=false;
+      underDropdown += '<i>' +courseUtils.getTopic(Number(topic[0])).topicName + '</i> x' + topic[1];
+    }
+
+    let scope = $scope.$new();
+    scope.class = $scope.class;
+    scope.alertType = 'info';
+    scope.title = 'Change Topic of '+ selectedUIDs.length +' Question'+(selectedUIDs.length===1?'':'s');
+    scope.summary = underDropdown;
+    scope.confirmText = '<b>Change Topic'+(selectedUIDs.length===1?'':'s')+'</b>';
+    scope.dropdown = true;
+    scope.dropdownInfo = {
+      placeholder: 'No Topic',
+      repeatObj: scope.class.topics,
+      selectAttr: 'topicName',
+      choicesAttr: 'topicName',
+      descAttr: 'topicDescription',
+      model: $scope.class.topics[0]
+    }
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      keyboard: false,
+      backdrop: 'static',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      let newTopic = scope.dropdownInfo.model;
+      if(newTopic === undefined)
+        newTopic = $scope.class.topics[0]; //No Topic
+      let topicUtil = new TopicUtils(newTopic);
+      for(let questionUID of selectedUIDs) {
+        //Duplicate
+        let oldQ = courseUtils.getQuestion(questionUID);
+        let newID = topicUtil.createQuestion(oldQ.questionTitle,oldQ.questionDescription);
+        let newQ = topicUtil.getQuestion(newID);
+        newQ.answers = oldQ.answers;
+        newQ.answersUID = oldQ.answersUID;
+        newQ.objectives = oldQ.objectives;
+        newQ.creationDate = oldQ.creationDate;
+        //Duplicate selection data
+        let newJSON = UI.UIDtoJson(newQ.UID);
+        let oldJSON = UI.UIDtoJson(oldQ.UID);
+        UI.miscState.classView.questions.checked[newJSON] = UI.miscState.classView.questions.checked[oldJSON];
+        UI.miscState.classView.questions.open[newJSON] = UI.miscState.classView.questions.open[oldJSON];
+        //Delete old
+        courseUtils.deleteQuestion(questionUID);
+      }
+      UI.save($scope.class);
+    }, function(){
+      //Canceled
+    });
+  }
+
   $scope.searchQuestions = function(tabName,data){
     if(!tabName)
       tabName='Search Questions';

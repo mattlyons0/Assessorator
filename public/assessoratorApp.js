@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-var app = angular.module("assessoratorApp", ['ui.bootstrap','ui.bootstrap.contextMenu','ngMaterial', 'ngMessages','ngSanitize', 'ui.select', 'ngToast', 'ngAnimate']);
+var app = angular.module('assessoratorApp', ['ui.bootstrap','ui.bootstrap.contextMenu','ngMaterial', 'ngMessages','ngSanitize', 'ui.select', 'ngToast', 'ngAnimate']);
 
 app.config(['ngToastProvider',function(ngToastProvider){
   ngToastProvider.configure({
@@ -9,6 +9,14 @@ app.config(['ngToastProvider',function(ngToastProvider){
     combineDuplications: true
   });
 }]);
+
+// Hack to fix ui.select's reliance on animations even when they don't exist (in modals)
+// See https://github.com/angular-ui/ui-select/issues/1560
+angular.module('ui.select').run(function($animate) {
+  $animate.enabled = function (elem) {
+    return false
+  }
+});
 
 app.directive('dynamicCtrl', ['$compile', '$parse',function($compile, $parse) { //Used for a dynamic controller
   return {
@@ -27,7 +35,7 @@ app.directive('dynamicCtrl', ['$compile', '$parse',function($compile, $parse) { 
 app.directive('autoscroll', ['$window', function($window) { //Used to make things scroll based on the height of the window and an offset
   return function (scope, element, attrs) {
     calcMaxHeight();
-    element.css('overflow-y',"auto");
+    element.css('overflow-y','auto');
 
     angular.element($window).bind('resize', function(){
       calcMaxHeight();
@@ -117,8 +125,12 @@ app.filter('sort', function(){
         return 2 * mult;
       if (objA < objB)
         return -2 * mult;
-      //Sort based on ID for stability if key matches
-      if(a.ID > b.ID)
+      //Sort based on fallback key for stability if key matches (ultimately fall back to ID and UID)
+      if(params.fallback && a[params.fallback] > b[params.fallback])
+        return 1
+      else if(params.fallback && a[params.fallback] < b[params.fallback])
+        return -1;
+      else if(a.ID > b.ID)
         return 1;
       else if(a.ID < b.ID)
         return -1;

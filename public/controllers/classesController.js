@@ -77,7 +77,7 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
           +'<h3>Are You Sure You Would Like to Delete '+ course.courseID +'?</h3></div><li class="list-group-item">';
     let html = courseDescrip + '<br/><br/><div class="text-danger">This will delete: '+deleteStr+'</div></li>';
     let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" class="btn btn-default" ng-click="dismiss()" style="margin-right:2px">Cancel</button>'
-      +'<button type="button" class="btn btn-danger" ng-click="close()">Delete</button></div>';
+      +'<button type="button" class="btn btn-danger" ng-click="close()"><b>Delete</b></button></div>';
     let confirm = $uibModal.open({
       template: header+html+buttons,
       controller: function($scope,$uibModalInstance){

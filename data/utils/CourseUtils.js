@@ -31,6 +31,9 @@ class CourseUtils {
   }
 
   getTopic(topicID){
+    if(!Number.isSafeInteger(topicID)){
+      console.warn("Searching for topic with id: "+topicID+" of type: "+typeof topicID+" which is not a integer.");
+    }
     for (let x = 0; x < this.course.topics.length; x++) {
       if (this.course.topics[x].ID === topicID) {
         return this.course.topics[x];

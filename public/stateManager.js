@@ -275,7 +275,7 @@ function saveJSON(location){
     let err = fs.writeFileSync(location,json);
     let scope = angular.element(document.querySelector('#container')).scope();
     if(err){
-      showToast('Error saving Database.',{level: 'danger',delay:10});
+      showToast('Error saving Database',{level: 'danger',delay:10});
       console.error('Error saving Database "'+saveDirectory+'"\n');
       console.log(err);
     } else{

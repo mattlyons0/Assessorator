@@ -442,7 +442,7 @@
                                         <!-- Bulk Dropdown -->
                                         <div ng-if="classView.questions.bulk.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205)">
-                                                <div class="input-group" style="width:65%;margin-right:2px">
+                                                <div class="input-group" style="margin-right:2px">
 
                                                     <div class="btn-group btn-group-sm" role="group" style="padding-right:5px">
                                                         <button type="button" class="btn btn-default" ng-disabled="countAccordion('question',true) === questionCount" ng-click="iterateAccordion('question',true,true)">Select All</button>
@@ -451,7 +451,7 @@
                                                     <div style="display:inline;padding-right:5px">{{countAccordion('question',true)}} selected</div>
                                                     <div class="btn-group btn-group-sm" role="group">
                                                         <button type="button" class="btn btn-danger" ng-disabled="!countAccordion('question',true)" ng-click="deleteQuestions(getAccordionIDs('question',true))">Delete</button>
-                                                        <button type="button" class="btn btn-primary" ng-disabled="!countAccordion('question',true)">Change Topic</button>
+                                                        <button type="button" class="btn btn-primary" ng-disabled="!countAccordion('question',true)" ng-click="changeTopics(getAccordionIDs('question',true))">Change Topic</button>
                                                         <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)">Add Objective</button>
                                                         <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)">Remove Objective</button>
                                                     </div>

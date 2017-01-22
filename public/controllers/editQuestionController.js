@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 let ObjectiveUtils = require('../data/utils/ObjectiveUtils');
 
-app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
+app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
   function init(){
     $scope.callback = $scope.tabData.callback;
 
@@ -23,7 +23,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
         $scope.objective.selected.push(objective);
       }
       let selectedIndex;
-      if(question.answers[0].answerText == 'True' && question.answers[1].answerText == 'False') {
+      if(question.answers[0] && question.answers[0].answerText == 'True' && question.answers[1].answerText == 'False') {
         $scope.question.type = 'TF';
         for(let i=0;i<question.answers.length;i++){
           let ans = question.answers[i];
@@ -69,7 +69,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   $scope.question = {};
   $scope.question.answers = [];
   $scope.question.answers.push({
-    text: "",
+    text: '',
     correct: false,
     pinned: false
   });
@@ -173,6 +173,17 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       for (let x = 0; x < $scope.question.answers.length - 1; x++) { //Omit ghost answer
         questionUtil.createAnswer($scope.question.answers[x].text, $scope.question.answers[x].correct, $scope.question.answers[x].pinned);
       }
+      if(ignoreEdit) { //If we are moving topics, preserve creation date & selection data
+        let oldQuestion = new TopicUtils(oldTopic).getQuestion($scope.tabData.questionID);
+        //Preserve creation date
+        question.creationDate = oldQuestion.creationDate
+        //Duplicate selection data
+        let newJSON = UI.UIDtoJson(question.UID);
+        let oldJSON = UI.UIDtoJson(oldQuestion.UID);
+        console.log(oldJSON);
+        UI.miscState.classView.questions.checked[newJSON] = UI.miscState.classView.questions.checked[oldJSON];
+        UI.miscState.classView.questions.open[newJSON] = UI.miscState.classView.questions.open[oldJSON];
+      }
     } else{ //Edit Topic
       let oldTopicUtil = new TopicUtils(oldTopic);
       let question = oldTopicUtil.getQuestion($scope.tabData.questionID);
@@ -221,7 +232,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
 
   $scope.requestFocus = function () {
     setTimeout(function () {
-      document.getElementById("questionTitle" + $scope.tabID).focus();
+      document.getElementById('questionTitle' + $scope.tabID).focus();
     }, 500); //Delay until animation starts
     init();
   };
@@ -233,7 +244,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       return;
     if (!tab)
       tab = $scope.$parent.getTabByID($scope.tabID);
-    tab.name = strLimit("Question: " + $scope.question.title);
+    tab.name = strLimit('Question: ' + $scope.question.title);
   });
 
   $scope.stopWatching2 = $scope.$watch('question.correctAnswer', function () { //Selector Answer Data Structure Update
@@ -250,9 +261,9 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
   });
 
   $scope.stopWatching3 = $scope.$watch('question.answers[question.answers.length-1].text', function () { //Create Ghost Answer
-    if ($scope.question.answers[$scope.question.answers.length - 1].text) {
+    if (!$scope.question.answers.length || $scope.question.answers[$scope.question.answers.length - 1].text) {
       $scope.question.answers.push({
-        text: "",
+        text: '',
         correct: false
       });
     }
@@ -280,12 +291,12 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       let replaceTrueFalse = function () {
         $scope.question.answers = [];
         $scope.question.answers.push({
-          text: "True",
+          text: 'True',
           correct: false,
           pinned: false
         });
         $scope.question.answers.push({
-          text: "False",
+          text: 'False',
           correct: false,
           pinned: false
         });
@@ -297,7 +308,7 @@ app.controller("editQuestionCtrl", function ($scope, $mdDialog, $mdToast) {
       };
 
       if (dataExists) {
-        let confirm = $mdDialog.confirm().title("Are you sure you would like to override previous answers?")
+        let confirm = $mdDialog.confirm().title('Are you sure you would like to override previous answers?')
           .textContent('Previous Answers will be replaced with True and False.').ok('OK').cancel('Cancel');
         $mdDialog.show(confirm).then(function () { //Yes
           replaceTrueFalse();

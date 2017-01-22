@@ -1,0 +1,33 @@
+<div class="list-group flex" style="margin-bottom:0">
+    <div class="list-group-item" ng-class="'alert-'+alertType">
+        <h3 style="margin-top:10px; text-align:center" bind-html-compile="title"></h3>
+    </div>
+    <li class="list-group-item">
+        <div ng-class="'text-'+alertType" ng-if="description" bind-html-compile="description"></div>
+        <div ng-class="'text-'+alertType" ng-if="dropdown">
+            <div class="form-horizontal">
+                <div class="form-group" style="margin:0"><label style="float:left;position:relative;top:5px">
+                    Select the topic to change to:</label>
+                    <div class="col-sm-7">
+                        <ui-select class="ng-animate-disabled" ng-model="dropdownInfo.model" theme="bootstrap">
+                            <ui-select-match placeholder="{{dropdownInfo.placeholder}}">
+                                {{$select.selected[dropdownInfo.choicesAttr]}}
+                            </ui-select-match>
+                            <ui-select-choices
+                                    repeat="obj in (dropdownInfo.repeatObj|sort:{key:dropdownInfo.choicesAttr,mode:'ascending'}) | filter: { topicName: $select.search }">
+                                <div ng-bind-html="obj[dropdownInfo.choicesAttr]| highlight: $select.search"></div>
+                                <small class="text-muted" ng-bind-html="obj[dropdownInfo.descAttr]"></small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-class="'text-'+alertType" ng-if="summary" bind-html-compile="summary" style="margin-top:15px"></div>
+    </li>
+    <div style="padding: 5px; text-align:right">
+        <button type="button" style="margin-right:2px" class="btn btn-default" ng-click="$dismiss()">Cancel</button>
+        <button type="button" class="btn" ng-click="$close()"
+                ng-class="(alertType === 'info'?'btn-primary':'btn-'+alertType)" bind-html-compile="confirmText"></button>
+    </div>
+</div>
