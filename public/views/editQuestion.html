@@ -103,10 +103,10 @@
                                             <input id="questionAnswer{{$index}}" ng-model="answer.text" placeholder="Answer"/>
                                         </md-input-container>
 
-                                        <md-button class="md-icon-button" ng-class="(answer.pinned?'md-primary':'')"
+                                        <md-button class="md-icon-button" ng-class="(answer.pinned?'blueColor':'blackColor')"
                                                    aria-label="Pin Question" ng-disabled="$last" ng-click="togglePin(answer)">
                                             <md-tooltip md-delay="1000" md-direction="left">Pin this question's location so that it will not be randomized.</md-tooltip>
-                                            <span class="glyphicon glyphicon-pushpin"></span>
+                                            <span class="glyphicon glyphicon-pushpin pin"></span>
                                         </md-button>
                                     </div>
                                 </md-radio-group>

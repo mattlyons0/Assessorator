@@ -139,3 +139,14 @@ span[uib-accordion-header] > div {
 .panel-collapse {
     transition: none !important;
 }
+
+.pin {
+    transform: scale(1.5);
+}
+
+.blueColor {
+    color: rgb(63,81,181) !important;
+}
+.blackColor {
+    color: rgba(0, 0, 0, 0.87) !important;
+}
