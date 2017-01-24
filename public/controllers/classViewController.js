@@ -609,14 +609,16 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   };
 
   $scope.questionBadgeObjectives = function(question){
+    let sortedObjectives = question.objectives.slice();
+    sortedObjectives = $filter('sort')(sortedObjectives, {key: 'objectiveText', mode: 'ascending'});
     let out = 'Objective';
-    if(question.objectives.length != 1)
+    if(sortedObjectives.length !== 1)
       out+='s';
     out+=': ';
-    for(let i=0;i<question.objectives.length;i++){
-      if(i != 0)
+    for(let i=0;i<sortedObjectives.length;i++){
+      if(i !== 0)
         out+=', ';
-      out+=question.objectives[i].objectiveText;
+      out+=sortedObjectives[i].objectiveText;
     }
 
     return out;

@@ -20,7 +20,7 @@
                 <input required id="classID" name="classID" ng-model="class.id" class="form-control"/>
 
                 <label>Semester:</label>
-                <select class="form-control">
+                <select ng-model="class.semester" class="form-control">
                     <option ng-repeat="semester in semesters" value="{{semester}}">
                         {{semester}}
                     </option>

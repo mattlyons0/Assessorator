@@ -92,7 +92,7 @@
                                                 </div>
                                                 <div style="width:35%; display:inherit">
                                                     <div class="input-group" style="width:50%;margin-right:2px">
-                                                        <ui-select allow-clear ng-model="assessmentsQuery.topic" theme="bootstrap">
+                                                        <ui-select append-to-body="true" allow-clear ng-model="assessmentsQuery.topic" theme="bootstrap">
                                                             <ui-select-match placeholder="Filter Topic">
                                                                 {{$select.selected.topicName}}
                                                             </ui-select-match>
@@ -108,7 +108,7 @@
                                                             </span>
                                                     </div>
                                                     <div class="input-group" style="width:50%">
-                                                        <ui-select ng-model="assessmentsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
+                                                        <ui-select append-to-body="true" ng-model="assessmentsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
                                                             <ui-select-match placeholder="Filter Objective">
                                                                 {{$select.selected.objectiveText}}
                                                             </ui-select-match>
@@ -405,7 +405,7 @@
                                                 </div>
                                                 <div style="width:35%; display:inherit">
                                                     <div class="input-group" style="width:50%;margin-right:2px">
-                                                        <ui-select allow-clear ng-model="questionsQuery.topic" theme="bootstrap">
+                                                        <ui-select append-to-body="true" allow-clear ng-model="questionsQuery.topic" theme="bootstrap">
                                                             <ui-select-match placeholder="Filter Topic">
                                                                 {{$select.selected.topicName}}
                                                             </ui-select-match>
@@ -421,7 +421,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="input-group" style="width:50%">
-                                                        <ui-select ng-model="questionsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
+                                                        <ui-select append-to-body="true" ng-model="questionsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
                                                             <ui-select-match placeholder="Filter Objective">
                                                                 {{$select.selected.objectiveText}}
                                                             </ui-select-match>

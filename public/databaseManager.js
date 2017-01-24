@@ -356,7 +356,7 @@ function updateDataFormat(course) {
   }
 
   //Check no topic index is 0 (was broken in one update, so this will fix it)
-  if(course.topics[0].ID !== 0){
+  if(course.topics[0] && course.topics[0].ID !== 0){
     let noTopicIndex = -1;
     for(let i=0;i<course.topics.length;i++){
       if(course.topics[i].ID === 0){
@@ -411,6 +411,12 @@ function updateDataFormat(course) {
     console.log('Created Course Prefs');
   } else{
     defineAllProps(defaultCoursePrefs,course.prefs);
+  }
+
+  //Check if displayOrder exists, if not create it
+  if(!course.displayOrder){
+    course.displayOrder = course.ID;
+    didUpdate = true;
   }
 
   return {needsSave: didUpdate, updateDate: updateDate};

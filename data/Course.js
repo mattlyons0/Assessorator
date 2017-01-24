@@ -23,6 +23,7 @@ class Course {
     this.courseSemester = courseSemester;
 
     this.ID = genID; //Generate a unique ID to use internally
+    this.displayOrder = genID;
 
     //Array Data
     /** Saved Assessments Generated

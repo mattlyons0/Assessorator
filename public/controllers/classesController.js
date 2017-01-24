@@ -89,6 +89,7 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
       html='<div class="text-danger">This operation cannot be reversed. '+courseDescrip+' will be deleted.</div></li>';
       let lastChance = $uibModal.open({
         template: header+html+buttons,
+        backdrop: 'static',
         controller: function($scope,$uibModalInstance){
           $scope.close = $uibModalInstance.close;
           $scope.dismiss = $uibModalInstance.dismiss;
@@ -110,9 +111,53 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
     return courseUtil.countQuestions();
   };
 
+  $scope.moveUp = function(classID){
+    let course = UI.getClassById(classID);
+    let courseBefore = {displayOrder: -1};
+
+    for(let c of UI.getClasses()){
+      if(c.displayOrder < course.displayOrder && c.displayOrder > courseBefore.displayOrder){
+        courseBefore = c;
+      }
+    }
+
+    if(!courseBefore.hasOwnProperty('ID')){
+      showToast("Can't Move Up",{level: 'warning'});
+    } else{
+      let temp = course.displayOrder;
+      course.displayOrder = courseBefore.displayOrder;
+      courseBefore.displayOrder = temp;
+    }
+  };
+
+  $scope.moveDown = function(classID){
+    let course = UI.getClassById(classID);
+    let courseAfter = {displayOrder: Number.MAX_VALUE};
+
+    for(let c of UI.getClasses()){
+      if(c.displayOrder > course.displayOrder && c.displayOrder < courseAfter.displayOrder){
+        courseAfter = c;
+      }
+    }
+
+    if(!courseAfter.hasOwnProperty('ID')){
+      showToast("Can't Move Down",{level: 'warning'});
+    } else{
+      let temp = course.displayOrder;
+      course.displayOrder = courseAfter.displayOrder;
+      courseAfter.displayOrder = temp;
+    }
+  };
+
   $scope.classesMenu = [
     ['Edit Course', function ($itemScope, $event) {
       $scope.editClass($event,$itemScope.class.ID);
+    }],
+    ['Move Up', function ($itemScope, $event) {
+      $scope.moveUp($itemScope.class.ID);
+    }],
+    ['Move Down', function ($itemScope, $event) {
+      $scope.moveDown($itemScope.class.ID);
     }],
     null, //divider
     ['Delete Course', function ($itemScope, $event) {
@@ -164,9 +209,10 @@ function CreateClassController($scope, $uibModalInstance) {
       objectives: course.objectives
     };
   }
-  $scope.semesters = ("Fall Spring Summer").split(' ');
+  $scope.semesters = ['', 'Fall', 'Spring', 'Summer'];
 
   $scope.submit = function () {
+    console.log($scope.class.semester);
     if ($scope.class.id) {
       if(!$scope.edit) {
         let courseID = UI.createClass($scope.class.name, $scope.class.id, $scope.class.semester, $scope.class.year?$scope.class.year:'');

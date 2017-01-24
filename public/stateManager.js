@@ -395,7 +395,7 @@ var showToast = function(content,options,tidName){
   if(options.compile !== true)
     options.compile = false;
   if(options.apply !== true)
-    options.apply = false;
+    options.apply = '';
   if(options.noClick !== true)
     options.noClick = false;
 
@@ -421,7 +421,7 @@ var showToast = function(content,options,tidName){
     savedToasts[tidName] = toastID;
 
   scope = angular.element(document.querySelector('#container')).scope();
-  if(options.apply || scope.page.URL.includes('classes.html')) //This page has problems detecting the digest for some reason
+  if(options.apply || (options.apply !== '' && scope.page.URL.includes('classes.html'))) //This page has problems detecting the digest for some reason
     scope.$apply(); //Force update
   return toastID;
 };

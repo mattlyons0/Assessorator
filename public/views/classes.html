@@ -37,7 +37,7 @@
                 <h3 class="list-group-item-heading">Courses</h3>
             </div>
             <!-- Classes Container-->
-            <a ng-repeat="class in classes" ng-click="viewClass(class.ID)" href="#" context-menu="classesMenu"
+            <a ng-repeat="class in (classes|sort:{key:'displayOrder',mode:'ascending'})" ng-click="viewClass(class.ID)" href="#" context-menu="classesMenu"
                class="list-group-item list-group-item-action">
                 <span class="badge" ng-if="class.objectives.length">{{ class.objectives.length }} Objective{{ class.objectives.length==1?'':'s' }}</span>
                 <span class="badge" ng-if="class.topics.length-1">{{ class.topics.length-1 }} Topic{{ class.topics.length-1==1?'':'s' }}</span>
