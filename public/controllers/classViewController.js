@@ -416,7 +416,8 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
       selectAttr: 'topicName',
       choicesAttr: 'topicName',
       descAttr: 'topicDescription',
-      model: $scope.class.topics[0]
+      model: $scope.class.topics[0],
+      label: 'Select the topic to change to:',
     }
 
     let confirm = $uibModal.open({
@@ -452,6 +453,102 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
       //Canceled
     });
   }
+
+  $scope.addObjectives = function(selectedUIDs){
+    let underDropdown = '';
+
+    let scope = $scope.$new();
+    scope.class = $scope.class;
+    scope.alertType = 'info';
+    scope.title = 'Add Objectives to '+ selectedUIDs.length +' Question'+(selectedUIDs.length===1?'':'s');
+    scope.summary = underDropdown;
+    scope.confirmText = '<b>Add Objective'+(selectedUIDs.length===1?'':'s')+'</b>';
+    scope.dropdown = true;
+    scope.dropdownInfo = {
+      placeholder: 'Choose an Objective',
+      repeatObj: scope.class.objectives,
+      selectAttr: 'objectiveText',
+      choicesAttr: 'objectiveText',
+      descAttr: '',
+      model: '',
+      label: 'Select the objectives to add:',
+      multiple: true
+    }
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      keyboard: false,
+      backdrop: 'static',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      let selectedObjectives = scope.dropdownInfo.model; //Array of objectives selected or empty string
+      if(selectedObjectives === ''){
+        showToast('No Objectives Added',{level: 'info'});
+        return;
+      }
+
+      for(let objective of selectedObjectives) {
+        for (let selectedUID of selectedUIDs) {
+          let question = courseUtils.getQuestion(selectedUID);
+          let questionUtil = new QuestionUtils(question);
+          if(!question.objectives.includes(objective))
+            questionUtil.addObjective(objective);
+        }
+      }
+      UI.save($scope.class);
+    }, function(){
+      //Canceled
+    });
+  };
+
+  $scope.removeObjectives = function(selectedUIDs){
+    let underDropdown = '';
+
+    let scope = $scope.$new();
+    scope.class = $scope.class;
+    scope.alertType = 'info';
+    scope.title = 'Remove Objectives from '+ selectedUIDs.length +' Question'+(selectedUIDs.length===1?'':'s');
+    scope.summary = underDropdown;
+    scope.confirmText = '<b>Remove Objective'+(selectedUIDs.length===1?'':'s')+'</b>';
+    scope.dropdown = true;
+    scope.dropdownInfo = {
+      placeholder: 'Choose an Objective',
+      repeatObj: scope.class.objectives,
+      selectAttr: 'objectiveText',
+      choicesAttr: 'objectiveText',
+      descAttr: '',
+      model: '',
+      label: 'Select the objectives to remove:',
+      multiple: true
+    }
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      keyboard: false,
+      backdrop: 'static',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      let selectedObjectives = scope.dropdownInfo.model; //Array of objectives selected or empty string
+      if(selectedObjectives === ''){
+        showToast('No Objectives Removed',{level: 'info'});
+        return;
+      }
+
+      for (let selectedUID of selectedUIDs) {
+        let question = courseUtils.getQuestion(selectedUID);
+        let questionUtil = new QuestionUtils(question);
+        for(let objective of selectedObjectives) {
+          if (question.objectives.includes(objective))
+            questionUtil.removeObjective(objective)
+        }
+      }
+      UI.save($scope.class);
+    }, function(){
+      //Canceled
+    });
+  };
 
   $scope.searchQuestions = function(tabName,data){
     if(!tabName)

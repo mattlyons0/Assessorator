@@ -7,14 +7,26 @@
         <div ng-class="'text-'+alertType" ng-if="dropdown">
             <div class="form-horizontal">
                 <div class="form-group" style="margin:0"><label style="float:left;position:relative;top:5px">
-                    Select the topic to change to:</label>
+                    {{dropdownInfo.label}}</label>
                     <div class="col-sm-7">
-                        <ui-select class="ng-animate-disabled" ng-model="dropdownInfo.model" theme="bootstrap">
+                        <!-- Single Selector -->
+                        <ui-select ng-if="!dropdownInfo.multiple" class="ng-animate-disabled" ng-model="dropdownInfo.model" theme="bootstrap">
                             <ui-select-match placeholder="{{dropdownInfo.placeholder}}">
                                 {{$select.selected[dropdownInfo.choicesAttr]}}
                             </ui-select-match>
                             <ui-select-choices
-                                    repeat="obj in (dropdownInfo.repeatObj|sort:{key:dropdownInfo.choicesAttr,mode:'ascending'}) | filter: { topicName: $select.search }">
+                                    repeat="obj in (dropdownInfo.repeatObj|sort:{key:dropdownInfo.choicesAttr,mode:'ascending'}) | filter: { [dropdownInfo.choicesAttr]: $select.search }">
+                                <div ng-bind-html="obj[dropdownInfo.choicesAttr]| highlight: $select.search"></div>
+                                <small class="text-muted" ng-bind-html="obj[dropdownInfo.descAttr]"></small>
+                            </ui-select-choices>
+                        </ui-select>
+                        <!-- Multiple Selector -->
+                        <ui-select ng-if="dropdownInfo.multiple" multiple class="ng-animate-disabled" ng-model="dropdownInfo.model" theme="bootstrap">
+                            <ui-select-match placeholder="{{dropdownInfo.placeholder}}">
+                                {{$item[dropdownInfo.choicesAttr]}}
+                            </ui-select-match>
+                            <ui-select-choices
+                                    repeat="obj in (dropdownInfo.repeatObj|sort:{key:dropdownInfo.choicesAttr,mode:'ascending'}) | filter: { [dropdownInfo.choicesAttr]: $select.search }">
                                 <div ng-bind-html="obj[dropdownInfo.choicesAttr]| highlight: $select.search"></div>
                                 <small class="text-muted" ng-bind-html="obj[dropdownInfo.descAttr]"></small>
                             </ui-select-choices>

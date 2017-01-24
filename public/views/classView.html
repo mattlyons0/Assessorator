@@ -452,8 +452,8 @@
                                                     <div class="btn-group btn-group-sm" role="group">
                                                         <button type="button" class="btn btn-danger" ng-disabled="!countAccordion('question',true)" ng-click="deleteQuestions(getAccordionIDs('question',true))">Delete</button>
                                                         <button type="button" class="btn btn-primary" ng-disabled="!countAccordion('question',true)" ng-click="changeTopics(getAccordionIDs('question',true))">Change Topic</button>
-                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)">Add Objective</button>
-                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)">Remove Objective</button>
+                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)" ng-click="addObjectives(getAccordionIDs('question',true))">Add Objective</button>
+                                                        <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)" ng-click="removeObjectives(getAccordionIDs('question',true))">Remove Objective</button>
                                                     </div>
                                                 </div>
                                                 <div style="width:35%; display:inherit">

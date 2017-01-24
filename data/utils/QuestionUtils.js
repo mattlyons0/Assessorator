@@ -30,8 +30,22 @@ class QuestionUtils {
   }
 
   addObjective(objective){
+    if(this.question.objectives.includes(objective)){
+      console.warn('Tried adding objective question already has');
+      return;
+    }
     this.question.objectives.push(objective);
     new ObjectiveUtils(objective).addQuestionUID(this.question.UID);
+  }
+
+  removeObjective(objective){
+    let index = this.question.objectives.indexOf(objective);
+    if(index !== -1){
+      this.question.objectives.splice(index,1); //Remove element
+      new ObjectiveUtils(objective).removeQuestionUID(this.question.UID);
+    } else{
+      console.warn('Tried removing objective question doesn\'t have');
+    }
   }
 
   /**
