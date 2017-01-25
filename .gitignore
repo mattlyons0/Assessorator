@@ -2,3 +2,4 @@ node_modules
 dist
 exports
 build/icons
+build/dist.sh
