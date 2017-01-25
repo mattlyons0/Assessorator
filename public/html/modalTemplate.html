@@ -36,6 +36,7 @@
             </div>
         </div>
         <div ng-class="'text-'+alertType" ng-if="summary" bind-html-compile="summary" style="margin-top:15px"></div>
+        <div ng-if="normalText" bind-html-compile="normalText" style="margin-top:15px"></div>
     </li>
     <div style="padding: 5px; text-align:right">
         <button type="button" style="margin-right:2px" class="btn btn-default" ng-click="$dismiss()">Cancel</button>

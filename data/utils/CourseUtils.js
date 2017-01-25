@@ -46,9 +46,21 @@ class CourseUtils {
     for(let i=0;i<this.course.topics.length;i++){
       if(this.course.topics[i].ID === topicID){
         this.course.topics.splice(i,1);
+
+        //Delete topic from state structures
+        delete UI.miscState.classView.topics.checked[topicID];
+        delete UI.miscState.classView.topics.open[topicID];
+
+        //Check if selected in any dropdowns. If so invalidate that dropdown
+        if(this.course.prefs.classView.assessments.filter.topicQuery === topicID)
+          this.course.prefs.classView.assessments.filter.topicQuery = null;
+        if(this.course.prefs.classView.questions.filter.topicQuery === topicID)
+          this.course.prefs.classView.questions.filter.topicQuery = null;
+
         return;
       }
     }
+    console.error("No topic with ID "+topicID+" found");
   }
 
   /**
@@ -67,16 +79,29 @@ class CourseUtils {
       if(objective.ID===objectiveID)
         return objective;
     }
+    console.error("Could not find objective with ID: "+objectiveID);
   }
 
   deleteObjective(objectiveID){
     for(let i=0;i<this.course.objectives.length;i++){
       let obj = this.course.objectives[i];
       if(objectiveID === obj.ID){
-        this.course.objectives.splice(i,1);
+        let objective = this.course.objectives.splice(i,1);
+
+        //Delete objective from state structures
+        delete UI.miscState.classView.objectives.checked[objectiveID];
+        delete UI.miscState.classView.objectives.open[objectiveID];
+
+        //Check if selected in any dropdowns. If so invalidate that dropdown
+        if(this.course.prefs.classView.assessments.filter.objectiveQuery === objectiveID)
+          this.course.prefs.classView.assessments.filter.objectiveQuery = null;
+        if(this.course.prefs.classView.questions.filter.objectiveQuery === objectiveID)
+          this.course.prefs.classView.questions.filter.objectiveQuery = null;
+
         return;
       }
     }
+    console.error("Tried deleting objective that doesn't exist. ID: "+objectiveID);
   }
 
   /**
@@ -103,9 +128,15 @@ class CourseUtils {
     for(let i=0;i<this.course.assessments.length;i++){
       if(this.course.assessments[i].ID === id){
         this.course.assessments.splice(i,1);
+
+        //Delete assessment from state structures
+        delete UI.miscState.classView.assessments.checked[id];
+        delete UI.miscState.classView.assessments.open[id];
+
         return;
       }
     }
+    console.error('Tried deleting assessment that doesn\'t exist! ID: '+id);
   }
 
   /**
@@ -154,6 +185,10 @@ class CourseUtils {
         return;
       }
     }
+  }
+
+  getPrefs(){
+    return this.course.prefs;
   }
 }
 

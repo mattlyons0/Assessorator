@@ -1,5 +1,5 @@
-"use strict";
-app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
+'use strict';
+app.controller('classesCtrl', function ($scope, $mdDialog,$sce,$uibModal) {
   $scope.readingDisk = true;
   $scope.readError = undefined;
 
@@ -49,16 +49,16 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
     }
     let deleteArr = [];
     if(questions)
-      deleteArr.push("<b>"+questions + " question"+(questions>1?'s</b>':'</b>'));
+      deleteArr.push('<b>'+questions + ' question'+(questions>1?'s</b>':'</b>'));
     if(topics)
-      deleteArr.push("<b>"+topics + " topic"+(topics>1?'s</b>':'</b>'));
+      deleteArr.push('<b>'+topics + ' topic'+(topics>1?'s</b>':'</b>'));
     if(objectives)
-      deleteArr.push("<b>"+objectives + " objective"+(objectives>1?'s</b>':'</b>'));
+      deleteArr.push('<b>'+objectives + ' objective'+(objectives>1?'s</b>':'</b>'));
     if(assessments) {
-      deleteArr.push("<b>"+assessments + " assessment"+(assessments>1?'s</b>':'</b>'));
+      deleteArr.push('<b>'+assessments + ' assessment'+(assessments>1?'s</b>':'</b>'));
     }
 
-    let deleteStr = "";
+    let deleteStr = '';
     for(let i=0;i<deleteArr.length;i++){
       if(i+2<deleteArr.length){
         deleteStr+=deleteArr[i]+', ';
@@ -71,7 +71,7 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
     let courseDescrip = course.courseID + ', ' + course.courseName + ' ' + course.courseSemester + ' ' + course.courseYear;
     if(!deleteStr.trim()){
       deleteStr = courseDescrip;
-      courseDescrip = "";
+      courseDescrip = '';
     }
     let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-danger"><h3 style="margin-top:10px">'
           +'<h3>Are You Sure You Would Like to Delete '+ course.courseID +'?</h3></div><li class="list-group-item">';
@@ -141,11 +141,14 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
     }
 
     if(!courseAfter.hasOwnProperty('ID')){
-      showToast("Can't Move Down",{level: 'warning'});
+      showToast('Can\'t Move Down',{level: 'warning'});
     } else{
       let temp = course.displayOrder;
       course.displayOrder = courseAfter.displayOrder;
       courseAfter.displayOrder = temp;
+
+      UI.save(course);
+      UI.save(courseAfter);
     }
   };
 
@@ -174,18 +177,18 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
     let name = require('../package.json').name;
     $scope.$apply($scope.readError = true);
     if(errorType == 'dom'){
-      $scope.readErrorText = $sce.trustAsHtml("Error opening database. Please ensure no other instances of "+name+" are open then " +
-        "<a href='javascript:document.location.reload()'>Retry</a>.");
+      $scope.readErrorText = $sce.trustAsHtml('Error opening database. Please ensure no other instances of '+name+' are open then ' +
+        '<a href=\'javascript:document.location.reload()\'>Retry</a>.');
     } else if(errorType == 'version'){
-      $scope.readErrorText = $sce.trustAsHtml("Error opening database, invalid version. See " +
-        "<a href='javascript:require(\"electron\").remote.getCurrentWindow().toggleDevTools();'>console</a> for more information.");
+      $scope.readErrorText = $sce.trustAsHtml('Error opening database, invalid version. See ' +
+        '<a href=\'javascript:require("electron").remote.getCurrentWindow().toggleDevTools();\'>console</a> for more information.');
     } else if(errorType == 'blocked'){
-      $scope.readErrorText = $sce.trustAsHtml("Error opening database. Please ensure no other instances of "+name+" are open then " +
-        "<a href='javascript:document.location.reload()'>Retry</a>.");
+      $scope.readErrorText = $sce.trustAsHtml('Error opening database. Please ensure no other instances of '+name+' are open then ' +
+        '<a href=\'javascript:document.location.reload()\'>Retry</a>.');
     } else if(errorType == 'unknown'){
-      $scope.readErrorText = $sce.trustAsHtml("Error opening database. See " +
-        "<a href='javascript:require(\"electron\").remote.getCurrentWindow().toggleDevTools();'>console</a> for more information. " +
-        "<a href='javascript:document.location.reload()'>Retry</a>")
+      $scope.readErrorText = $sce.trustAsHtml('Error opening database. See ' +
+        '<a href=\'javascript:require("electron").remote.getCurrentWindow().toggleDevTools();\'>console</a> for more information. ' +
+        '<a href=\'javascript:document.location.reload()\'>Retry</a>')
     }
   };
 });
@@ -193,9 +196,9 @@ app.controller("classesCtrl", function ($scope, $mdDialog,$sce,$uibModal) {
 function CreateClassController($scope, $uibModalInstance) {
   if($scope.classID == undefined) {
     $scope.class = {
-      name: "",
-      id: "",
-      semester: "",
+      name: '',
+      id: '',
+      semester: '',
       year: new Date().getFullYear(),
       objectives: []
     };

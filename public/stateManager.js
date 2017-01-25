@@ -404,7 +404,7 @@ var showToast = function(content,options,tidName){
     content: options.compile?sce.trustAsHtml(content):content,
     dismissOnTimeout: !options.keepOpen,
     dismissButton: options.keepOpen && !options.disallowClose,
-    dismissOnClick: !(options.disallowClose || options.noClick),
+    dismissOnClick: !(options.disallowClose || options.noClick || options.keepOpen),
     timeout: options.delay,
     compileContent: options.compile
   });

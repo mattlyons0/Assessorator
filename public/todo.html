@@ -19,13 +19,14 @@
         <li>When saving data pointers are cloned (change to just using needed ID's instead of pointers), this will decrease startup time (no need to repair pointers) as well as decrease filesize</li>
         <li>At very small width the course selection button goes away from the header (along with others)</li>
         <li>Handle different types of quotes in filter, " and the angled ones as the same</li>
-        <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning </li>
+        <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning (currently they won't be deleted until save and reload) </li>
         <li>Upon deletion of questions used as manual questions within assessments delete those manual questions and provide warning</li>
         <li>Importing questions by file adds ? symbols to every quote</li>
         <li>Topic and Objective dropdowns in EditQuestion arent alphabetized</li>
         <li>Topic and Objective Dropdowns in CreateRequirement aren't alphabetized</li>
         <li>Sometimes md-scroll-mask sticks (solve by removing all md-overlays)</li>
         <li>UI-select elements doesn't handle large text optimally</li>
+        <li>Deleting a question does not remove it from manually added question in assessments until save and reload</li>
     </ul>
 
     <h2>Features</h2>
@@ -46,14 +47,11 @@
             <li>Class View</li>
             <ul>
                 <li>Focus query field when clicking filter</li>
-                <li>Bulk editing mode</li>
-                <ul>
-                    <li>Button to select all (which respects filters)</li>
-                    <li>bulk delete</li>
-                    <li>bulk set topic</li>
-                    <li>bulk add objective</li>
-                    <li>bulk remove objective</li>
-                </ul>
+                <li>A way to find invalid questions (questions with no correct answer)</li>
+            </ul>
+            <li>Assessments Edit</li>
+            <ul>
+                <li>Don't generate assessments with questions that are incomplete (or at least warn if this is the case)</li>
             </ul>
             <li>Retrieve classes and incrementally update the UI as they are received (instead of doing them all at once)</li>
         </ul>
@@ -111,6 +109,8 @@
         </ul>
         <li>Add a way to find incomplete questions (questions without at least 2 answers or without a correct answer)</li>
         <li>Replace libs with min versions</li>
+        <li>Prompt before downloading update</li>
+        <li>Add a setting to prevent autoupdates</li>
         <li>After updating show changelog (use <a href="https://github.com/electron-userland/electron-builder/pull/979">--updated flag</a> within the updated modal)</li>
         <li>New Icon (that actually looks good)</li>
     </ul>

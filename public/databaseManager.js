@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 let AppDirectory = require('appdirectory');
 let dirs = new AppDirectory('Assessorator');
 let versionFolder = dirs.userData();
@@ -8,7 +8,7 @@ let fs = require('fs');
 let mkdirp = require('mkdirp');
 let Course = require('../data/Course.js');
 
-let DB_NAME = "AssessoratorDataStore";
+let DB_NAME = 'AssessoratorDataStore';
 let db = undefined; //Opened DB Object
 let db_version = 1;
 
@@ -38,10 +38,10 @@ function loadDatabase(callback, errorCallback) {
   openRequest.onupgradeneeded = function (e) {
     let oldVersion = e.oldVersion;
     let newVersion = e.newVersion;
-    console.log("Upgrading Database from version " + oldVersion + ' to ' + newVersion);
+    console.log('Upgrading Database from version ' + oldVersion + ' to ' + newVersion);
 
     if (oldVersion === 0) { //This is a new database
-      let courseStore = e.target.result.createObjectStore("courses", {keyPath: "ID"});
+      let courseStore = e.target.result.createObjectStore('courses', {keyPath: 'ID'});
       courseStore.transaction.oncomplete = function (event) {
         console.log('Created courseStore');
         //TODO ensure it gets here
@@ -111,7 +111,7 @@ function loadDatabase(callback, errorCallback) {
     }
   };
   openRequest.onsuccess = function (e) {
-    console.log("Database opened successfully.");
+    console.log('Database opened successfully.');
     db = e.target.result;
     db.onversionchange = function (e) {
       console.log('Version Change');
@@ -129,7 +129,7 @@ function loadDatabase(callback, errorCallback) {
   };
 
   openRequest.onerror = function (event) {
-    console.error("Error Opening DB");
+    console.error('Error Opening DB');
     if (openRequest.error.name == 'VersionError') {
       console.error('Version Error: ' + openRequest.error.message);
       if (errorCallback) {
@@ -216,10 +216,10 @@ function deleteDatabase(callback) {
       callback();
   };
   deleteDbRequest.onerror = function (e) {
-    console.log("Database deletion error: " + e.target.errorCode);
+    console.log('Database deletion error: ' + e.target.errorCode);
   };
   deleteDbRequest.onblocked = function(e){
-    console.log("Database delete blocked: ");
+    console.log('Database delete blocked: ');
     console.log(e);
   };
 
@@ -386,7 +386,8 @@ function updateDataFormat(course) {
       if(optimal.hasOwnProperty(property)){
         if(!current.hasOwnProperty(property)) {
           current[property] = optimal[property];
-          console.log('Added prefs property: \''+property+'\' with value \''+optimal[property]+'\'');
+          console.log('Added prefs property: \''+property+'\' with value:');
+          console.log(optimal[property]);
           didUpdate = true;
         } else {
           defineAllProps(optimal[property], current[property]);
@@ -414,7 +415,7 @@ function updateDataFormat(course) {
   }
 
   //Check if displayOrder exists, if not create it
-  if(!course.displayOrder){
+  if(course.displayOrder === undefined){
     course.displayOrder = course.ID;
     didUpdate = true;
   }
@@ -441,7 +442,8 @@ function repairPointers(course) {
 
   //Repair Topic/Objective & ManuallyAddedQuestion pointers to Assessments
   for (let assessment of course.assessments) {
-    for (let rule of assessment.rules) { //Topic/Objectives
+    for (let ruleIdx=0;ruleIdx<assessment.rules.length;ruleIdx++) { //Topic/Objectives
+      let rule = assessment.rules[ruleIdx];
       for (let i = 0; i < rule.topics.length; i++) {
         let oldTopic = rule.topics.splice(0, 1)[0];
         if (oldTopic) {
@@ -458,13 +460,25 @@ function repairPointers(course) {
             rule.objectives.push(objective);
         }
       }
+      if(rule.objectives.length === 0 && rule.type==="Objective"){
+        assessment.rules.splice(ruleIdx,1);
+        ruleIdx--;
+        console.warn("Deleted rule in assessment '"+assessment.assessmentName+"' with no Objectives.");
+      } else if(rule.topics.length === 0 && rule.type==="Topic"){
+        assessment.rules.splice(ruleIdx,1);
+        ruleIdx--;
+        console.warn("Deleted rule in assessment '"+assessment.assessmentName+"' with no Topics.");
+      }
     }
     for (let i = 0; i < assessment.questions.length; i++) { //Manually added questions
       let oldQuestion = assessment.questions.splice(i, 1)[0];
       if (oldQuestion) {
-        let question = new TopicUtils(courseUtil.getTopic(oldQuestion.topicID)).getQuestion(oldQuestion.ID);
-        if(question) //Handle if it was a dangling reference
-          assessment.questions.push(question); //Repair pointer
+        let topic = courseUtil.getTopic(oldQuestion.topicID);
+        if(topic) {
+          let question = new TopicUtils(topic).getQuestion(oldQuestion.ID);
+          if (question) //Handle if it was a dangling reference
+            assessment.questions.push(question) //Repair pointer
+        }
       }
     }
   }
@@ -474,7 +488,7 @@ function modifyCourse(course) {
   let courseStore = db.transaction('courses', 'readwrite').objectStore('courses');
   let request = courseStore.put(course);
   request.onerror = (error) => {
-    console.error("Error updating course in database" + error);
+    console.error('Error updating course in database' + error);
   };
   request.onsuccess = (event) => {
     console.log('Updated Database');
@@ -485,7 +499,7 @@ function deleteCourse(courseID, callback) {
   let courseStore = db.transaction('courses', 'readwrite').objectStore('courses');
   let request = courseStore.delete(courseID);
   request.onerror = (error) => {
-    console.error("Error deleting course in database" + error);
+    console.error('Error deleting course in database' + error);
   };
   request.onsuccess = (event) => {
     console.log('Deleted Course in Database');

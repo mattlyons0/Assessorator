@@ -253,24 +253,32 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   $scope.deleteTopic = function(id){
     let topic = new CourseUtils($scope.class).getTopic(id);
     if(id === 0){
-      showToast('Cannot delete \''+topic.topicName+'\' as it is the topic questions without a topic are shown under.', {level: 'warning', delay: 7});
+      showToast('Cannot delete \''+topic.topicName+'\' as it is the Default Topic', {level: 'danger', delay: 7});
       return;
     }
 
     if(topic.questions.length > 0){
       showToast('\''+topic.topicName+'\' contains '+topic.questions.length+' question'+(topic.questions.length>1?'s':'')+
-        '.All questions must be '+'removed from a topic before it can be deleted.',{level: 'warning', delay:10});
+        '. All questions must be '+'removed from a topic before it can be deleted.',{level: 'danger', delay:10});
       return;
     }
-    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Topic \''+topic.topicName+'\'?')
-      .ok('Delete').cancel('Cancel');
-    $mdDialog.show(confirm).then(function(){
-      new CourseUtils($scope.class).deleteTopic(id);
 
+    let scope = $scope.$new();
+    scope.alertType = 'danger';
+    scope.title = 'Are You Sure You Would Like to Delete Topic \''+topic.topicName+'\'?';
+    scope.description = topic.topicName+(topic.topicDescription?': '+topic.topicDescription:'');
+    scope.confirmText = '<b>Delete Topic</b>';
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      size: 'lg',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      courseUtils.deleteTopic(Number(id));
       UI.save($scope.class);
-      $scope.selectedTopic = undefined;
     }, function(){
-      //You didn't delete it.
+      //Didn't delete
     });
   };
   $scope.createQuestion = function(){
@@ -285,15 +293,26 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   $scope.deleteQuestion = function(uid){
     let courseUtil = new CourseUtils($scope.class);
     let question = courseUtil.getQuestion(uid);
-    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Question \''+question.questionTitle+'\'?')
-      .ok('Delete').cancel('Cancel');
-    $mdDialog.show(confirm).then(function(){
-      new TopicUtils(courseUtil.getTopic(question.topicID)).deleteQuestion(question.ID);
 
+    let questionAnswers = $scope.questionAnswersToHTML(question);
+
+    let scope = $scope.$new();
+    scope.alertType = 'danger';
+    scope.title = 'Are You Sure You Would Like to Delete Question?';
+    scope.normalText = question.questionTitle+(question.questionDescription?': '+question.questionDescription:'')+'<br/><br/>';
+    scope.normalText += questionAnswers;
+    scope.confirmText = '<b>Delete Question</b>';
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      size: 'lg',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      courseUtils.deleteQuestion(uid);
       UI.save($scope.class);
-      $scope.updateQuestionCount();
     }, function(){
-      //You didn't delete it.
+      //Didn't delete
     });
   };
   $scope.createObjective = function(){
@@ -314,14 +333,29 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   $scope.deleteObjective = function(id){
     let courseUtil = new CourseUtils($scope.class);
     let objective = courseUtil.getObjective(id);
-    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Objective \''+objective.objectiveText+'\'?')
-      .ok('Delete').cancel('Cancel');
-    $mdDialog.show(confirm).then(function(){
-     courseUtil.deleteObjective(id);
 
+    if(objective.questionUIDs.length > 0){
+      showToast('\''+objective.objectiveText+'\' is used in '+objective.questionUIDs.length+' question'+(objective.questionUIDs.length>1?'s':'')+
+        '. All questions must be '+'removed from an objective before it can be deleted.',{level: 'danger', delay:10});
+      return;
+    }
+
+    let scope = $scope.$new();
+    scope.alertType = 'danger';
+    scope.title = 'Are You Sure You Would Like to Delete Objective \''+objective.objectiveText+'\'?';
+    scope.description = objective.objectiveText;
+    scope.confirmText = '<b>Delete Objective</b>';
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      size: 'lg',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      courseUtils.deleteObjective(Number(id));
       UI.save($scope.class);
     }, function(){
-      //You didn't delete it.
+      //Didn't delete
     });
   };
   $scope.createAssessment = function(){
@@ -332,27 +366,12 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   };
   $scope.deleteAssessment = function(id){
     let assessment = new CourseUtils($scope.class).getAssessment(id);
-    let confirm = $mdDialog.confirm().title('Are you sure you would like to delete Assessment \''+assessment.assessmentName+'\'?')
-      .ok('Delete').cancel('Cancel');
-    $mdDialog.show(confirm).then(function(){
-      new CourseUtils($scope.class).deleteAssessment(id);
 
-      UI.save($scope.class);
-    }, function(){
-      //You didn't delete it.
-    });
-  };
-  $scope.getClassQuestions = function() {
-    let courseUtil = new CourseUtils($scope.class);
-    return courseUtil.countQuestions();
-  };
-
-  $scope.deleteQuestions = function(deleteUIDs){
     let scope = $scope.$new();
     scope.alertType = 'danger';
-    scope.title = 'Are You Sure You Would Like to Delete '+ deleteUIDs.length +' Question'+(deleteUIDs.length===1?'':'s')+'?';
-    scope.description = 'This will delete the selected questions.';
-    scope.confirmText = '<b>Delete ' + deleteUIDs.length + ' Question'+(deleteUIDs.length===1?'':'s')+'</b>';
+    scope.title = 'Are You Sure You Would Like to Delete Assessment \''+assessment.assessmentName+'\'?';
+    scope.description = assessment.assessmentName+(assessment.assessmentDescription?': '+assessment.assessmentDescription:'');
+    scope.confirmText = '<b>Delete Assessment</b>';
 
     let confirm = $uibModal.open({
       templateUrl: 'html/modalTemplate.html',
@@ -360,14 +379,38 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
       scope: scope
     });
     confirm.result.then(function(){
-      for(let questionUID of deleteUIDs) {
-        courseUtils.deleteQuestion(questionUID);
-      }
+      courseUtils.deleteAssessment(Number(id));
       UI.save($scope.class);
     }, function(){
       //Didn't delete
     });
   };
+  $scope.getClassQuestions = function() {
+    let courseUtil = new CourseUtils($scope.class);
+    return courseUtil.countQuestions();
+  };
+
+  $scope.questionAnswersToHTML = function(question){
+    let questionAnswers = '';
+    let first = true;
+    for(let answer of question.answers){
+      if(first){
+        first = false;
+        questionAnswers+='<ul>'
+      }
+      questionAnswers+='<li style="list-style-type:circle">'+answer.answerText;
+      if(answer.correct)
+        questionAnswers+='<span class="badge" style="margin-left:5px; background-color:#337ab7">Correct</span>';
+      if(answer.pinned)
+        questionAnswers+='<span class="badge" style="margin-left:5px">Pinned</span>';
+      questionAnswers+='</li>';
+    }
+    if(!first){
+      questionAnswers+='</ul>'
+    }
+
+    return questionAnswers;
+  }
 
   $scope.changeTopics = function(selectedUIDs){
     let selectedTopics = {}; //Count of each question with a specified topic indexed by topic id
@@ -452,7 +495,7 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     }, function(){
       //Canceled
     });
-  }
+  };
 
   $scope.addObjectives = function(selectedUIDs){
     let underDropdown = '';
@@ -547,6 +590,108 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
       UI.save($scope.class);
     }, function(){
       //Canceled
+    });
+  };
+
+  $scope.deleteQuestions = function(deleteUIDs){
+    let scope = $scope.$new();
+    scope.alertType = 'danger';
+    scope.title = 'Are You Sure You Would Like to Delete '+ deleteUIDs.length +' Question'+(deleteUIDs.length===1?'':'s')+'?';
+    scope.description = 'This will delete the selected question'+(deleteUIDs.length===1?'':'s')+'.';
+    scope.confirmText = '<b>Delete ' + deleteUIDs.length + ' Question'+(deleteUIDs.length===1?'':'s')+'</b>';
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      size: 'lg',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      for(let questionUID of deleteUIDs) {
+        courseUtils.deleteQuestion(questionUID);
+      }
+      UI.save($scope.class);
+    }, function(){
+      //Didn't delete
+    });
+  };
+
+  $scope.deleteAssessments = function(selectedUIDs){
+    let scope = $scope.$new();
+    scope.alertType = 'danger';
+    scope.title = 'Are You Sure You Would Like to Delete '+ selectedUIDs.length +' Assessment'+(selectedUIDs.length===1?'':'s')+'?';
+    scope.description = 'This will delete the selected assessment'+(selectedUIDs.length===1?'':'s')+'.';
+    scope.confirmText = '<b>Delete ' + selectedUIDs.length + ' Assessment'+(selectedUIDs.length===1?'':'s')+'</b>';
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      size: 'lg',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      for(let id of selectedUIDs) {
+        courseUtils.deleteAssessment(Number(id));
+      }
+      UI.save($scope.class);
+    }, function(){
+      //Didn't delete
+    });
+  };
+
+  $scope.deleteTopics = function(selectedUIDs){
+    let scope = $scope.$new();
+    scope.alertType = 'danger';
+    scope.title = 'Are You Sure You Would Like to Delete '+ selectedUIDs.length +' Topic'+(selectedUIDs.length===1?'':'s')+'?';
+    scope.description = 'This will delete the selected topic'+(selectedUIDs.length===1?'':'s')+'.';
+    scope.confirmText = '<b>Delete ' + selectedUIDs.length + ' Topic'+(selectedUIDs.length===1?'':'s')+'</b>';
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      size: 'lg',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      for(let id of selectedUIDs) {
+        let topic = new CourseUtils($scope.class).getTopic(Number(id));
+        if(id === 0){
+          showToast('Cannot delete \''+topic.topicName+'\' as it is the Default Topic', {level: 'warning', delay: 10});
+        } else if(topic.questions.length > 0){
+          showToast('\''+topic.topicName+'\' contains '+topic.questions.length+' question'+(topic.questions.length>1?'s':'')+
+            '. All questions must be '+'removed from a topic before it can be deleted.',{level: 'warning', delay:10});
+        } else {
+          courseUtils.deleteTopic(Number(id))
+        }
+      }
+      UI.save($scope.class);
+    }, function(){
+      //Didn't delete
+    });
+  };
+
+  $scope.deleteObjectives = function(selectedUIDs){
+    let scope = $scope.$new();
+    scope.alertType = 'danger';
+    scope.title = 'Are You Sure You Would Like to Delete '+ selectedUIDs.length +' Objective'+(selectedUIDs.length===1?'':'s')+'?';
+    scope.description = 'This will delete the selected objective'+(selectedUIDs.length===1?'':'s')+'.';
+    scope.confirmText = '<b>Delete ' + selectedUIDs.length + ' Objective'+(selectedUIDs.length===1?'':'s')+'</b>';
+
+    let confirm = $uibModal.open({
+      templateUrl: 'html/modalTemplate.html',
+      size: 'lg',
+      scope: scope
+    });
+    confirm.result.then(function(){
+      for(let id of selectedUIDs) {
+        let objective = courseUtils.getObjective(Number(id));
+        if(objective.questionUIDs.length > 0){
+          showToast('\''+objective.objectiveText+'\' is used in '+objective.questionUIDs.length+' question'+(objective.questionUIDs.length>1?'s':'')+
+            '. All questions must be '+'removed from an objective before it can be deleted.',{level: 'warning', delay:10});
+        } else {
+          courseUtils.deleteObjective(Number(id))
+        }
+      }
+      UI.save($scope.class);
+    }, function(){
+      //Didn't delete
     });
   };
 
@@ -963,6 +1108,23 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   });
   $scope.$watch('questionsQuery.objective', function(){
     classView.questions.filter.objectiveQuery = $scope.questionsQuery.objective!==null?$scope.questionsQuery.objective.ID:null;
+  });
+  //Check for invalidation when deleted
+  $scope.$watch('classView.assessments.filter.topicQuery', function(){
+    if(classView.assessments.filter.topicQuery === null)
+      $scope.assessmentsQuery.topic = null;
+  });
+  $scope.$watch('classView.assessments.filter.objectiveQuery', function(){
+    if(classView.assessments.filter.objectiveQuery === null)
+      $scope.assessmentsQuery.objective = null;
+  });
+  $scope.$watch('classView.questions.filter.topicQuery', function(){
+    if(classView.questions.filter.topicQuery === null)
+      $scope.questionsQuery.topic = null;
+  });
+  $scope.$watch('classView.questions.filter.objectiveQuery', function(){
+    if(classView.questions.filter.objectiveQuery === null)
+      $scope.questionsQuery.objective = null;
   });
 
 

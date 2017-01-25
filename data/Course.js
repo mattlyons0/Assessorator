@@ -58,6 +58,9 @@ class Course {
             searchDescriptions: false,
             searchQuestions: false,
             caseSensitive: false
+          },
+          bulk: {
+            open: false,
           }
         },
         topics: {
@@ -69,6 +72,9 @@ class Course {
             searchTopics: true,
             searchDescriptions: false,
             caseSensitive: false
+          },
+          bulk: {
+            open: false,
           }
         },
         objectives: {
@@ -78,6 +84,9 @@ class Course {
 
             query: '',
             caseSensitive: false
+          },
+          bulk: {
+            open: false,
           }
         },
         questions: {

@@ -15,8 +15,7 @@ onmessage = function(msg){
 
 function save(course){
   course = JSON.parse(course);
-  console.log(course);
-  
+
   let openRequest = indexedDB.open(DB_NAME,db_version);
   openRequest.onsuccess = function(e) {
     db = e.target.result;
@@ -29,9 +28,9 @@ function save(course){
     request.onsuccess = () => {
       self.postMessage('success');
       console.log('Saved');
-      setTimeout(function(){
-        close();
-      },30*1000);
+      // setTimeout(function(){
+        // close();
+      // },30*1000);
     };
     db.close();
   };

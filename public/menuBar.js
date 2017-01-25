@@ -133,6 +133,16 @@ var template = [
           }
         }
       },
+      {
+        label: 'Data Debug',
+        click: function(item, focusedWindow) {
+          if (focusedWindow){
+            let js = "UI.printData();";
+            focusedWindow.webContents.executeJavaScript(js);
+            focusedWindow.webContents.openDevTools();
+          }
+        }
+      },
     ]
   },
 ];
