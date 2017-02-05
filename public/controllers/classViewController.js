@@ -28,35 +28,23 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
 
   //Used for sorting
   $scope.sortModes = [
-    {name:'Alphabetical (A-Z)', icon: 'glyphicon-sort-by-alphabet', ascending: true, fieldIndex: 0},
-    {name: 'Alphabetical (Z-A)', icon: 'glyphicon-sort-by-alphabet-alt', ascending: false, fieldIndex: 0},
-    {name: 'Date Added (New-Old)', icon: 'glyphicon-sort-by-order', ascending: false, fieldIndex: 1},
-    {name: 'Date Added (Old-New)', icon: 'glyphicon-sort-by-order-alt', ascending: true, fieldIndex: 1}
+    {name:'Alphabetical (A-Z)', icon: 'glyphicon-sort-by-alphabet', ascending: true, fieldIndex: 0, index: 0},
+    {name: 'Alphabetical (Z-A)', icon: 'glyphicon-sort-by-alphabet-alt', ascending: false, fieldIndex: 0, index: 1},
+    {name: 'Date Added (New-Old)', icon: 'glyphicon-sort-by-order', ascending: false, fieldIndex: 1, index: 2},
+    {name: 'Date Added (Old-New)', icon: 'glyphicon-sort-by-order-alt', ascending: true, fieldIndex: 1, index: 3}
   ];
   $scope.sortFieldsQuestions = ['questionTitle', 'creationDate'];
   $scope.sortFieldsObjectives = ['objectiveText', 'creationDate'];
   $scope.sortFieldsTopics = ['topicName', 'creationDate'];
   $scope.sortFieldsAssessments = ['assessmentName', 'creationDate'];
 
-  $scope.assessmentsSort = $scope.sortModes[0];
+  $scope.sortModels = {
+    assessments: $scope.sortModes[classView.assessments.sort],
+    topics: $scope.sortModes[classView.topics.sort],
+    objectives: $scope.sortModes[classView.objectives.sort],
+    questions: $scope.sortModes[classView.questions.sort]
+  }
 
-  $scope.sortModeMouseDown = function(event,keyval){
-    //Increment or Decrement index based on which mouse button was pressed
-    let index = classView[keyval].sort;
-    if(event.which === 1) { //Left Click
-      index++;
-      if(index >= $scope.sortModes.length)
-        index = 0;
-    }
-    else if(event.which === 3) { //Right Click
-      index--;
-      if(index < 0)
-        index = $scope.sortModes.length-1;
-    }
-
-    //Change Sort Mode
-    classView[keyval].sort = index;
-  };
   $scope.getSortParams = function(tabType,sortMode){
     let key, fallback;
     sortMode = $scope.sortModes[sortMode];
@@ -1126,6 +1114,13 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     if(classView.questions.filter.objectiveQuery === null)
       $scope.questionsQuery.objective = null;
   });
+  //Used to copy index to saved model for sort mode
+  $scope.$watch('sortModels', function(){
+    classView.assessments.sort = $scope.sortModels.assessments.index;
+    classView.topics.sort = $scope.sortModels.topics.index;
+    classView.objectives.sort = $scope.sortModels.objectives.index;
+    classView.questions.sort = $scope.sortModels.questions.index;
+  }, true);
 
 
   /********************************

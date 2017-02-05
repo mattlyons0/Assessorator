@@ -51,11 +51,15 @@
                                                 <button type="button" class="btn btn-default" ng-disabled="!class.assessments.length" ng-click="iterateAccordion('assessment',false)">Collapse All</button>
                                             </div>
 
-                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
-                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.assessments.sort].name }}" ng-mouseup="sortModeMouseDown($event,'assessments')">
-                                                    <span class="glyphicon {{sortModes[classView.assessments.sort].icon}}"></span>
-                                                </button>
+                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px;display:flex">
+                                                <ui-select ng-model="sortModels.assessments" theme="bootstrap" search-enabled="false" uib-tooltip="Sorting Mode">
+                                                    <ui-select-match style="height:30px;border-bottom-right-radius:0;border-top-right-radius:0;border-right:0;width:190px">
+                                                        <span class="glyphicon" ng-class="$select.selected.icon" style="width:14px;left:-5px;font-size:12px"></span>{{$select.selected.name}}
+                                                    </ui-select-match>
+                                                    <ui-select-choices repeat="sort in sortModes">
+                                                        {{ sort.name }}
+                                                    </ui-select-choices>
+                                                </ui-select>
                                                 <button type="button" ng-class="'btn btn-default'+(classView.assessments.bulk.open?' active':'')" data-toggle="button" tooltip-placement="top"
                                                         uib-tooltip="Bulk Operations" ng-click="classView.assessments.bulk.open = !classView.assessments.bulk.open;">
                                                     <span class="glyphicon glyphicon-check"></span>
@@ -208,11 +212,15 @@
                                                 <button type="button" class="btn btn-default" ng-disabled="!class.topics.length" ng-click="iterateAccordion('topic',false)">Collapse All</button>
                                             </div>
 
-                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
-                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.topics.sort].name }}" ng-mouseup="sortModeMouseDown($event,'topics')">
-                                                    <span class="glyphicon {{sortModes[classView.topics.sort].icon}}"></span>
-                                                </button>
+                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px;display:flex">
+                                                <ui-select ng-model="sortModels.topics" theme="bootstrap" search-enabled="false" uib-tooltip="Sorting Mode">
+                                                    <ui-select-match style="height:30px;border-bottom-right-radius:0;border-top-right-radius:0;border-right:0;width:190px">
+                                                        <span class="glyphicon" ng-class="$select.selected.icon" style="width:14px;left:-5px;font-size:12px"></span>{{$select.selected.name}}
+                                                    </ui-select-match>
+                                                    <ui-select-choices repeat="sort in sortModes">
+                                                        {{ sort.name }}
+                                                    </ui-select-choices>
+                                                </ui-select>
                                                 <button type="button" ng-class="'btn btn-default'+(classView.topics.bulk.open?' active':'')" data-toggle="button" tooltip-placement="top"
                                                         uib-tooltip="Bulk Operations" ng-click="classView.topics.bulk.open = !classView.topics.bulk.open;">
                                                     <span class="glyphicon glyphicon-check"></span>
@@ -322,11 +330,15 @@
                                                 <button type="button" class="btn btn-default" ng-disabled="!class.objectives.length" ng-click="iterateAccordion('objective',false)">Collapse All</button>
                                             </div>
 
-                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
-                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.objectives.sort].name }}" ng-mouseup="sortModeMouseDown($event,'objectives')">
-                                                    <span class="glyphicon {{sortModes[classView.objectives.sort].icon}}"></span>
-                                                </button>
+                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px;display:flex">
+                                                <ui-select ng-model="sortModels.objectives" theme="bootstrap" search-enabled="false" uib-tooltip="Sorting Mode">
+                                                    <ui-select-match style="height:30px;border-bottom-right-radius:0;border-top-right-radius:0;border-right:0;width:190px">
+                                                        <span class="glyphicon" ng-class="$select.selected.icon" style="width:14px;left:-5px;font-size:12px"></span>{{$select.selected.name}}
+                                                    </ui-select-match>
+                                                    <ui-select-choices repeat="sort in sortModes">
+                                                        {{ sort.name }}
+                                                    </ui-select-choices>
+                                                </ui-select>
                                                 <button type="button" ng-class="'btn btn-default'+(classView.objectives.bulk.open?' active':'')" data-toggle="button" tooltip-placement="top"
                                                         uib-tooltip="Bulk Operations" ng-click="classView.objectives.bulk.open = !classView.objectives.bulk.open;">
                                                     <span class="glyphicon glyphicon-check"></span>
@@ -423,11 +435,15 @@
                                                 <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion('question',false)">Collapse All</button>
                                             </div>
 
-                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px">
-                                                <button type="button" class="btn btn-default" data-toggle="button" tooltip-placement="left"
-                                                        uib-tooltip="{{ 'Sort By: '+sortModes[classView.questions.sort].name }}" ng-mouseup="sortModeMouseDown($event,'questions')">
-                                                    <span class="glyphicon {{sortModes[classView.questions.sort].icon}}"></span>
-                                                </button>
+                                            <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px; display: flex">
+                                                <ui-select ng-model="sortModels.questions" theme="bootstrap" search-enabled="false" uib-tooltip="Sorting Mode">
+                                                    <ui-select-match style="height:30px;border-bottom-right-radius:0;border-top-right-radius:0;border-right:0;width:190px">
+                                                        <span class="glyphicon" ng-class="$select.selected.icon" style="width:14px;left:-5px;font-size:12px"></span>{{$select.selected.name}}
+                                                    </ui-select-match>
+                                                    <ui-select-choices repeat="sort in sortModes">
+                                                        {{ sort.name }}
+                                                    </ui-select-choices>
+                                                </ui-select>
                                                 <button type="button" ng-class="'btn btn-default'+(classView.questions.bulk.open?' active':'')" data-toggle="button" tooltip-placement="top"
                                                         uib-tooltip="Bulk Operations" ng-click="classView.questions.bulk.open = !classView.questions.bulk.open;">
                                                     <span class="glyphicon glyphicon-check"></span>
