@@ -1,27 +1,27 @@
-<md-card id="editObjectiveContainer">
-    <md-card-title>
-        <md-card-title-text>
-            <span class="md-headline">{{edit?'Edit':'Create'}} Objective</span>
-        </md-card-title-text>
-    </md-card-title>
-    <form name="objectiveForm" ng-submit="submitObjective()">
-        <md-content layout-padding>
-            <div layout="column">
-                <md-input-container class="md-block" flex>
-                    <label>Objective Name</label>
-                    <input required id="objectiveName{{tabID}}" type="text" name="objectiveName" ng-model="objective.name"/>
-                    <div ng-messages="objectiveForm.importData.$error">
-                        <div ng-message="required">Objective Name is required.</div>
-                    </div>
-                </md-input-container>
+<div id="editObjectiveContainer" style="margin-top: 0">
+    <div class="list-group" flex>
+        <div class="list-group-item active">
+            <h3 class="list-group-item-heading">{{edit?'Edit':'Create'}} Objective</h3>
+        </div>
+
+        <form name="objectiveForm" ng-submit="submitObjective()">
+            <div class="list-group-item list-group-item-action" autoscroll="260">
+            <div class="form-group">
+                <label>Objective Name:</label> <br/>
+                <textarea class="form-control" required id="objectiveName{{tabID}}" type="text" style="height:20px"
+                          name="objectiveName" ng-model="objective.name"></textarea>
+                <div ng-messages="objectiveForm.importData.$error">
+                    <div ng-message="required">Objective Name is required.</div>
+                </div>
             </div>
-            <div layout="row">
-                <span flex></span>
-                <md-button ng-click="cleanup()">Cancel</md-button>
-                <md-button type="submit" class="md-primary">
-                    Create
-                </md-button>
             </div>
-        </md-content>
-    </form>
-</md-card>
+
+            <div class="list-group-item" style="padding:5px; text-align: right">
+                <button class="btn btn-default" ng-click="cleanup()">Cancel</button>
+                <button class="btn btn-primary" type="submit">
+                    {{edit?'Modify':'Create'}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

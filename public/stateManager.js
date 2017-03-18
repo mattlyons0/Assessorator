@@ -278,7 +278,7 @@ UI.UIDtoJson = function(uid){
 UI.UIDfromJson = function(json){
   let split = json.split(' ');
   return {topic: Number(split[0]),question:Number(split[1])};
-}
+};
 
 function initPreferences(){
     let update = setLocalStorage('autoUpdate', 0, true);

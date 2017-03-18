@@ -1066,6 +1066,29 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     console.error('No tab found with ID: '+tabID);
   };
 
+  $scope.resizeTextArea = function (el) {
+    function resize (event) {
+      let size = 0;
+      if(event.key === 'Enter')
+        size+=20;
+      event.target.style.height = 'auto';
+      event.target.style.height = event.target.scrollHeight+size+'px';
+    }
+    /* 0-timeout to get the already changed text */
+    function delayedResize (event) {
+      window.setTimeout(resize, 0, event);
+    }
+
+    el.style.overflowY = 'hidden';
+    el.addEventListener('change', resize, false);
+    el.addEventListener('cut', resize, false);
+    el.addEventListener('paste', resize, false);
+    el.addEventListener('drop', resize, false);
+    el.addEventListener('keydown', resize, false);
+
+    resize({target: el});
+  };
+
   function createTab(tabName,contentURL,ctrl,data){
     if(!data)
       data = {};

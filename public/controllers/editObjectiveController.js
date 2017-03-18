@@ -2,6 +2,7 @@
 app.controller("editObjectiveCtrl", function($scope){
   function init(){
     if ($scope.tabData.objectiveID != undefined){
+
       let objective = new CourseUtils($scope.class).getObjective($scope.tabData.objectiveID);
 
       $scope.edit = true;
@@ -45,6 +46,7 @@ app.controller("editObjectiveCtrl", function($scope){
   $scope.requestFocus = function(){
     setTimeout(function(){
       document.getElementById("objectiveName"+$scope.tabID).focus();
+      $scope.resizeTextArea(document.getElementById("objectiveName"+$scope.tabID));
     },200); //Delay until animation starts
     init();
   };
