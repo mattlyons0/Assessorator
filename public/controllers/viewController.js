@@ -27,4 +27,13 @@ app.controller("viewCtrl", function ($scope, $uibModal, $document,$mdToast, ngTo
       templateUrl: 'views/about.html'
     });
   };
+
+  $scope.settings = function(){
+    let settingsModal = $uibModal.open({
+      templateUrl: 'views/settings.html',
+      size: 'lg',
+      keyboard: false,
+      backdrop: 'static'
+    });
+  };
 });

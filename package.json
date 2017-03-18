@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron main.js",
     "pack": "build --dir",
-    "release": "build --windows --linux;./build/dist.sh "
+    "release": "build --windows --linux -p never;./build/dist.sh "
   },
   "dependencies": {
     "angular": "~1.6.1",

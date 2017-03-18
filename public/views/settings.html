@@ -1,0 +1,51 @@
+<div ng-controller="settingsCtrl" class="list-group flex" style="margin-bottom:0">
+    <div class="list-group-item active">
+        <h2 style="margin-top:10px">
+            Settings
+        </h2>
+    </div>
+
+    <li class="list-group-item form-check form-check-inline">
+        <h4>
+            <span uib-tooltip="Update Automatically, After a Prompt or Ignore Updates" tooltip-placement="right">Auto Update:</span>
+        </h4>
+        <form>
+            <label class="form-check-label" ng-repeat="option in setting.autoUpdate.options track by $index" style="margin-right:10px">
+                <input class="form-check-input" type="radio" ng-value="$index" ng-model="setting.autoUpdate.selectedIndex"/> {{ option }}
+            </label>
+        </form>
+    </li>
+
+    <li class="list-group-item form-check form-check-inline">
+        <h4>
+            <span uib-tooltip="Backup Open Database Automatically on Close" tooltip-placement="right">Backups:</span>
+        </h4>
+        <label class="form-check-label" style="margin-right:15px">
+            <input class="form-check-input" type="checkbox" ng-checked="setting.backup.enabled"
+                   ng-click="setting.backup.enabled?setting.backup.enabled=0:setting.backup.enabled=1"> Enabled
+        </label>
+        <label class="form-check-label" style="margin-bottom:10px">
+            <input id="backupFolder" class="form-check-input" type="file" webkitdirectory style="display:none"
+                   onchange="angular.element(this).scope().changeBackupPath(this)">
+            <button type="button" class="btn btn-sm btn-default" onclick="document.getElementById('backupFolder').click()"
+                    ng-disabled="!setting.backup.enabled" style="margin-right:5px">
+                Change Backup Folder
+            </button>
+            <span ng-show="setting.backup.enabled">
+                {{ joinPath(setting.backup.path, '/AssessoratorBackup.json')}}
+                <button type="button" class="btn btn-sm btn-default" style="margin-left:15px" ng-click="defaultBackupPath()">Use Default</button>
+            </span>
+        </label>
+        <div class="progress progress-striped active" ng-show="setting.backup.enabled && setting.backup.pathVerified === 'verifying'">
+            <div class="progress-bar" style="width:100%">Verifying Path...</div>
+        </div>
+        <div class="alert alert-danger" role="alert" ng-show="setting.backup.enabled && setting.backup.pathVerified === false" style="padding:5px;margin-bottom:0">
+            Error verifying path: <i>{{ setting.backup.pathError }}</i>
+        </div>
+    </li>
+
+    <div style="padding: 5px; text-align:right">
+        <button type="button" style="margin-right:2px" class="btn btn-default" ng-click="$dismiss()">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="setting.backup.enabled && setting.backup.pathVerified === false">Save</button>
+    </div>
+</div>

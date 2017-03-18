@@ -15,12 +15,6 @@ li {
     list-style-type: none;
 }
 
-li button {
-    float: right;
-    height: 18px;
-    width: 20px;
-}
-
 h3 {
     white-space: normal !important;
 }
@@ -171,4 +165,8 @@ span[uib-accordion-header] > div {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border-left:0
+}
+
+label {
+    font-weight: normal !important;
 }

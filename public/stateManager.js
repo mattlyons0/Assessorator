@@ -7,6 +7,8 @@
 let appD = require('appdirectory');
 let dir = new appD("Assessorator");
 let makeDir = require('mkdirp');
+let path = require('path');
+let md5 = require('md5');
 const electron = require('electron');
 let scope = undefined;
 
@@ -55,6 +57,7 @@ UI.loadFromDisk = function (coursesFromDisk) {
     createCallbacks[0]();
     createCallbacks.splice(0, 1);
   }
+  initPreferences();
 };
 
 UI.diskLoadError = function(error){
@@ -171,21 +174,29 @@ UI.stressTest = function () {
 };
 
 //Called when the window is closed, will wait to close process until this function is done executing
-UI.onClose = function(){
+UI.onClose = function(fake){
   try {
-    let courses = state.courseList;
-    let coursesSaved = 0;
-    if (courses && courses.length) {
-      for (let course of courses) {
-        UI.save(course, function () {
-          coursesSaved++;
-          if (coursesSaved === courses.length) {
-            saveJSON(dir.userData() + '/dbBackup.json', UI.destroy());
-          }
-        });
+    if(localStorage.backupEnabled) {
+      makeDir(localStorage.backupPath,function(err){
+        if(err){
+          console.error('Error creating directory for backup file\n'+err);
+        }
+      });
+
+      let courses = state.courseList;
+      let coursesSaved = 0;
+      if (courses && courses.length) {
+        for (let course of courses) {
+          UI.save(course, function () {
+            coursesSaved++;
+            if (coursesSaved === courses.length) {
+              saveJSON(path.join(localStorage.backupPath, 'AssessoratorBackup.json'), UI.destroy(fake));
+            }
+          });
+        }
+      } else {
+        UI.destroy();
       }
-    } else {
-      UI.destroy();
     }
   } catch(err){
     UI.destroy();
@@ -193,7 +204,9 @@ UI.onClose = function(){
 };
 
 //Will destroy the main window process
-UI.destroy = function(){
+UI.destroy = function(fake){
+  if(fake === true)
+    return;
   require('electron').ipcRenderer.send('destroy');
 };
 
@@ -267,35 +280,62 @@ UI.UIDfromJson = function(json){
   return {topic: Number(split[0]),question:Number(split[1])};
 }
 
-function saveJSON(location){
-  let md5 = require('md5');
-  let json = toJSON();
+function initPreferences(){
+    let update = setLocalStorage('autoUpdate', 0, true);
+    setLocalStorage('backupEnabled', 1, true);
+    setLocalStorage('backupPath', dir.userData());
 
-  if(location){
-    let err = fs.writeFileSync(location,json);
-    let scope = angular.element(document.querySelector('#container')).scope();
-    if(err){
-      showToast('Error saving Database',{level: 'danger',delay:10});
-      console.error('Error saving Database "'+saveDirectory+'"\n');
-      console.log(err);
-    } else{
-      let data = fs.readFileSync(location,'utf8');
-      if(err){
-        showToast("Error verifying saved Database.",{level: 'danger', delay:10});
-        if(callback)
-          callback();
-        return;
-      }
+    electron.ipcRenderer.send('updateConfig', update)
+}
 
-      if(md5(data) === md5(json)) {
-        showToast("Database Saved to <i>"+location+"</i>"+
-          '<p class="btn btn-default" onclick="require(\'electron\').shell.showItemInFolder(\''+location+'\')" ' +
-          'style="opacity:.75;margin-left:10px; margin-bottom: 0 !important;">Open in Folder</p>',
-          {level: 'success', compile: true, keepOpen: true, apply: true, noClick: true});
-      } else{
-        showToast("<b>Database Saved in Invalid State!</b> (Checksum of saved file did not match original)",{level: 'danger', keepOpen: true});
+function setLocalStorage(variable, defaultTo, number){
+  if(localStorage[variable] === undefined) {
+    localStorage[variable] = defaultTo;
+    return defaultTo;
+  }
+  if(number)
+    return Number(localStorage[variable]);
+  return localStorage[variable];
+}
+
+function saveJSON(location, callback){
+  try {
+    let json = toJSON();
+
+    if (location) {
+      let err = fs.writeFileSync(location, json);
+      let scope = angular.element(document.querySelector('#container')).scope();
+      if (err) {
+        showToast('Error saving Database', {level: 'danger', delay: 10});
+        console.error('Error saving Database "' + saveDirectory + '"\n');
+        console.log(err);
+      } else {
+        let data = fs.readFileSync(location, 'utf8');
+        if (err) {
+          showToast("Error verifying saved Database.", {level: 'danger', delay: 10});
+          if (callback)
+            callback();
+          return;
+        }
+
+        if (md5(data) === md5(json)) {
+          showToast("Database Saved to <i>" + location + "</i>" +
+            '<p class="btn btn-default" onclick="require(\'electron\').shell.showItemInFolder(\'' + location + '\')" ' +
+            'style="opacity:.75;margin-left:10px; margin-bottom: 0 !important;">Open in Folder</p>',
+            {level: 'success', compile: true, keepOpen: true, apply: true, noClick: true});
+        } else {
+          showToast("<b>Database Saved in Invalid State!</b> (Checksum of saved file did not match original)", {
+            level: 'danger',
+            keepOpen: true
+          });
+        }
       }
+      if(callback)
+        callback();
     }
+  } catch(err){
+    if(callback)
+      callback(err);
   }
 }
 
@@ -315,6 +355,9 @@ function openJSON(parsedJSON){
         });
         count++;
       }
+    }, (err) => {
+      console.error('err')
+      $scope.dbReadError(err);
     });
   });
 }
@@ -351,13 +394,6 @@ Array.prototype.equals = function (array) {
 };
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
-
-//Create save backup dir on startup
-makeDir(dir.userData(),function(err){
-  if(err){
-    console.error('Error creating directory for backup file\n'+err);
-  }
-});
 
 //Handle webcontents.send('toast',...) requests from main process
 UI.setToastVar = function(toastVar,$sce){

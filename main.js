@@ -11,6 +11,8 @@ const pkg = require('./package.json');
 const path = require('path');
 const logger = require('electron-log');
 
+let autoUpdaterTriggered = false;
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -33,22 +35,23 @@ function registerUpdater(){
   autoUpdater.logger.transports.file.level = 'info';
 
   autoUpdater.addListener('update-available', function(event) {
-    showToast('A update is available and will be downloaded in the background shortly.');
-    showToast('<p style="text-align:center">Downloading Update at 0.00 mbps<p/>'+
-      '<div class="progress progress-striped active"><div class="progress-bar progress-bar-info" style="width:100%">Starting Download...</div>',
-      {level: 'success', keepOpen: true, noClick: true, disallowClose: true},'downloadProgress');
+    autoUpdaterTriggered = true;
 
+    showToast('A update is available and will be downloaded in the background shortly.');
+    showToast('<p style="text-align:center">Downloading Update at 0.00 mbps<p/>' +
+      '<div class="progress progress-striped active"><div class="progress-bar progress-bar-info" style="width:100%">Starting Download...</div></div>',
+      {level: 'success', keepOpen: true, noClick: true, disallowClose: true, apply: true}, 'downloadProgress');
   });
   autoUpdater.addListener('update-downloaded', function(event,releaseNotes,releaseName,releaseDate,updateURL){
     mainWindow.send('dismissToast','downloadProgress');
 
     showToast('<p>A new update is ready to install.<br/><i>'+ pkg.name +' v'+ releaseName +'</i> will be automatically<br/>installed once the application is closed.</p>' +
       '<div style="text-align:center"><p class="btn btn-default" onclick="require(\'electron\').ipcRenderer.send(\'installUpdate\')" ' +
-      'style="opacity:.75; margin 0 !important;">Restart and Install Now</p></div>', {level: 'success', keepOpen: true, noClick: true, compile: true});
+      'style="opacity:.75; margin 0 !important;">Restart and Install Now</p></div>', {level: 'success', keepOpen: true, noClick: true, compile: true, apply: true});
   });
   autoUpdater.addListener('download-progress', function(data){
     editToast('downloadProgress','<p style="text-align:center">Downloading Update at '+ (data.bytesPerSecond/125000.0).toFixed(2) +' mbps</p>'+
-      '<div class="progress progress-striped active"><div class="progress-bar" style="width:'+data.percent+'%">'+(data.percent).toFixed(2)+'%</div>');
+      '<div class="progress progress-striped active"><div class="progress-bar" style="width:'+data.percent+'%">'+(data.percent).toFixed(2)+'%</div></div>');
   });
   autoUpdater.addListener('error', function(error){
     console.warn('Error checking for updates:');
@@ -61,9 +64,7 @@ function registerUpdater(){
     console.log('Up to date!');
   });
 
-  mainWindow.webContents.once('did-frame-finish-load', function(event){
-    autoUpdater.checkForUpdates();
-  });
+  autoUpdater.checkForUpdates();
 }
 
 function createWindow() {
@@ -148,6 +149,16 @@ electron.ipcMain.on('installUpdate', function(){
   autoUpdater.quitAndInstall();
 });
 
+electron.ipcMain.on('updateConfig', function(info,updateMode){
+  if(autoUpdaterTriggered)
+    return;
+
+  if(updateMode === 0){ //Automatic
+    registerUpdater();
+  }
+  // Otherwise disabled
+});
+
 //Called by UI.onClose() once close scripts are done running
 electron.ipcMain.on('destroy', function(){
   mainWindow.destroy();
@@ -157,7 +168,6 @@ electron.ipcMain.on('destroy', function(){
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
   createWindow();
-  registerUpdater();
 });
 
 // Quit when all windows are closed.
