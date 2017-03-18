@@ -4,6 +4,7 @@
     user-select: none;
     word-wrap: break-word; /* Don't wrap */
     text-overflow: ellipsis;
+    -webkit-user-drag: none;
 }
 
 select {
