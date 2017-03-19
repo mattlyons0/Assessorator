@@ -7,7 +7,7 @@
         <form name="objectiveForm" ng-submit="submitObjective()">
             <div class="list-group-item list-group-item-action" autoscroll="260">
             <div class="form-group">
-                <label>Objective Name:</label> <br/>
+                <label><h4 style="margin-bottom:2px">Objective Name:</h4></label> <br/>
                 <textarea class="form-control" required id="objectiveName{{tabID}}" style="height:20px; margin-bottom:15px;"
                           name="objectiveName" ng-model="objective.name" ng-blur="submitError=true"></textarea>
                 <div ng-show="submitError" ng-messages="objectiveForm.objectiveName.$error">
