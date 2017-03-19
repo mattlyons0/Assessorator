@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $sce, $filter, $uibModal) {
+app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $sce, $filter, $uibModal, $window) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   let nextID = 0;
@@ -442,7 +442,7 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
     scope.confirmText = '<b>Change Topic'+(selectedUIDs.length===1?'':'s')+'</b>';
     scope.dropdown = true;
     scope.dropdownInfo = {
-      placeholder: 'No Topic',
+      placeholder: 'Select a Topic',
       repeatObj: scope.class.topics,
       selectAttr: 'topicName',
       choicesAttr: 'topicName',
@@ -1067,26 +1067,11 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
   };
 
   $scope.resizeTextArea = function (el) {
-    function resize (event) {
-      let size = 0;
-      if(event.key === 'Enter')
-        size+=20;
-      event.target.style.height = 'auto';
-      event.target.style.height = event.target.scrollHeight+size+'px';
-    }
-    /* 0-timeout to get the already changed text */
-    function delayedResize (event) {
-      window.setTimeout(resize, 0, event);
-    }
+    if(el.resizeListening)
+      return;
+    el.resizeListening = true;
 
-    el.style.overflowY = 'hidden';
-    el.addEventListener('change', resize, false);
-    el.addEventListener('cut', resize, false);
-    el.addEventListener('paste', resize, false);
-    el.addEventListener('drop', resize, false);
-    el.addEventListener('keydown', resize, false);
-
-    resize({target: el});
+    autosize(el);
   };
 
   function createTab(tabName,contentURL,ctrl,data){

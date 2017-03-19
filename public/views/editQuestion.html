@@ -1,129 +1,107 @@
-<style>
-    /*Undo searchQuestions.html css tricks*/
-    md-chips.md-default-theme .md-chips, md-chips .md-chips {
-        box-shadow: 0 1px rgb(224,224,224) !important;
-    }
-    md-chips input {
-        display: block;
-    }
-</style>
+<div id="editQuestionContainer" style="margin-top: 0">
+    <div class="list-group" flex>
+        <div class="list-group-item active">
+            <h3 class="list-group-item-heading">{{edit?'Edit':'Create'}} Question</h3>
+        </div>
 
-<md-card id="editQuestionContainer">
-    <form name="questionForm" ng-submit="submitQuestion()">
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-headline">{{edit?'Edit':'Create'}} Question</span>
-            </md-card-title-text>
-        </md-card-title>
-        <md-card-content autoscroll="350">
-            <md-content layout-padding>
+        <form name="questionForm" ng-submit="submitQuestion()">
+            <div class="list-group-item" autoscroll="260">
                 <div>
-                    <div layout="column">
-                        <md-input-container class="md-block" flex="80"
-                                            style="margin-bottom:0; margin-top:0; height:50px">
-                            <label>Question</label>
-                            <input required id="questionTitle{{tabID}}" type="text" name="questionTitle"
-                                   ng-model="question.title"/>
-                            <div ng-messages="questionForm.questionTitle.$error">
-                                <div ng-message="required">A Question is required.</div>
+                    <div class="form-group" style="margin-bottom:5px;">
+                        <label><h4 style="margin-bottom:2px;margin-top:5px">Question:</h4></label> <br/>
+                        <textarea class="form-control" required id="questionTitle{{tabID}}" type="text" name="questionTitle" rows="1"
+                                  ng-model="question.title" style="height:20px" ng-blur="submitError=true"></textarea>
+                        <div ng-show="submitError" ng-messages="questionForm.questionTitle.$error">
+                            <div class="alert alert-danger" ng-message="required" style="padding:5px;margin-bottom:0;margin-top:5px">
+                                A Question is required
                             </div>
-                        </md-input-container>
-
-                        <md-input-container class="md-block" flex style="margin-bottom:0; margin-top:0">
-                            <label>Description</label>
-                            <textarea ng-model="question.description"></textarea>
-                        </md-input-container>
-                        <div layout-gt-xs="row" style="margin-bottom:20px">
-                            <md-chips ng-model="topic.selected" style="margin-right:7px"
-                                      md-transform-chip="transformChipTopic($chip)"
-                                      md-require-match="true" flex>
-                                <md-chip-template>
-                                    {{$chip.topicName}}
-                                </md-chip-template>
-                                <md-autocomplete md-no-cache="true" placeholder="Choose a Topic" md-min-length="0"
-                                                 md-input-id="topicChooserInput" md-autocomplete-snap
-                                                 md-search-text="topic.searchQuery" md-items="topic in searchTopics()"
-                                                 md-select-on-match>
-                                    <md-item-template>
-                                        <span md-highlight-text="searchQueryTopic()" md-highlight-flags="i">
-                                            {{topic.topicName}}
-                                        </span>
-                                    </md-item-template>
-                                    <md-not-found>
-                                        <div ng-click="createTopic()"
-                                             style="height:100%;width:100%; outline:none;border:0">Create New Topic
-                                        </div>
-                                    </md-not-found>
-                                </md-autocomplete>
-                            </md-chips>
-
-                            <md-chips required ng-model="objective.selected" style="margin-left:7px"
-                                      md-require-match="true" md-autocomplete-snap flex>
-                                <md-chip-template>
-                                    {{$chip.objectiveText}}
-                                </md-chip-template>
-                                <md-autocomplete md-no-cache="true" placeholder="Add an Objective" md-min-length="0"
-                                                 md-input-id="objectiveChooserInput"
-                                                 md-search-text="objective.searchQuery"
-                                                 md-items="objective in searchObjectives()" md-select-on-match>
-                                    <span md-highlight-text="searchQueryObjective()" md-highlight-flags="i">
-                                        {{objective.objectiveText}}
-                                    </span>
-                                    <md-not-found>
-                                        <div ng-click="createObjective()"
-                                             style="height:100%;width:100%; outline:none;border:0">Create New Objective
-                                        </div>
-                                    </md-not-found>
-                                </md-autocomplete>
-                            </md-chips>
                         </div>
-
-                        <div layout="row" style="margin-bottom:15px">
-                            <span style="padding-right:10px">Question Type:</span>
-                            <md-radio-group ng-model="question.type" class="md-primary" layout="row">
-                                <md-radio-button value="MC">Multiple Choice</md-radio-button>
-                                <md-radio-button value="MA">Multiple Answers</md-radio-button>
-                                <md-radio-button value="TF"> True/False</md-radio-button>
-                            </md-radio-group>
-                        </div>
-
-                        <fieldset class="standard">
-                            <legend>Answers</legend>
-                                <md-radio-group ng-model="question.correctAnswer" class="md-primary">
-                                    <div ng-repeat="answer in question.answers" layout="row">
-                                        <md-radio-button aria-label="Answer" ng-if="useRadio()" ng-value="$index"
-                                                         ng-disabled="!answer.text"
-                                                         style="margin-bottom:0; height:36px"></md-radio-button>
-                                        <md-checkbox aria-label="Answer" ng-if="question.type === 'MA'"
-                                                     ng-model="answer.correct" ng-disabled="!answer.text"
-                                                     class="md-primary"
-                                                     style="top:7px"></md-checkbox>
-                                        <md-input-container md-no-float
-                                                            style="margin-bottom:0; margin-top:0; height:25px" flex>
-                                            <input id="questionAnswer{{$index}}" ng-model="answer.text" placeholder="Answer"/>
-                                        </md-input-container>
-
-                                        <md-button class="md-icon-button" ng-class="(answer.pinned?'blueColor':'blackColor')"
-                                                   aria-label="Pin Question" ng-disabled="$last" ng-click="togglePin(answer)">
-                                            <md-tooltip md-delay="1000" md-direction="left">Pin this question's location so that it will not be randomized.</md-tooltip>
-                                            <span class="glyphicon glyphicon-pushpin pin"></span>
-                                        </md-button>
-                                    </div>
-                                </md-radio-group>
-                        </fieldset>
-
+                    </div>
+                    <div class="form-group">
+                        <label><h4 style="margin-bottom:2px;margin-top:5px">Description:</h4></label> <br/>
+                        <textarea class="form-control" id="questionDesc{{tabID}}" type="text" name="questionDesc" rows="1"
+                                  ng-model="question.description" style="height:20px; margin-bottom:15px;"></textarea>
                     </div>
                 </div>
-            </md-content>
-        </md-card-content>
-        <md-card-actions>
-            <div layout="row">
-                <span flex></span>
-                <md-button ng-click="cleanup()">Cancel</md-button>
-                <md-button type="submit" class="md-primary">
-                    {{edit?'Modify':'Create'}}
-                </md-button>
+
+                <div style="display:flex;min-height:40px;border-bottom:1px solid #ddd;padding-bottom:10px;margin-bottom:10px">
+                    <!-- Select Topic-->
+                    <div style="width:47%;margin-right:auto;display:flex">
+                        <ui-select class="ng-animate-disabled" ng-model="topic.selected" theme="bootstrap" style="width:100%">
+                            <ui-select-match placeholder="Choose a Topic" class="input-group" style="width:100%">
+                                {{$select.selected.topicName}}
+                            </ui-select-match>
+                            <ui-select-choices
+                                    repeat="topic in (class.topics |sort:{key:'topicName',mode:'ascending'}) | filter: { 'topicName': $select.search }">
+                                <div ng-bind-html="topic.topicName| highlight: $select.search"></div>
+                                <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
+                            </ui-select-choices>
+                        </ui-select>
+                        <span class="input-group-btn">
+                          <button type="button" ng-click="topic.selected = class.topics[0]" class="btn btn-default"
+                                  ng-disabled="topic.selected.ID === 0" style="border-left-width:0;">
+                            <span class="glyphicon glyphicon-remove"></span>
+                          </button>
+                        </span>
+                    </div>
+                    <!-- Select Objectives -->
+                    <div style="width:47%;margin-left:auto;">
+                        <ui-select multiple class="ng-animate-disabled" ng-model="objective.selected" theme="bootstrap" style="min-height:34px">
+                            <ui-select-match placeholder="Add an Objective">
+                                {{$item.objectiveText}}
+                            </ui-select-match>
+                            <ui-select-choices
+                                    repeat="obj in (class.objectives|sort:{key:'objectiveText',mode:'ascending'}) | filter: { 'objectiveText': $select.search }">
+                                <div ng-bind-html="obj.objectiveText| highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <ul class="nav nav-list">
+                <li class="divider"></li></ul>
+
+                <div style="display:flex">
+                    <h4 style="margin: 0 15px 0 0">Question Type: </h4>
+                    <label class="form-check-label" style="margin-right:10px">
+                        <input class="form-check-input" type="radio" name="qType" ng-model="question.type" value="MC"/> Multiple Choice
+                    </label>
+                    <label class="form-check-label" style="margin-right:10px">
+                        <input class="form-check-input" type="radio" name="qType" ng-model="question.type" value="MA"/> Multiple Answers
+                    </label>
+                    <label class="form-check-label" style="margin-right:10px">
+                        <input class="form-check-input" type="radio" name="qType" ng-model="question.type" value="TF"/> True/False
+                    </label>
+                </div>
+
+                <div>
+                    <fieldset class="standard">
+                        <legend style="margin-bottom:10px">Answers</legend>
+
+                        <div ng-repeat="answer in question.answers" layout="row">
+                            <input name="answers" ng-if="useRadio()" ng-value="$index" ng-model="question.correctAnswer" type="radio"
+                                         ng-disabled="!answer.text" style="margin-bottom:0; transform:scale(1.5); height:36px;margin-right:15px"/>
+                            <input aria-label="Answer" ng-if="question.type === 'MA'" type="checkbox"
+                                         ng-model="answer.correct" ng-disabled="!answer.text" class="md-primary"
+                                         style="position:relative;top:7px; transform:scale(1.5);margin-right:15px"/>
+                            <textarea id="questionAnswer{{$index}}" ng-model="answer.text" placeholder="Answer" class="answerBox" rows="1">
+                            </textarea>
+
+                            <button type="button" class="btn btn-link" ng-class="(answer.pinned?'blueColor':'blackColor')" style="outline:0"
+                                    tabindex="-1" ng-disabled="$last" ng-click="togglePin(answer)" popover-trigger="'mouseenter'" popover-placement="left"
+                                    uib-popover="Pin this question's location so that it will not be randomized" popover-popup-delay="750">
+                                <span class="glyphicon glyphicon-pushpin pin"></span>
+                            </button>
+                        </div>
+                    </fieldset>
+                </div>
             </div>
-        </md-card-actions>
-    </form>
-</md-card>
+
+            <div class="list-group-item" style="padding:5px; text-align: right">
+                <button class="btn btn-default" ng-click="cleanup()">Cancel</button>
+                <button class="btn btn-primary" type="submit">
+                    {{edit?'Modify':'Create'}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

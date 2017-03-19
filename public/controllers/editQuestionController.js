@@ -14,10 +14,7 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
 
       $scope.question.title=question.questionTitle;
       $scope.question.description=question.questionDescription;
-      $scope.topic.selected = [topic];
-      if(topic.ID == 0){ //Ignore the 'No Topic' Topic
-        $scope.topic.selected = [];
-      }
+      $scope.topic.selected = topic;
       $scope.objective.selected = [];
       for(let objective of question.objectives){
         $scope.objective.selected.push(objective);
@@ -66,6 +63,8 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
 
   }
 
+  $scope.submitError = false;
+
   $scope.question = {};
   $scope.question.answers = [];
   $scope.question.answers.push({
@@ -80,7 +79,7 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
   };
 
   $scope.topic = {};
-  $scope.topic.selected = [];
+  $scope.topic.selected = $scope.class.topics[0]; //No Topic
 
   $scope.objective = {};
   $scope.objective.selected = [];
@@ -103,9 +102,6 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
     return array;
   };
   $scope.transformChipTopic = function (chip) {
-    if ($scope.topic.selected.length > 0) {
-      $scope.topic.selected.splice(0, 1); //remove first topic
-    }
     return chip;
   };
 
@@ -131,10 +127,6 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
   $scope.submitQuestion = function () {
     if (!$scope.question.title)
       return;
-    if($scope.topic.selected.length > 1){
-      document.querySelector('#topicChooserInput').focus();
-      showToast('Only One Topic may be selected', {level: 'danger'});
-    }
     if ($scope.question.answers.length > 1){
       let correct = false;
       for(let x=0;x<$scope.question.answers.length - 1;x++){ //Last one is always ghost answer
@@ -152,9 +144,7 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
       }
     }
 
-    let topic = $scope.topic.selected[0];
-    if(!$scope.topic.selected.length)
-      topic = $scope.class.topics[0]; //The 'No Topic' Topic
+    let topic = $scope.topic.selected;
     let oldTopic = undefined;
     if($scope.edit)
       oldTopic = new CourseUtils($scope.class).getTopic($scope.tabData.topicID);
@@ -180,7 +170,7 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
         //Duplicate selection data
         let newJSON = UI.UIDtoJson(question.UID);
         let oldJSON = UI.UIDtoJson(oldQuestion.UID);
-        console.log(oldJSON);
+
         UI.miscState.classView.questions.checked[newJSON] = UI.miscState.classView.questions.checked[oldJSON];
         UI.miscState.classView.questions.open[newJSON] = UI.miscState.classView.questions.open[oldJSON];
       }
@@ -233,6 +223,8 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
   $scope.requestFocus = function () {
     setTimeout(function () {
       document.getElementById('questionTitle' + $scope.tabID).focus();
+      $scope.resizeTextArea(document.getElementById("questionTitle"+$scope.tabID));
+      $scope.resizeTextArea(document.getElementById("questionDesc"+$scope.tabID));
     }, 500); //Delay until animation starts
     init();
   };
@@ -266,6 +258,13 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
         text: '',
         correct: false
       });
+
+      setTimeout(()=>{
+        for(let i=0;i<$scope.question.answers.length;i++){
+          $scope.resizeTextArea(document.getElementById("questionAnswer"+i));
+        }
+      },0)
+
     }
   });
 
@@ -283,7 +282,7 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
     if ($scope.question.type === 'TF') {
       let dataExists = false;
       for (let x = 0; x < $scope.question.answers.length; x++) {
-        if ($scope.question.answers[x].text && ($scope.question.answers[x].text != 'True' && $scope.question.answers[x].text != 'False')) {
+        if ($scope.question.answers[x].text && ($scope.question.answers[x].text !== 'True' && $scope.question.answers[x].text !== 'False')) {
           dataExists = true;
           break;
         }
@@ -300,10 +299,15 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
           correct: false,
           pinned: false
         });
-        if($scope.setCorrect == 'True')
-          $scope.question.answers[0].correct=true;
-        else if($scope.setCorrect == 'False')
-          $scope.question.answers[1].correct=true;
+        $scope.question.correctAnswer = undefined;
+        if ($scope.setCorrect == 'True') {
+          $scope.question.answers[0].correct = true;
+          $scope.question.correctAnswer = 0;
+        }
+        else if ($scope.setCorrect == 'False'){
+          $scope.question.answers[1].correct = true;
+          $scope.question.correctAnswer = 1;
+        }
         $scope.setCorrect = undefined;
       };
 

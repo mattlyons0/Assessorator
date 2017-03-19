@@ -8,17 +8,17 @@
             <div class="list-group-item list-group-item-action" autoscroll="260">
                 <div class="form-group">
                     <label><h4 style="margin-bottom:2px;">Topic Name:</h4></label> <br/>
-                    <textarea class="form-control" required id="topicName{{tabID}}" style="height:20px"
+                    <textarea class="form-control" required id="topicName{{tabID}}" style="height:20px" rows="1"
                               name="topicName" ng-model="topic.name" ng-blur="submitError=true"></textarea>
                     <div ng-show="submitError" ng-messages="topicForm.topicName.$error">
                         <div class="alert alert-danger" ng-message="required"
-                             style="padding:10px;margin-bottom:0;margin-top:15px">Topic Name is required.</div>
+                             style="padding:10px;margin-bottom:0;margin-top:15px">Topic Name is required</div>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label><h4 style="margin-bottom:2px;">Description:</h4></label> <br/>
-                    <textarea class="form-control" style="height:20px" id="topicDesc{{tabID}}"
+                    <textarea class="form-control" style="height:20px" id="topicDesc{{tabID}}" rows="1"
                               name="topicDesc" ng-model="topic.description"></textarea>
                 </div>
             </div>
