@@ -2,7 +2,7 @@
 
 let ObjectiveUtils = require('../data/utils/ObjectiveUtils');
 
-app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
+app.controller('editQuestionCtrl', function ($scope, $uibModal) {
   function init(){
     $scope.callback = $scope.tabData.callback;
 
@@ -20,43 +20,34 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
         $scope.objective.selected.push(objective);
       }
       let selectedIndex;
-      if(question.answers[0] && question.answers[0].answerText == 'True' && question.answers[1].answerText == 'False') {
-        $scope.question.type = 'TF';
-        for(let i=0;i<question.answers.length;i++){
-          let ans = question.answers[i];
-          if(ans.correct) {
-            $scope.question.correctAnswer = i;
-            $scope.setCorrect=ans.answerText;
-            break;
-          }
+      let selected = 0;
+      for(let i=0;i<question.answers.length;i++){
+        let ans = question.answers[i];
+        if(ans.correct) {
+          selected++;
+          selectedIndex = i;
         }
       }
-      else{
-        let selected = 0;
-        for(let i=0;i<question.answers.length;i++){
-          let ans = question.answers[i];
-          if(ans.correct) {
-            selected++;
-            selectedIndex = i;
-          }
-        }
-        if(selected <= 1)
-          $scope.question.type = 'MC';
-        else {
-          $scope.question.type = 'MA';
-          $scope.ignoreNextDataValidate = true;
-        }
+      if(selected <= 1)
+        $scope.question.type = 'MC';
+      else {
+        $scope.question.type = 'MA';
+        $scope.ignoreNextDataValidate = true;
+      }
 
-        $scope.question.answers = [];
-        for(let ans of question.answers){
-          $scope.question.answers.push({
-            text: ans.answerText,
-            correct: ans.correct,
-            pinned: ans.pinned
-          });
-        }
+      $scope.question.answers = [];
+      for(let ans of question.answers){
+        $scope.question.answers.push({
+          text: ans.answerText,
+          correct: ans.correct,
+          pinned: ans.pinned
+        });
         if(selected <= 1) {
           $scope.question.correctAnswer = selectedIndex;
+
+          if(question.answers[0] && question.answers[0].answerText === 'True' && question.answers[1].answerText === 'False') {
+            $scope.question.type = 'TF';
+          }
         }
       }
     }
@@ -281,11 +272,8 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
   $scope.stopWatching5 = $scope.$watch('question.type', function () { //Preload True False Data
     if ($scope.question.type === 'TF') {
       let dataExists = false;
-      for (let x = 0; x < $scope.question.answers.length; x++) {
-        if ($scope.question.answers[x].text && ($scope.question.answers[x].text !== 'True' && $scope.question.answers[x].text !== 'False')) {
-          dataExists = true;
-          break;
-        }
+      if (($scope.question.answers[0].text !== 'True' && $scope.question.answers[1].text !== 'False')) {
+        dataExists = true;
       }
       let replaceTrueFalse = function () {
         $scope.question.answers = [];
@@ -300,27 +288,28 @@ app.controller('editQuestionCtrl', function ($scope, $mdDialog) {
           pinned: false
         });
         $scope.question.correctAnswer = undefined;
-        if ($scope.setCorrect == 'True') {
-          $scope.question.answers[0].correct = true;
-          $scope.question.correctAnswer = 0;
-        }
-        else if ($scope.setCorrect == 'False'){
-          $scope.question.answers[1].correct = true;
-          $scope.question.correctAnswer = 1;
-        }
-        $scope.setCorrect = undefined;
       };
 
       if (dataExists) {
-        let confirm = $mdDialog.confirm().title('Are you sure you would like to override previous answers?')
-          .textContent('Previous Answers will be replaced with True and False.').ok('OK').cancel('Cancel');
-        $mdDialog.show(confirm).then(function () { //Yes
+        let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-warning"><h3 style="margin-top:10px;text-align:center">'
+          + 'Are you sure you would like to override previous answers?</h3></div><li class="list-group-item">';
+        let html = 'Previous Answers will be replaced with True and False.</li>';
+        let buttons = '<div style="padding: 5px; text-align:right"> <button type="button" class="btn btn-default" ng-click="dismiss()" style="margin-right:2px">Cancel</button>'
+          + '<button type="button" class="btn btn-warning" ng-click="close()"><b>OK</b></button></div>';
+        let confirm = $uibModal.open({
+          template: header + html + buttons,
+          controller: function ($scope, $uibModalInstance) {
+            $scope.close = $uibModalInstance.close;
+            $scope.dismiss = $uibModalInstance.dismiss;
+          }
+        });
+        confirm.result.then(() => {
+          //Do it
           replaceTrueFalse();
-        }, function () { //No
+        }, () => {
+          //Didn't do it
           $scope.question.type = 'MC';
-        })
-      } else {
-        replaceTrueFalse();
+        });
       }
     }
   });

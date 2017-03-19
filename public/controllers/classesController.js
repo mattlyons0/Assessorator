@@ -17,7 +17,7 @@ app.controller('classesCtrl', function ($scope, $mdDialog,$sce,$uibModal) {
 
   $scope.addClass = function (event,id) {
     let scope = $scope.$new(); //Makes current scope parent
-    if(id != undefined) {
+    if(id !== undefined) {
       scope.classID = id;
       scope.edit = true;
     }
@@ -194,7 +194,11 @@ app.controller('classesCtrl', function ($scope, $mdDialog,$sce,$uibModal) {
 });
 
 function CreateClassController($scope, $uibModalInstance) {
-  if($scope.classID == undefined) {
+  setTimeout(()=>{
+    document.querySelector("#classID").focus();
+  },0);
+
+  if($scope.classID === undefined) {
     $scope.class = {
       name: '',
       id: '',
@@ -214,6 +218,14 @@ function CreateClassController($scope, $uibModalInstance) {
   }
   $scope.semesters = ['', 'Fall', 'Spring', 'Summer'];
 
+  $scope.validateClass = function(){
+    let elem = angular.element(document.querySelector('#classID'));
+    if($scope.class.id !== undefined && $scope.class.id.trim() !== ''){
+      elem.css('background-color','white');
+      elem.attr('placeholder','');
+    }
+  }
+
   $scope.submit = function () {
     console.log($scope.class.semester);
     if ($scope.class.id) {
@@ -232,9 +244,9 @@ function CreateClassController($scope, $uibModalInstance) {
       }
       $uibModalInstance.close();
     } else{
-      angular.element(document.querySelector('#classID')).css('border-color','red');
       angular.element(document.querySelector('#classID')).css('background-color','lightPink');
       angular.element(document.querySelector('#classID')).attr('placeholder','Required')
+      document.querySelector("#classID").focus();
     }
   };
   $scope.cancel = function (event) {

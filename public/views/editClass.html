@@ -17,7 +17,7 @@
         <form class="form-inline" style="text-align: center;" ng-submit="submit()">
             <div class="form-group">
                 <label>Course ID:</label>
-                <input required id="classID" name="classID" ng-model="class.id" class="form-control"/>
+                <input required id="classID" name="classID" ng-model="class.id" class="form-control" ng-change="validateClass()"/>
 
                 <label>Semester:</label>
                 <select ng-model="class.semester" class="form-control">

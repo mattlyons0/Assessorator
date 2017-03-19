@@ -10,7 +10,7 @@
                     <div class="form-group" style="margin-bottom:5px;">
                         <label><h4 style="margin-bottom:2px;margin-top:5px">Question:</h4></label> <br/>
                         <textarea class="form-control" required id="questionTitle{{tabID}}" type="text" name="questionTitle" rows="1"
-                                  ng-model="question.title" style="height:20px" ng-blur="submitError=true"></textarea>
+                                  ng-model="question.title" style="height:20px"></textarea>
                         <div ng-show="submitError" ng-messages="questionForm.questionTitle.$error">
                             <div class="alert alert-danger" ng-message="required" style="padding:5px;margin-bottom:0;margin-top:5px">
                                 A Question is required
@@ -54,6 +54,9 @@
                                     repeat="obj in (class.objectives|sort:{key:'objectiveText',mode:'ascending'}) | filter: { 'objectiveText': $select.search }">
                                 <div ng-bind-html="obj.objectiveText| highlight: $select.search"></div>
                             </ui-select-choices>
+                            <ui-select-no-choice style="padding-left:5px;">
+                                No Objectives {{class.objectives.length===0?'Exist':'Left'}}!
+                            </ui-select-no-choice>
                         </ui-select>
                     </div>
                 </div>
@@ -78,9 +81,9 @@
                         <legend style="margin-bottom:10px">Answers</legend>
 
                         <div ng-repeat="answer in question.answers" layout="row">
-                            <input name="answers" ng-if="useRadio()" ng-value="$index" ng-model="question.correctAnswer" type="radio"
+                            <input name="answers" ng-if="useRadio()" ng-value="$index" ng-model="question.correctAnswer" type="radio" tabindex="-1"
                                          ng-disabled="!answer.text" style="margin-bottom:0; transform:scale(1.5); height:36px;margin-right:15px"/>
-                            <input aria-label="Answer" ng-if="question.type === 'MA'" type="checkbox"
+                            <input aria-label="Answer" ng-if="question.type === 'MA'" type="checkbox" tabindex="-1"
                                          ng-model="answer.correct" ng-disabled="!answer.text" class="md-primary"
                                          style="position:relative;top:7px; transform:scale(1.5);margin-right:15px"/>
                             <textarea id="questionAnswer{{$index}}" ng-model="answer.text" placeholder="Answer" class="answerBox" rows="1">
@@ -98,7 +101,7 @@
 
             <div class="list-group-item" style="padding:5px; text-align: right">
                 <button class="btn btn-default" ng-click="cleanup()">Cancel</button>
-                <button class="btn btn-primary" type="submit">
+                <button class="btn btn-primary" type="submit" ng-click="submitError=true">
                     {{edit?'Modify':'Create'}}
                 </button>
             </div>

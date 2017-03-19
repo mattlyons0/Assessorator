@@ -17,12 +17,10 @@
         <li>There are some places in the code from before Question.topicID existed, these parts of the code are inefficient</li>
         <li>Importing large databases doesn't always delete old database</li>
         <li>When saving data pointers are cloned (change to just using needed ID's instead of pointers), this will decrease startup time (no need to repair pointers) as well as decrease filesize</li>
-        <li>At very small width the course selection button goes away from the header (along with others)</li>
         <li>Handle different types of quotes in filter, " and the angled ones as the same</li>
         <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning (currently they won't be deleted until save and reload) </li>
         <li>Upon deletion of questions used as manual questions within assessments delete those manual questions and provide warning</li>
         <li>Importing questions by file adds ? symbols to every quote</li>
-        <li>Topic and Objective dropdowns in EditQuestion arent alphabetized</li>
         <li>Topic and Objective Dropdowns in CreateRequirement aren't alphabetized</li>
         <li>Sometimes md-scroll-mask sticks (solve by removing all md-overlays)</li>
         <li>UI-select elements doesn't handle large text optimally</li>
@@ -40,13 +38,10 @@
         <ul>
             <li>Determine what to do with the tab system (keep or remove)</li>
             <li>Don't allow duplicate tabs w/ same info, open one that exists already</li>
-            <li>Allow question dragging to reorder in question creation</li>
             <li>Alert via toast when low on storage space</li>
-            <li>Courses on homepage cannot be rearranged</li>
 
             <li>Class View</li>
             <ul>
-                <li>Focus query field when clicking filter</li>
                 <li>A way to find invalid questions (questions with no correct answer)</li>
             </ul>
             <li>Assessments Edit</li>
@@ -64,11 +59,6 @@
             <li>Import into specific assessment</li>
         </ul>
         <li>Cut, Copy, Paste right click menu on input fields</li>
-        <li>Search Capability</li>
-        <ul>
-            <li>Search all data</li>
-            <li>Create other search options based on useability tests with tom</li>
-        </ul>
         <li>Assessment Creation</li>
         <ul>
             <li>Randomly create assessments based on criteria</li>
@@ -104,14 +94,12 @@
             <li>Make filtering much more efficient (currently called way too much)</li>
         </ul>
         <li>Crash Reporter</li>
-        <li>Determine how to handle course year</li>
-        <li>Determine how to use question title and description. Should title always be the question, should description just elaborate on that?</li>
+        <li>Courses</li>
         <ul>
             <li>Option to duplicate course?</li>
             <li>Year Ranges?</li>
         </ul>
         <li>Add a way to find incomplete questions (questions without at least 2 answers or without a correct answer)</li>
-        <li>Replace libs with min versions</li>
         <li>After updating show changelog (use <a href="https://github.com/electron-userland/electron-builder/pull/979">--updated flag</a> within the updated modal)</li>
         <li>New Icon (that actually looks good)</li>
     </ul>

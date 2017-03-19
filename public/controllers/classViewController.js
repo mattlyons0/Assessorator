@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $sce, $filter, $uibModal, $window) {
+app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filter, $uibModal, $window) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   let nextID = 0;
@@ -1028,12 +1028,23 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
 
   $scope.goBack = function () {
     if($scope.tabs.length > 0) {
-      let confirm = $mdDialog.confirm().title('Are you sure you would like to go back?')
-        .textContent('All open tabs will be closed.').ok('Go Back').cancel('Cancel');
-      $mdDialog.show(confirm).then(function () {
+      let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-danger"><h3 style="margin-top:10px">'
+        +'<h3>Are you sure you would like to go back?</h3></div><li class="list-group-item">';
+      let html = 'All open tabs will be closed. Any unsaved changes will be lost.</li>';
+      let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" class="btn btn-default" ng-click="dismiss()" style="margin-right:2px">Cancel</button>'
+        +'<button type="button" class="btn btn-danger" ng-click="close()"><b>Go Back</b></button></div>';
+      let confirm = $uibModal.open({
+        template: header+html+buttons,
+        controller: function($scope,$uibModalInstance){
+          $scope.close = $uibModalInstance.close;
+          $scope.dismiss = $uibModalInstance.dismiss;
+        }
+      });
+      confirm.result.then(() => {
+        //Do it
         back();
-      }, function () {
-        //You didn't do it.
+      }, () => {
+        //Didn't do it
       });
     } else{
       back();
@@ -1073,6 +1084,14 @@ app.controller('classViewCtrl', function ($scope,$timeout,$mdDialog, $mdToast, $
 
     autosize(el);
   };
+
+  $scope.focusId = function(id){
+    setTimeout(()=>{
+      try {
+        document.querySelector("#" + id).focus();
+      } catch(err) {}
+    }, 0);
+  }
 
   function createTab(tabName,contentURL,ctrl,data){
     if(!data)

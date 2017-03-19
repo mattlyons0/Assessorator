@@ -9,7 +9,7 @@
                 <div class="form-group">
                     <label><h4 style="margin-bottom:2px;">Topic Name:</h4></label> <br/>
                     <textarea class="form-control" required id="topicName{{tabID}}" style="height:20px" rows="1"
-                              name="topicName" ng-model="topic.name" ng-blur="submitError=true"></textarea>
+                              name="topicName" ng-model="topic.name"></textarea>
                     <div ng-show="submitError" ng-messages="topicForm.topicName.$error">
                         <div class="alert alert-danger" ng-message="required"
                              style="padding:10px;margin-bottom:0;margin-top:15px">Topic Name is required</div>
@@ -25,7 +25,7 @@
 
             <div class="list-group-item" style="padding:5px; text-align: right">
                 <button class="btn btn-default" ng-click="cleanup()">Cancel</button>
-                <button class="btn btn-primary" type="submit">
+                <button class="btn btn-primary" type="submit" ng-click="submitError=true">
                     {{edit?'Modify':'Create'}}
                 </button>
             </div>

@@ -65,7 +65,7 @@
                                                     <span class="glyphicon glyphicon-check"></span>
                                                 </button>
                                                 <button type="button" ng-class="'btn btn-default'+(classView.assessments.filter.open?' active':'')" data-toggle="button"
-                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.assessments.filter.open = !classView.assessments.filter.open">
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.assessments.filter.open = !classView.assessments.filter.open;focusId('filterAssessmentSearch')">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
                                             </div>
@@ -75,7 +75,7 @@
                                         <div ng-if="classView.assessments.filter.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex">
                                                 <div class="input-group" style="width:65%;margin-right:2px">
-                                                    <input type="text" class="form-control" placeholder="Filter Assessments" ng-model="classView.assessments.filter.query">
+                                                    <input type="text" class="form-control" placeholder="Filter Assessments" id="filterAssessmentSearch" ng-model="classView.assessments.filter.query">
                                                     <span class="input-group-addon">
                                                             <label>
                                                                 <input type="checkbox" ng-model="classView.assessments.filter.searchNames" style="position:relative;top:2px"/>
@@ -226,7 +226,7 @@
                                                     <span class="glyphicon glyphicon-check"></span>
                                                 </button>
                                                 <button type="button" ng-class="'btn btn-default'+(classView.topics.filter.open?' active':'')" data-toggle="button"
-                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.topics.filter.open = !classView.topics.filter.open">
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.topics.filter.open = !classView.topics.filter.open;focusId('filterTopicSearch')">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
                                             </div>
@@ -236,7 +236,7 @@
                                         <div ng-if="classView.topics.filter.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex;width:100%">
                                                 <div class="input-group" style="width:100%">
-                                                    <input type="text" class="form-control" placeholder="Filter Topics" ng-model="classView.topics.filter.query">
+                                                    <input type="text" class="form-control" placeholder="Filter Topics" id="filterTopicSearch" ng-model="classView.topics.filter.query">
                                                     <span class="input-group-addon">
                                                         <label>
                                                             <input type="checkbox" ng-model="classView.topics.filter.searchTopics" style="position:relative;top:2px"/>
@@ -344,7 +344,7 @@
                                                     <span class="glyphicon glyphicon-check"></span>
                                                 </button>
                                                 <button type="button" ng-class="'btn btn-default'+(classView.objectives.filter.open?' active':'')" data-toggle="button"
-                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.objectives.filter.open = !classView.objectives.filter.open">
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.objectives.filter.open = !classView.objectives.filter.open;focusId('filterObjectiveSearch')">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
                                             </div>
@@ -354,7 +354,7 @@
                                         <div ng-if="classView.objectives.filter.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex;width:100%">
                                                 <div class="input-group" style="width:100%">
-                                                    <input type="text" class="form-control" placeholder="Filter Objectives" ng-model="classView.objectives.filter.query">
+                                                    <input type="text" class="form-control" placeholder="Filter Objectives" id="filterObjectiveSearch" ng-model="classView.objectives.filter.query">
                                                     <span class="input-group-addon">
                                                         <label>
                                                             <input type="checkbox" ng-model="classView.objectives.filter.caseSensitive" style="position:relative;top:2px"/>
@@ -449,7 +449,7 @@
                                                     <span class="glyphicon glyphicon-check"></span>
                                                 </button>
                                                 <button type="button" ng-class="'btn btn-default'+(classView.questions.filter.open?' active':'')" data-toggle="button"
-                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.questions.filter.open = !classView.questions.filter.open">
+                                                        tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.questions.filter.open = !classView.questions.filter.open;focusId('filterQuestionSearch')">
                                                     <span class="glyphicon glyphicon-filter"></span>
                                                 </button>
                                             </div>
@@ -459,7 +459,7 @@
                                         <div ng-if="classView.questions.filter.open">
                                             <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex">
                                                 <div class="input-group" style="width:65%;margin-right:2px">
-                                                    <input type="text" class="form-control" placeholder="Filter Questions" ng-model="classView.questions.filter.query">
+                                                    <input type="text" class="form-control" placeholder="Filter Questions" id="filterQuestionSearch" ng-model="classView.questions.filter.query">
                                                     <span class="input-group-addon">
                                                         <label>
                                                             <input type="checkbox" ng-model="classView.questions.filter.searchQuestions" style="position:relative;top:2px"/>
