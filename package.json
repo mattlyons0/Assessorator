@@ -1,6 +1,6 @@
 {
   "name": "Assessorator",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "An application designed manage multiple choice question banks, generate assessments and export in edX format.",
   "main": "main.js",
   "author": "Matt Lyons <matt@mattlyons.net>",

@@ -265,15 +265,26 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
         $scope.question.answers.splice($scope.question.answers.length - 1, 1); //If there are 2 trailing blanks remove the last one
         runCheck(); //Recursively remove all other empy answers at the tail
       }
+      // Check if selected answer is now gone
+      if ($scope.question.correctAnswer !== undefined && $scope.question.correctAnswer >= $scope.question.answers.length - 1){ //-1 for ghost
+        $scope.question.correctAnswer = undefined;
+      }
     };
     runCheck();
   });
 
-  $scope.stopWatching5 = $scope.$watch('question.type', function () { //Preload True False Data
+  $scope.stopWatching5 = $scope.$watch('question.type', function () { //Preload True/False Data
     if ($scope.question.type === 'TF') {
       let dataExists = false;
-      if (($scope.question.answers[0].text !== 'True' && $scope.question.answers[1].text !== 'False')) {
+      let replaceData = true;
+      if (($scope.question.answers.length > 0 && $scope.question.answers[0].text !== undefined) ||
+            ($scope.question.answers.length > 1 && $scope.question.answers[1].text !== undefined)){
         dataExists = true;
+      }
+      if($scope.question.answers.length === 2 && $scope.question.answers[0].text !== undefined && $scope.question.answers[1].text !== undefined
+          && $scope.question.answers[1].text && $scope.question.answers[0].text.trim() === 'True' &&
+          $scope.question.answers[1].text.trim() === 'False') {
+        replaceData = false;
       }
       let replaceTrueFalse = function () {
         $scope.question.answers = [];
@@ -290,7 +301,7 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
         $scope.question.correctAnswer = undefined;
       };
 
-      if (dataExists) {
+      if (dataExists && replaceData) {
         let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-warning"><h3 style="margin-top:10px;text-align:center">'
           + 'Are you sure you would like to override previous answers?</h3></div><li class="list-group-item">';
         let html = 'Previous Answers will be replaced with True and False.</li>';
@@ -310,6 +321,8 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
           //Didn't do it
           $scope.question.type = 'MC';
         });
+      } else if(replaceData){
+        replaceTrueFalse();
       }
     }
   });
