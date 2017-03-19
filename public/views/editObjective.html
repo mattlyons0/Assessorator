@@ -8,10 +8,10 @@
             <div class="list-group-item list-group-item-action" autoscroll="260">
             <div class="form-group">
                 <label>Objective Name:</label> <br/>
-                <textarea class="form-control" required id="objectiveName{{tabID}}" type="text" style="height:20px"
-                          name="objectiveName" ng-model="objective.name"></textarea>
-                <div ng-messages="objectiveForm.importData.$error">
-                    <div ng-message="required">Objective Name is required.</div>
+                <textarea class="form-control" required id="objectiveName{{tabID}}" style="height:20px; margin-bottom:15px;"
+                          name="objectiveName" ng-model="objective.name" ng-blur="submitError=true"></textarea>
+                <div ng-show="submitError" ng-messages="objectiveForm.objectiveName.$error">
+                    <div class="alert alert-danger" ng-message="required" style="padding:10px;margin-bottom:0">Objective Name is required.</div>
                 </div>
             </div>
             </div>

@@ -12,6 +12,7 @@ app.controller("editObjectiveCtrl", function($scope){
   }
 
   $scope.objective = {};
+  $scope.submitError = false;
 
   let tab;
 
