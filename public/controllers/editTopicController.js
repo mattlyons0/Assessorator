@@ -11,6 +11,8 @@ app.controller("editTopicCtrl", function($scope){
     }
   }
 
+  $scope.submitError = false;
+
   let tab;
 
   $scope.stopWatching = $scope.$watch('topic.name', function(){ //Once name is entered
@@ -42,6 +44,8 @@ app.controller("editTopicCtrl", function($scope){
   $scope.requestFocus = function(){
     setTimeout(function(){
       document.getElementById("topicName"+$scope.tabID).focus();
+      $scope.resizeTextArea(document.getElementById("topicName"+$scope.tabID));
+      $scope.resizeTextArea(document.getElementById("topicDesc"+$scope.tabID));
     },200); //Delay until animation starts
     init();
   };

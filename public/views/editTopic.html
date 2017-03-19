@@ -1,32 +1,34 @@
-<md-card id="editTopicContainer">
-    <md-card-title>
-        <md-card-title-text>
-            <span class="md-headline">{{edit?'Edit':'Create'}} Topic</span>
-        </md-card-title-text>
-    </md-card-title>
-    <form name="topicForm" ng-submit="submitTopic()">
-        <md-content layout-padding>
-            <div layout="column">
-                <md-input-container class="md-block" flex>
-                    <label>Topic Name</label>
-                    <input required id="topicName{{tabID}}" type="text" name="topicName" ng-model="topic.name"/>
-                    <div ng-messages="topicForm.topicName.$error">
-                        <div ng-message="required">Topic Name is required.</div>
-                    </div>
-                </md-input-container>
+<div id="editTopicContainer" style="margin-top: 0">
+    <div class="list-group" flex>
+        <div class="list-group-item active">
+            <h3 class="list-group-item-heading">{{edit?'Edit':'Create'}} Topic</h3>
+        </div>
 
-                <md-input-container class="md-block" flex>
-                    <label>Description</label>
-                    <textarea ng-model="topic.description"></textarea>
-                </md-input-container>
+        <form name="topicForm" ng-submit="submitTopic()">
+            <div class="list-group-item list-group-item-action" autoscroll="260">
+                <div class="form-group">
+                    <label>Topic Name:</label> <br/>
+                    <textarea class="form-control" required id="topicName{{tabID}}" style="height:20px"
+                              name="topicName" ng-model="topic.name" ng-blur="submitError=true"></textarea>
+                    <div ng-show="submitError" ng-messages="topicForm.topicName.$error">
+                        <div class="alert alert-danger" ng-message="required"
+                             style="padding:10px;margin-bottom:0;margin-top:15px">Topic Name is required.</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description:</label> <br/>
+                    <textarea class="form-control" style="height:20px" id="topicDesc{{tabID}}"
+                              name="topicDesc" ng-model="topic.description"></textarea>
+                </div>
             </div>
-            <div layout="row">
-                <span flex></span>
-                <md-button ng-click="cleanup()">Cancel</md-button>
-                <md-button type="submit" class="md-primary">
+
+            <div class="list-group-item" style="padding:5px; text-align: right">
+                <button class="btn btn-default" ng-click="cleanup()">Cancel</button>
+                <button class="btn btn-primary" type="submit">
                     {{edit?'Modify':'Create'}}
-                </md-button>
+                </button>
             </div>
-        </md-content>
-    </form>
-</md-card>
+        </form>
+    </div>
+</div>
