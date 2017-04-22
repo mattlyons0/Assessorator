@@ -45,7 +45,7 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
         if(selected <= 1) {
           $scope.question.correctAnswer = selectedIndex;
 
-          if(question.answers[0] && question.answers[0].answerText === 'True' && question.answers[1].answerText === 'False') {
+          if(question.answers.length === 2 && question.answers[0] && question.answers[0].answerText === 'True' && question.answers[1].answerText === 'False') {
             $scope.question.type = 'TF';
           }
         }
@@ -129,10 +129,8 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
         if($scope.question.answers[x].correct)
           correct=true;
       }
-      if(!correct){
-        showToast('A Question must have a correct answer', {level: 'danger'});
-        return;
-      }
+      if(!correct)
+        showToast('Question saved as incomplete. No correct answer was chosen.', {level: 'warning'});
     }
 
     let topic = $scope.topic.selected;
@@ -281,7 +279,7 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
             ($scope.question.answers.length > 1 && $scope.question.answers[1].text !== undefined)){
         dataExists = true;
       }
-      if($scope.question.answers.length === 2 && $scope.question.answers[0].text !== undefined && $scope.question.answers[1].text !== undefined
+      if($scope.question.answers.length === 3 && $scope.question.answers[0].text !== undefined && $scope.question.answers[1].text !== undefined
           && $scope.question.answers[1].text && $scope.question.answers[0].text.trim() === 'True' &&
           $scope.question.answers[1].text.trim() === 'False') {
         replaceData = false;
