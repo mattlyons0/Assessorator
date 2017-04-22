@@ -10,21 +10,21 @@
     "release": "build --windows --linux -p never;./build/dist.sh "
   },
   "dependencies": {
-    "angular": "~1.6.1",
-    "angular-animate": "~1.6.1",
-    "angular-aria": "~1.6.1",
+    "angular": "~1.6.4",
+    "angular-animate": "~1.6.4",
+    "angular-aria": "~1.6.4",
     "angular-bootstrap-contextmenu": "~0.9.9",
     "angular-material": "~1.1.3",
-    "angular-messages": "~1.6.1",
-    "angular-route": "~1.6.1",
-    "angular-sanitize": "~1.6.1",
-    "angular-touch": "~1.6.1",
+    "angular-messages": "~1.6.4",
+    "angular-route": "~1.6.4",
+    "angular-sanitize": "~1.6.4",
+    "angular-touch": "~1.6.4",
     "angular-ui-bootstrap": "~2.5.0",
     "appdirectory": "~0.1.0",
     "autosize": "^3.0.20",
     "bootstrap": "~3.3.7",
     "electron-auto-updater": "~1.0.0",
-    "electron-log": "~2.0.0",
+    "electron-log": "~2.2.2",
     "electron-window-state": "~4.1.0",
     "md5": "~2.2.1",
     "mkdirp": "~0.5.1",
@@ -32,7 +32,7 @@
     "ui-select": "~0.19.6"
   },
   "devDependencies": {
-    "electron": "1.6.3",
+    "electron": "1.6.5",
     "electron-builder": "~15.6.2",
     "devtron": "^1.3.0"
   },
