@@ -31,7 +31,7 @@
 
     <!-- Overview Tab-->
     <div ng-show="currentTab === 0">
-        <div autoscroll="130">
+        <div autoscroll="55">
             <div class="padding greyBackground">
                 <uib-tabset justified="true" active="classView.openedTab">
                     <!-- Assessments Tab -->
@@ -71,10 +71,10 @@
 
                                 <!-- Filter Dropdown -->
                                 <div ng-if="classView.assessments.filter.open">
-                                    <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex">
-                                        <div class="input-group" style="width:65%;margin-right:2px">
-                                            <input type="text" class="form-control" placeholder="Filter Assessments" id="filterAssessmentSearch" ng-model="classView.assessments.filter.query">
-                                            <span class="input-group-addon">
+                                    <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:flex; flex-flow:row wrap;">
+                                        <div class="input-group" style="width:65%;margin-right:2px;display:inline-flex;flex:1 1 auto">
+                                            <input type="text" class="form-control" placeholder="Filter Assessments" id="filterAssessmentSearch" ng-model="classView.assessments.filter.query" style="flex:1 1 auto;">
+                                            <span class="input-group-addon" style="min-width:45%;white-space:normal;flex:1 1 auto;">
                                                     <label>
                                                         <input type="checkbox" ng-model="classView.assessments.filter.searchNames" style="position:relative;top:2px"/>
                                                         Search Names
@@ -96,8 +96,8 @@
                                                     </label>
                                                 </span>
                                         </div>
-                                        <div style="width:35%; display:inherit">
-                                            <div class="input-group" style="width:50%;margin-right:2px">
+                                        <div style="width:34.8%; display:inherit;flex:1 1 auto;overflow-x:auto">
+                                            <div class="input-group" style="width:49%;margin-right:2px">
                                                 <ui-select append-to-body="true" allow-clear ng-model="assessmentsQuery.topic" theme="bootstrap">
                                                     <ui-select-match placeholder="Filter Topic">
                                                         {{$select.selected.topicName}}
@@ -107,13 +107,13 @@
                                                         <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
                                                     </ui-select-choices>
                                                 </ui-select>
-                                                <span class="input-group-btn">
-                                                  <button type="button" ng-click="assessmentsQuery.topic = null" class="btn btn-default" ng-disabled="!assessmentsQuery.topic">
+                                                <span class="input-group-btn fullHeight">
+                                                  <button type="button" ng-click="assessmentsQuery.topic = null" class="btn btn-default fullHeight" ng-disabled="!assessmentsQuery.topic">
                                                     <span class="glyphicon glyphicon-remove"></span>
                                                   </button>
                                                 </span>
                                             </div>
-                                            <div class="input-group" style="width:50%">
+                                            <div class="input-group" style="width:49%">
                                                 <ui-select append-to-body="true" ng-model="assessmentsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
                                                     <ui-select-match placeholder="Filter Objective">
                                                         {{$select.selected.objectiveText}}
@@ -122,8 +122,8 @@
                                                         <span ng-bind-html="objective.objectiveText | highlight: $select.search"></span>
                                                     </ui-select-choices>
                                                 </ui-select>
-                                                <span class="input-group-btn">
-                                                      <button type="button" ng-click="assessmentsQuery.objective = null" class="btn btn-default" ng-disabled="!assessmentsQuery.objective">
+                                                <span class="input-group-btn fullHeight">
+                                                      <button type="button" ng-click="assessmentsQuery.objective = null" class="btn btn-default fullHeight" ng-disabled="!assessmentsQuery.objective">
                                                         <span class="glyphicon glyphicon-remove"></span>
                                                       </button>
                                                     </span>
@@ -455,10 +455,10 @@
 
                                 <!-- Filter Dropdown -->
                                 <div ng-if="classView.questions.filter.open">
-                                    <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:inline-flex">
-                                        <div class="input-group" style="width:65%;margin-right:2px">
-                                            <input type="text" class="form-control" placeholder="Filter Questions" id="filterQuestionSearch" ng-model="classView.questions.filter.query">
-                                            <span class="input-group-addon">
+                                    <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:flex;flex-flow:row wrap;">
+                                        <div class="input-group" style="width:65%;margin-right:2px;flex:1 1 auto;display:flex">
+                                            <input type="text" class="form-control" placeholder="Filter Questions" id="filterQuestionSearch" ng-model="classView.questions.filter.query" style="flex:1 1 auto;">
+                                            <span class="input-group-addon" style="min-width:46%; white-space: normal; flex:1 1 auto;">
                                                 <label>
                                                     <input type="checkbox" ng-model="classView.questions.filter.searchQuestions" style="position:relative;top:2px"/>
                                                     Search Questions
@@ -480,8 +480,8 @@
                                                 </label>
                                             </span>
                                         </div>
-                                        <div style="width:35%; display:inherit">
-                                            <div class="input-group" style="width:50%;margin-right:2px">
+                                        <div style="width:34.8%; display:inherit;flex:1 1 auto;overflow-x:auto">
+                                            <div class="input-group" style="width:49%;margin-right:2px">
                                                 <ui-select append-to-body="true" allow-clear ng-model="questionsQuery.topic" theme="bootstrap">
                                                     <ui-select-match placeholder="Filter Topic">
                                                         {{$select.selected.topicName}}
@@ -491,13 +491,13 @@
                                                         <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
                                                     </ui-select-choices>
                                                 </ui-select>
-                                                <span class="input-group-btn">
-                                                  <button type="button" ng-click="questionsQuery.topic = null" class="btn btn-default" ng-disabled="!questionsQuery.topic">
+                                                <span class="input-group-btn fullHeight">
+                                                  <button type="button" ng-click="questionsQuery.topic = null" class="btn btn-default fullHeight" ng-disabled="!questionsQuery.topic">
                                                     <span class="glyphicon glyphicon-remove"></span>
                                                   </button>
                                                 </span>
                                             </div>
-                                            <div class="input-group" style="width:50%">
+                                            <div class="input-group" style="width:49%">
                                                 <ui-select append-to-body="true" ng-model="questionsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
                                                     <ui-select-match placeholder="Filter Objective">
                                                         {{$select.selected.objectiveText}}
@@ -506,8 +506,8 @@
                                                         <span ng-bind-html="objective.objectiveText | highlight: $select.search"></span>
                                                     </ui-select-choices>
                                                 </ui-select>
-                                                <span class="input-group-btn">
-                                                  <button type="button" ng-click="questionsQuery.objective = null" class="btn btn-default" ng-disabled="!questionsQuery.objective">
+                                                <span class="input-group-btn fullHeight">
+                                                  <button type="button" ng-click="questionsQuery.objective = null" class="btn btn-default fullHeight" ng-disabled="!questionsQuery.objective">
                                                     <span class="glyphicon glyphicon-remove"></span>
                                                   </button>
                                                 </span>
@@ -531,12 +531,6 @@
                                                 <button type="button" class="btn btn-primary" ng-disabled="!countAccordion('question',true)" ng-click="changeTopics(getAccordionIDs('question',true))">Change Topic</button>
                                                 <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)" ng-click="addObjectives(getAccordionIDs('question',true))">Add Objective</button>
                                                 <button type="button" class="btn btn-primary" ng-disabled="!class.objectives.length||!countAccordion('question',true)" ng-click="removeObjectives(getAccordionIDs('question',true))">Remove Objective</button>
-                                            </div>
-                                        </div>
-                                        <div style="width:35%; display:inherit">
-                                            <div class="input-group" style="width:50%;margin-right:2px">
-                                            </div>
-                                            <div class="input-group" style="width:50%">
                                             </div>
                                         </div>
                                     </div>

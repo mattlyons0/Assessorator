@@ -229,3 +229,18 @@ li.uib-tab>a.nav-link{
 .list-group-item.active {
     padding: 5px 15px !important;
 }
+
+/* Fix UI-Select Chips handling very long strings overflowing */
+span.ui-select-match-item.btn.btn-default {
+    white-space:normal;
+}
+div.ui-select-match>span.btn.btn-default.ui-select-toggle {
+    white-space:normal;
+    height: 100%;
+}
+.fullHeight {
+    height: 100%;
+}
+div.ui-select-container>input.ui-select-search {
+    height: 100%;
+}

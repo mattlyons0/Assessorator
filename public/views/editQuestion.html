@@ -27,8 +27,8 @@
                 <div style="display:flex;min-height:40px;border-bottom:1px solid #ddd;padding-bottom:10px;margin-bottom:10px">
                     <!-- Select Topic-->
                     <div style="width:47%;margin-right:auto;display:flex">
-                        <ui-select class="ng-animate-disabled" ng-model="topic.selected" theme="bootstrap" style="width:100%">
-                            <ui-select-match placeholder="Choose a Topic" class="input-group" style="width:100%">
+                        <ui-select class="ng-animate-disabled fullHeight" ng-model="topic.selected" theme="bootstrap" style="width:100%">
+                            <ui-select-match placeholder="Choose a Topic" class="input-group fullHeight" style="width:100%">
                                 {{$select.selected.topicName}}
                             </ui-select-match>
                             <ui-select-choices
@@ -37,8 +37,8 @@
                                 <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
                             </ui-select-choices>
                         </ui-select>
-                        <span class="input-group-btn">
-                          <button type="button" ng-click="topic.selected = class.topics[0]" class="btn btn-default"
+                        <span class="input-group-btn fullHeight">
+                          <button type="button" ng-click="topic.selected = class.topics[0]" class="btn btn-default fullHeight"
                                   ng-disabled="topic.selected.ID === 0" style="border-left-width:0;">
                             <span class="glyphicon glyphicon-remove"></span>
                           </button>
