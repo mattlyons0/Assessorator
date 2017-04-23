@@ -194,3 +194,16 @@ textarea {
 .answerBox:focus {
     border-bottom: 1px solid rgb(63,81,181);
 }
+
+/* Shrink Navbar Height*/
+.navbar-nav>li>a {
+    padding: 10px !important;
+}
+.navbar-brand {
+    padding: 10px !important;
+    height: auto !important;
+}
+.navbar {
+    min-height: 0 !important;
+    margin-bottom: 0 !important;
+}

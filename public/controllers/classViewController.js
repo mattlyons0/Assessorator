@@ -3,7 +3,10 @@
 app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filter, $uibModal, $window) {
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
-  let nextID = 0;
+  $scope.currentTab = 0;
+  $scope.lastTab = 0;
+
+  let nextID = 1;
   
   let classView = $scope.class.prefs.classView;
   $scope.classView = classView;
@@ -1029,10 +1032,10 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
   $scope.goBack = function () {
     if($scope.tabs.length > 0) {
       let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-danger"><h3 style="margin-top:10px">'
-        +'<h3>Are you sure you would like to go back?</h3></div><li class="list-group-item">';
-      let html = 'All open tabs will be closed. Any unsaved changes will be lost.</li>';
+        +'<h3 style="text-align:center">Go Back to Course Selection?</h3></div><li class="list-group-item">';
+      let html = '<h4>Changes in <i>'+$scope.getTabByID($scope.currentTab).name+'</i> will be lost.</h4></li>';
       let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" class="btn btn-default" ng-click="dismiss()" style="margin-right:2px">Cancel</button>'
-        +'<button type="button" class="btn btn-danger" ng-click="close()"><b>Go Back</b></button></div>';
+        +'<button type="button" class="btn btn-danger" ng-click="close()"><b>Go to Course Selection</b></button></div>';
       let confirm = $uibModal.open({
         template: header+html+buttons,
         controller: function($scope,$uibModalInstance){
@@ -1060,6 +1063,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     for(let x=0;x<$scope.tabs.length;x++){
       if($scope.tabs[x].id === tabID){
         $scope.tabs.splice(x,1);
+        $scope.currentTab = $scope.lastTab;
       }
     }
   };
@@ -1091,7 +1095,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
         document.querySelector("#" + id).focus();
       } catch(err) {}
     }, 0);
-  }
+  };
 
   function createTab(tabName,contentURL,ctrl,data){
     if(!data)
@@ -1106,6 +1110,12 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     };
     nextID++;
     $scope.tabs.push(tab);
+    $scope.lastTab = $scope.currentTab;
+    setTimeout( ()=> {
+      $scope.$apply( () => {
+        $scope.currentTab = tab.id;
+      });
+    },0); //Avoid flicker when switching tabs. Ensures tab is rendered before switching
 
     return tab.id;
   }

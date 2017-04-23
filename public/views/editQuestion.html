@@ -10,7 +10,7 @@
                     <div class="form-group" style="margin-bottom:5px;">
                         <label><h4 style="margin-bottom:2px;margin-top:5px">Question:</h4></label> <br/>
                         <textarea class="form-control" required id="questionTitle{{tabID}}" type="text" name="questionTitle" rows="1"
-                                  ng-model="question.title" style="height:20px"></textarea>
+                                  ng-model="question.title" style="height:34px"></textarea>
                         <div ng-show="submitError" ng-messages="questionForm.questionTitle.$error">
                             <div class="alert alert-danger" ng-message="required" style="padding:5px;margin-bottom:0;margin-top:5px">
                                 A Question is required
@@ -20,7 +20,7 @@
                     <div class="form-group">
                         <label><h4 style="margin-bottom:2px;margin-top:5px">Description:</h4></label> <br/>
                         <textarea class="form-control" id="questionDesc{{tabID}}" type="text" name="questionDesc" rows="1"
-                                  ng-model="question.description" style="height:20px; margin-bottom:15px;"></textarea>
+                                  ng-model="question.description" style="height:34px; margin-bottom:15px;"></textarea>
                     </div>
                 </div>
 
@@ -86,7 +86,7 @@
                             <input aria-label="Answer" ng-if="question.type === 'MA'" type="checkbox" tabindex="-1"
                                          ng-model="answer.correct" ng-disabled="!answer.text" class="md-primary"
                                          style="position:relative;top:7px; transform:scale(1.5);margin-right:15px"/>
-                            <textarea id="questionAnswer{{$index}}" ng-model="answer.text" placeholder="Answer" class="answerBox" rows="1">
+                            <textarea id="questionAnswer{{$index}}" ng-model="answer.text" placeholder="Answer" class="answerBox" rows="1" style="overflow-y:hidden">
                             </textarea>
 
                             <button type="button" class="btn btn-link" ng-class="(answer.pinned?'blueColor':'blackColor')" style="outline:0"

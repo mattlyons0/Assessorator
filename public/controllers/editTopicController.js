@@ -46,7 +46,7 @@ app.controller("editTopicCtrl", function($scope){
       document.getElementById("topicName"+$scope.tabID).focus();
       $scope.resizeTextArea(document.getElementById("topicName"+$scope.tabID));
       $scope.resizeTextArea(document.getElementById("topicDesc"+$scope.tabID));
-    },200); //Delay until animation starts
+    },0); //Delay until render is done
     init();
   };
 });

@@ -8,7 +8,7 @@
             <div class="list-group-item list-group-item-action" autoscroll="260">
                 <div class="form-group">
                     <label><h4 style="margin-bottom:2px;">Topic Name:</h4></label> <br/>
-                    <textarea class="form-control" required id="topicName{{tabID}}" style="height:20px" rows="1"
+                    <textarea class="form-control" required id="topicName{{tabID}}" style="height:34px" rows="1"
                               name="topicName" ng-model="topic.name"></textarea>
                     <div ng-show="submitError" ng-messages="topicForm.topicName.$error">
                         <div class="alert alert-danger" ng-message="required"
@@ -18,7 +18,7 @@
 
                 <div class="form-group">
                     <label><h4 style="margin-bottom:2px;">Description:</h4></label> <br/>
-                    <textarea class="form-control" style="height:20px" id="topicDesc{{tabID}}" rows="1"
+                    <textarea class="form-control" style="height:34px" id="topicDesc{{tabID}}" rows="1"
                               name="topicDesc" ng-model="topic.description"></textarea>
                 </div>
             </div>

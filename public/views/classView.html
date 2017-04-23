@@ -13,7 +13,7 @@
                 <!-- Right Elements -->
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown" uib-dropdown>
-                        <a href="#" class="dropdown-toggle" uib-dropdown-toggle>Tools <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" uib-dropdown-toggle>Course Tools <span class="caret"></span></a>
                         <ul class="dropdown-menu" uib-dropdown-menu>
                             <li><a href="#" ng-click="importQuestions()">Import Questions</a></li>
                             <li><a href="#" ng-click="exportAssessment()">Export Assessment</a></li>
@@ -30,8 +30,7 @@
     </nav>
 
     <md-content>
-        <md-tabs md-autoselect md-dynamic-height md-border-bottom>
-            <md-tab label="Overview">
+            <div ng-show="currentTab === 0">
                 <div autoscroll="130">
                     <md-content class="md-padding greyBackground" layout="column" layout-gt-sm="row">
 
@@ -595,14 +594,13 @@
                         </uib-tabset>
                     </md-content>
                 </div>
-            </md-tab>
-            <md-tab ng-repeat="tab in tabs" label="{{ tab.name }}">
+            </div>
+            <div ng-repeat="tab in tabs" label="{{ tab.name }}" ng-show="currentTab === tab.id">
                 <md-content class="md-padding greyBackground">
                     <div ng-include="tab.URL" dynamic-ctrl="tab.controller"
                          ng-init="tabID=tab.id;tabData=tab.data;requestFocus()"></div>
                 </md-content>
-            </md-tab>
-        </md-tabs>
+            </div>
     </md-content>
 
 </div>

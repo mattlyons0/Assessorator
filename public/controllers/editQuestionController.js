@@ -214,7 +214,7 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
       document.getElementById('questionTitle' + $scope.tabID).focus();
       $scope.resizeTextArea(document.getElementById("questionTitle"+$scope.tabID));
       $scope.resizeTextArea(document.getElementById("questionDesc"+$scope.tabID));
-    }, 500); //Delay until animation starts
+    }, 0); //Delay until render is done
     init();
   };
 

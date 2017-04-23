@@ -48,7 +48,7 @@ app.controller("editObjectiveCtrl", function($scope){
     setTimeout(function(){
       document.getElementById("objectiveName"+$scope.tabID).focus();
       $scope.resizeTextArea(document.getElementById("objectiveName"+$scope.tabID));
-    },200); //Delay until animation starts
+    },0); //Delay until render finishes
     init();
   };
 });

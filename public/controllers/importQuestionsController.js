@@ -219,6 +219,6 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
   $scope.requestFocus = function () {
     setTimeout(function () {
       document.getElementById("importArea" + $scope.tabID).focus();
-    }, 200); //Delay until animation starts
+    }, 0); //Delay until render finishes
   };
 });

@@ -60,7 +60,7 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
   $scope.requestFocus = function () {
     setTimeout(function () {
       document.getElementById("assessmentTitle" + $scope.tabID).focus();
-    }, 500); //Delay until animation starts
+    }, 0); //Delay until render finishes
     init();
   };
 
