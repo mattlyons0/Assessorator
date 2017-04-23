@@ -207,3 +207,25 @@ textarea {
     min-height: 0 !important;
     margin-bottom: 0 !important;
 }
+
+.padding {
+    padding: 15px;
+}
+
+/* Overview UIB Tabs */
+li.uib-tab.active>a.nav-link {
+    background: linear-gradient(to bottom, #337ab7 0, #2b669a 100%) repeat-x !important;
+    border-color:#2b669a !important;
+    color:white !important;
+    text-shadow: 0 -1px 0 #286090 !important;
+}
+li.uib-tab>a.nav-link{
+    height:43px !important;
+    font-size:20px;
+    padding: 5px 15px;
+}
+
+/* Shrink list-group-item active*/
+.list-group-item.active {
+    padding: 5px 15px !important;
+}

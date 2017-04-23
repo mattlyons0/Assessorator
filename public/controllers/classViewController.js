@@ -302,6 +302,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     confirm.result.then(function(){
       courseUtils.deleteQuestion(uid);
       UI.save($scope.class);
+      $scope.questionCount--;
     }, function(){
       //Didn't delete
     });
@@ -599,6 +600,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     confirm.result.then(function(){
       for(let questionUID of deleteUIDs) {
         courseUtils.deleteQuestion(questionUID);
+        $scope.questionCount--;
       }
       UI.save($scope.class);
     }, function(){
