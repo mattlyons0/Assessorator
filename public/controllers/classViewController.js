@@ -4,7 +4,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
   $scope.class = UI.getClassById($scope.$parent.page.classID);
   $scope.tabs = [];
   $scope.currentTab = 0;
-  $scope.lastTab = 0;
+  $scope.lastTab = [0];
 
   let nextID = 1;
   
@@ -1065,7 +1065,8 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     for(let x=0;x<$scope.tabs.length;x++){
       if($scope.tabs[x].id === tabID){
         $scope.tabs.splice(x,1);
-        $scope.currentTab = $scope.lastTab;
+        $scope.lastTab.splice($scope.lastTab.length-1,1); //Delete Current Tab
+        $scope.currentTab = $scope.lastTab[$scope.lastTab.length-1]; //Get Last Tab
       }
     }
   };
@@ -1112,7 +1113,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     };
     nextID++;
     $scope.tabs.push(tab);
-    $scope.lastTab = $scope.currentTab;
+    $scope.lastTab.push(tab.id);
     setTimeout( ()=> {
       $scope.$apply( () => {
         $scope.currentTab = tab.id;
