@@ -1,5 +1,5 @@
 "use strict";
-app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce) {
+app.controller("editAssessmentCtrl", function ($scope, $uibModal,$sce) {
   function init(){
     if ($scope.tabData.assessmentID != undefined){
       let assessment = new CourseUtils($scope.class).getAssessment($scope.tabData.assessmentID);
@@ -144,7 +144,7 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
     if(count === 0)
       return 'This requirement has no possible questions.';
 
-    let output = count + ' possible question' + (count===1?'':'s') + ' meet this requirement.';
+    let output = count + ' possible question' + (count===1?'':'s') + ' meet' + (count===1?'s':'') + ' this requirement.';
     if(count < rule.numRequired) { //Impossible
       output = 'This requirement cannot be met because only ' + output;
     }
@@ -185,15 +185,15 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
       scope.index = index;
       scope.editRequirementEnabled = true;
     }
-    $mdDialog.show({
-      controller: CreateRequirementController,
+
+    let settingsModal = $uibModal.open({
       templateUrl: 'views/editRequirement.html',
-      parent: angular.element(document.body), //Fixes Toasts
-      targetEvent: event,
-      clickOutsideToClose: false,
-      fullscreen: false,
-      scope: scope
-      // closeTo: closeTo
+      size: 'md',
+      keyboard: false,
+      backdrop: 'static',
+      scope: scope,
+      controller: CreateRequirementController
+
     });
   };
   $scope.editRequirement = function(index,event){
@@ -229,7 +229,7 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
 
 
 
-function CreateRequirementController($scope, $mdDialog, $mdToast) {
+function CreateRequirementController($scope) {
   if(!$scope.editRequirementEnabled) {
     $scope.questions.rules[$scope.index].type = "Topic";
     $scope.questions.rules[$scope.index].numRequired = 1;
@@ -237,35 +237,15 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
     $scope.questions.rules[$scope.index].topics = [];
   }
 
-  $scope.search = {};
-  $scope.search.query = "";
+  $scope.choices = ['Topic', 'Objective'];
+  $scope.selection = { index: $scope.choices.indexOf($scope.questions.rules[$scope.index].type) };
 
-  $scope.searchQuery = function () {
-    return $scope.search.query;
-  };
-  $scope.searchTopics = function () {
-    let array = [];
-    let query = $scope.search.query;
-    if (!query)
-      return $scope.class.topics;
-    for (let x = 0; x < $scope.class.topics.length; x++) {
-      if ($scope.class.topics[x].topicName.toLowerCase().indexOf(query.toLowerCase()) > -1)
-        array.push($scope.class.topics[x]);
+  $scope.$watch('selection.index', function() {
+    if($scope.selection.index !== -1){
+      $scope.questions.rules[$scope.index].type = $scope.choices[$scope.selection.index];
     }
-    return array;
-  };
+  });
 
-  $scope.searchObjectives = function () {
-    let array = [];
-    let query = $scope.search.query;
-    if (!query)
-      return $scope.class.objectives;
-    for (let x = 0; x < $scope.class.objectives.length; x++) {
-      if ($scope.class.objectives[x].objectiveText.toLowerCase().indexOf(query.toLowerCase()) > -1)
-        array.push($scope.class.objectives[x]);
-    }
-    return array;
-  };
 
   function checkConflict(){
     let rule = $scope.questions.rules[$scope.index];
@@ -304,11 +284,11 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
   $scope.submit = function () {
     if($scope.questions.rules[$scope.index].type == 'Topic' && !$scope.questions.rules[$scope.index].topics.length){
       showToast("At least one topic must be selected",{level: 'danger'});
-      document.getElementById('inputChooser').focus();
+      $scope.$broadcast('inputChooserTopic');
       return;
     } else if($scope.questions.rules[$scope.index].type == 'Objective' && !$scope.questions.rules[$scope.index].objectives.length){
       showToast("At least one objective must be selected", {level: 'danger'});
-      document.getElementById('inputChooser').focus();
+      $scope.$broadcast('inputChooserObjective');
       return;
     } else if(!$scope.questions.rules[$scope.index].type){
       showToast("A type must be selected", {level: 'danger'});
@@ -324,10 +304,10 @@ function CreateRequirementController($scope, $mdDialog, $mdToast) {
     if(conflict)
       return;
 
-    $mdDialog.hide();
+    $scope.$close();
   };
   $scope.cancel = function (event) {
-    $mdDialog.cancel();
+    $scope.$dismiss();
     if(!$scope.editRequirementEnabled)
       $scope.questions.rules.splice($scope.index, 1);
   };

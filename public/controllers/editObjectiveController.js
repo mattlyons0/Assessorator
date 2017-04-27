@@ -43,7 +43,6 @@ app.controller("editObjectiveCtrl", function($scope){
   $scope.cleanup = function(){
     $scope.stopWatching();
     $scope.$parent.closeTab($scope.tabID);
-    console.log($scope.lastTab);
   };
   $scope.requestFocus = function(){
     setTimeout(function(){

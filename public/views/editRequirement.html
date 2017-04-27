@@ -1,98 +1,119 @@
-<style>
-    .md-chips {
-        position: relative;
-        top: 17px;
-    }
-    /*Undo searchQuestions.html css tricks*/
-    md-chips.md-default-theme .md-chips, md-chips .md-chips {
-        box-shadow: 0 1px rgb(224,224,224) !important;
-    }
-    md-chips input {
-        display: block;
-    }
-</style>
-<md-dialog id="editClassContainer">
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h2>
-                <span>Create Requirement</span>
-            </h2>
+<div id="editClassContainer" class="list-group flex" style="margin-bottom:0">
+    <div class="list-group-item active">
+        <h2 style="margin-top:10px">
+            {{editRequirementEnabled?'Modify':'Create'}} Requirement
+        </h2>
+    </div>
+
+    <li class="list-group-item form-check form-check-inline" style="border:none">
+        <h4>
+            <span>Requirement Type:</span>
+        </h4>
+        <form>
+            <label class="form-check-label" ng-repeat="choice in choices track by $index" style="margin-right:10px">
+                <input class="form-check-input" name="type" type="radio" ng-value="$index" ng-model="selection.index"/> {{ choice }}
+            </label>
+        </form>
+    </li>
+    <div style="display:flex;margin:0 5px">
+        <!-- Select Topics -->
+        <div ng-if="questions.rules[index].type === 'Topic'" style="width:70%">
+            <ui-select multiple class="ng-animate-disabled" ng-model="questions.rules[index].topics" theme="bootstrap"
+                       focus-on="inputChooserTopic" style="min-height:34px">
+                <ui-select-match placeholder="Choose a Topic">
+                    {{$item.topicName}}
+                </ui-select-match>
+                <ui-select-choices
+                        repeat="obj in (class.topics|sort:{key:'topicName',mode:'ascending'}) | filter: { 'topicName': $select.search }">
+                    <div ng-bind-html="obj.topicName| highlight: $select.search"></div>
+                </ui-select-choices>
+                <ui-select-no-choice style="padding-left:5px;">
+                    {{ class.topics.length===0?'No Topics Exist':'No Topics Found' }}
+                </ui-select-no-choice>
+            </ui-select>
         </div>
-    </md-toolbar>
-    <form name="ruleForm" ng-submit="submit()">
-        <md-dialog-content layout-padding>
-            <div>
-                <div layout="row">
-                    <span style="padding-right:10px">Requirement Type:</span>
-                    <md-radio-group id="reqType" ng-model="questions.rules[index].type" class="md-primary" layout="row">
-                        <md-radio-button value="Topic">Topic</md-radio-button>
-                        <md-radio-button value="Objective">Objective</md-radio-button>
-                    </md-radio-group>
-                </div>
-                <div layout-gt-xs="row">
-
+        <!-- Select Objectives -->
+        <div ng-if="questions.rules[index].type === 'Objective'" style="width:70%">
+            <ui-select multiple class="ng-animate-disabled" ng-model="questions.rules[index].objectives" theme="bootstrap"
+                       focus-on="inputChooserObjective" style="min-height:34px">
+                <ui-select-match placeholder="Choose an Objective">
+                    {{$item.objectiveText}}
+                </ui-select-match>
+                <ui-select-choices
+                        repeat="obj in (class.objectives|sort:{key:'objectiveText',mode:'ascending'}) | filter: { 'objectiveText': $select.search }">
+                    <div ng-bind-html="obj.objectiveText| highlight: $select.search"></div>
+                </ui-select-choices>
+                <ui-select-no-choice style="padding-left:5px;">
+                    {{ class.objectives.length===0?'No Objectives Exist':'No Objectives Found' }}
+                </ui-select-no-choice>
+            </ui-select>
+        </div>
+        <!-- Number of Questions -->
+        <label class="form-check-label" style="width:28%;position:relative;top:-20px;margin-left:auto">
+            Number of Questions:
+            <input class="form-control" name="type" type="number" min="1" step="any"
+                   ng-model="questions.rules[index].numRequired"/>
+        </label>
+    </div>
+    <div class="list-group-item" style="padding: 5px; text-align:right">
+        <button type="button" style="margin-right:2px" class="btn btn-default" ng-if="!editRequirementEnabled" ng-click="cancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="submit()">
+            {{editRequirementEnabled?'Modify':'Create'}}
+        </button>
+    </div>
+</div>
                     <!-- Conditional Search Fields -->
+                    <!--<md-chips ng-if="questions.rules[index].type == 'Topic'" ng-model="questions.rules[index].topics"-->
+                              <!--style="margin-right:7px; height:65px;"-->
+                              <!--md-require-match="true" flex>-->
+                        <!--<md-autocomplete md-no-cache="true" placeholder="Choose a Topic" md-min-length="0"-->
+                                         <!--md-input-id="inputChooser" md-autocomplete-snap-->
+                                         <!--md-search-text="search.query" md-items="topic in searchTopics()"-->
+                                         <!--md-select-on-match>-->
+                            <!--<md-item-template>-->
+                                        <!--<span md-highlight-text="searchQuery()" md-highlight-flags="i">-->
+                                            <!--{{topic.topicName}}-->
+                                        <!--</span>-->
+                            <!--</md-item-template>-->
+                            <!--<md-not-found>-->
+                                <!--<div>-->
+                                    <!--No Topics Found.-->
+                                <!--</div>-->
+                            <!--</md-not-found>-->
+                        <!--</md-autocomplete>-->
+                        <!--<md-chip-template>-->
+                            <!--{{$chip.topicName}}-->
+                        <!--</md-chip-template>-->
+                    <!--</md-chips>-->
 
-                    <md-chips ng-if="questions.rules[index].type == 'Topic'" ng-model="questions.rules[index].topics"
-                              style="margin-right:7px; height:65px;"
-                              md-require-match="true" flex>
-                        <md-autocomplete md-no-cache="true" placeholder="Choose a Topic" md-min-length="0"
-                                         md-input-id="inputChooser" md-autocomplete-snap
-                                         md-search-text="search.query" md-items="topic in searchTopics()"
-                                         md-select-on-match>
-                            <md-item-template>
-                                        <span md-highlight-text="searchQuery()" md-highlight-flags="i">
-                                            {{topic.topicName}}
-                                        </span>
-                            </md-item-template>
-                            <md-not-found>
-                                <div>
-                                    No Topics Found.
-                                </div>
-                            </md-not-found>
-                        </md-autocomplete>
-                        <md-chip-template>
-                            {{$chip.topicName}}
-                        </md-chip-template>
-                    </md-chips>
+                    <!--<md-chips ng-if="questions.rules[index].type == 'Objective'" ng-model="questions.rules[index].objectives"-->
+                              <!--style="margin-left:7px; height:65px;"-->
+                              <!--md-require-match="true" md-autocomplete-snap flex>-->
+                        <!--<md-autocomplete md-no-cache="true" placeholder="Choose an Objective" md-min-length="0"-->
+                                         <!--md-input-id="inputChooser"-->
+                                         <!--md-search-text="search.query"-->
+                                         <!--md-items="objective in searchObjectives()" md-select-on-match>-->
+                            <!--<md-item-template>-->
+                                    <!--<span md-highlight-text="searchQuery()" md-highlight-flags="i">-->
+                                        <!--{{objective.objectiveText}}-->
+                                    <!--</span>-->
+                            <!--</md-item-template>-->
+                            <!--<md-not-found>-->
+                                <!--<div>-->
+                                    <!--No Objectives found.-->
+                                <!--</div>-->
+                            <!--</md-not-found>-->
+                        <!--</md-autocomplete>-->
+                        <!--<md-chip-template>-->
+                            <!--{{$chip.objectiveText}}-->
+                        <!--</md-chip-template>-->
+                    <!--</md-chips>-->
 
-                    <md-chips ng-if="questions.rules[index].type == 'Objective'" ng-model="questions.rules[index].objectives"
-                              style="margin-left:7px; height:65px;"
-                              md-require-match="true" md-autocomplete-snap flex>
-                        <md-autocomplete md-no-cache="true" placeholder="Choose an Objective" md-min-length="0"
-                                         md-input-id="inputChooser"
-                                         md-search-text="search.query"
-                                         md-items="objective in searchObjectives()" md-select-on-match>
-                            <md-item-template>
-                                    <span md-highlight-text="searchQuery()" md-highlight-flags="i">
-                                        {{objective.objectiveText}}
-                                    </span>
-                            </md-item-template>
-                            <md-not-found>
-                                <div>
-                                    No Objectives found.
-                                </div>
-                            </md-not-found>
-                        </md-autocomplete>
-                        <md-chip-template>
-                            {{$chip.objectiveText}}
-                        </md-chip-template>
-                    </md-chips>
+                    <!--<md-input-container style="position: relative;top:8px">-->
+                        <!--<label>Number of Questions</label>-->
+                        <!--<input required id="numQuestions" type="number" min="1" step="any" ng-model="questions.rules[index].numRequired"/>-->
+                    <!--</md-input-container>-->
+                <!--</div>-->
+            <!--</div>-->
 
-                    <md-input-container style="position: relative;top:8px">
-                        <label>Number of Questions</label>
-                        <input required id="numQuestions" type="number" min="1" step="any" ng-model="questions.rules[index].numRequired"/>
-                    </md-input-container>
-                </div>
-            </div>
-
-        </md-dialog-content>
-        <md-dialog-actions layout="row">
-            <span flex></span>
-            <md-button ng-if="!editRequirementEnabled" ng-click="cancel()">Cancel</md-button>
-            <md-button type="submit" class="md-primary">
-                {{editRequirementEnabled?'Modify':'Create'}}
-            </md-button>
-        </md-dialog-actions>
-    </form>
-</md-dialog>
+        <!--</md-dialog-content>-->
