@@ -12,7 +12,7 @@ let md5 = require('md5');
 const electron = require('electron');
 let scope = undefined;
 
-var UI = {};
+var UI = { classID: null };
 UI.miscState = {
   classView: {
     assessments: {
@@ -32,7 +32,7 @@ UI.miscState = {
       checked: {}, //Used to track checked bulk checkboxes by UID
     }
   }
-}
+};
 
 var CourseUtils = require('../data/utils/CourseUtils');
 var QuestionUtils = require('../data/utils/QuestionUtils');

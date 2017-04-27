@@ -141,9 +141,10 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
     if (oldTopic && oldTopic.ID !== topic.ID) //Move topics
       ignoreEdit = true;
 
+    let newID = null;
     if(!$scope.edit || ignoreEdit) {
       let topicUtil = new TopicUtils(topic);
-      topicUtil.createQuestion($scope.question.title, $scope.question.description);
+      newID = topicUtil.createQuestion($scope.question.title, $scope.question.description);
       let question = topic.questions[topic.questions.length - 1];
       let questionUtil = new QuestionUtils(question);
       for (let objective of $scope.objective.selected) {
@@ -155,7 +156,7 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
       if(ignoreEdit) { //If we are moving topics, preserve creation date & selection data
         let oldQuestion = new TopicUtils(oldTopic).getQuestion($scope.tabData.questionID);
         //Preserve creation date
-        question.creationDate = oldQuestion.creationDate
+        question.creationDate = oldQuestion.creationDate;
         //Duplicate selection data
         let newJSON = UI.UIDtoJson(question.UID);
         let oldJSON = UI.UIDtoJson(oldQuestion.UID);
@@ -191,7 +192,18 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
         question.answers.splice($scope.question.answers.length-1, (question.answers.length-1)-($scope.question.answers.length-2));
       }
     }
-    if(oldTopic && oldTopic.ID !== topic.ID){ //Move topics
+    if(oldTopic && newID !== null && oldTopic.ID !== topic.ID){ //Move topics
+      //Duplicate selection data
+      let newJSON = UI.UIDtoJson({topic: topic.ID,question: newID});
+      let oldJSON = UI.UIDtoJson({topic: oldTopic.ID, question: $scope.tabData.questionID});
+      UI.miscState.classView.questions.checked[newJSON] = UI.miscState.classView.questions.checked[oldJSON];
+      UI.miscState.classView.questions.open[newJSON] = UI.miscState.classView.questions.open[oldJSON];
+      //Duplicate assessment manually added
+      for(let assessment of $scope.class.assessments){
+        let index = assessment.questions.indexOf(oldJSON);
+        if(index !== -1)
+          assessment.questions.push(newJSON);
+      }
       new TopicUtils(oldTopic).deleteQuestion($scope.tabData.questionID);
     }
 

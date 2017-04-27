@@ -57,6 +57,14 @@ class TopicUtils {
         delete UI.miscState.classView.questions.checked[json];
         delete UI.miscState.classView.questions.open[json];
 
+        //Delete from Assessments
+        for(let assessment of UI.getClassById(UI.classID).assessments){
+          let index = assessment.questions.indexOf(json);
+          if(index !== -1){
+            assessment.questions.splice(index,1);
+          }
+        }
+
         return;
       }
     }

@@ -277,7 +277,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
   };
   $scope.editQuestion = function(uid){
     if(uid.topic === undefined){
-      uid = angular.fromJson(uid);
+      uid = UI.UIDfromJson(uid);
     }
     createTab('Edit Question', 'views/editQuestion.html','editQuestionCtrl',{questionID: uid.question,topicID: uid.topic, callback: $scope.updateQuestionCount});
   };
@@ -394,7 +394,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     }
 
     return questionAnswers;
-  }
+  };
 
   $scope.changeTopics = function(selectedUIDs){
     let selectedTopics = {}; //Count of each question with a specified topic indexed by topic id
@@ -424,7 +424,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     let first = true;
     for(let topic of arr){
       if(!first)
-        underDropdown += ', '
+        underDropdown += ', ';
       else
         first=false;
       underDropdown += '<i>' +courseUtils.getTopic(Number(topic[0])).topicName + '</i> x' + topic[1];
@@ -445,7 +445,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
       descAttr: 'topicDescription',
       model: $scope.class.topics[0],
       label: 'Select the topic to change to:',
-    }
+    };
 
     let confirm = $uibModal.open({
       templateUrl: 'html/modalTemplate.html',
@@ -472,6 +472,12 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
         let oldJSON = UI.UIDtoJson(oldQ.UID);
         UI.miscState.classView.questions.checked[newJSON] = UI.miscState.classView.questions.checked[oldJSON];
         UI.miscState.classView.questions.open[newJSON] = UI.miscState.classView.questions.open[oldJSON];
+        //Duplicate assessment manually added
+        for(let assessment of $scope.class.assessments){
+          let index = assessment.questions.indexOf(oldJSON);
+          if(index !== -1)
+            assessment.questions.push(newJSON);
+        }
         //Delete old
         courseUtils.deleteQuestion(questionUID);
       }
@@ -797,10 +803,10 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     return output;
   };
 
-  $scope.formatAssessmentQuestion = function(question){
-    let jsonUID = angular.toJson(question.UID).replace('"/g','\"');
+  $scope.formatAssessmentQuestion = function(jsonUID){
+    let question = courseUtils.getQuestion(UI.UIDfromJson(jsonUID));
     let highlighted = $filter('highlight')(question.questionTitle,classView.assessments.filter.query,classView.assessments.filter.caseSensitive);
-    return '<a href="#" ng-click=\'editQuestion('+jsonUID+')\'>'+ highlighted + '</a> ' + $scope.formatQuestionType(question);
+    return '<a href="#" ng-click=\'editQuestion("'+jsonUID+'")\'>'+ highlighted + '</a> ' + $scope.formatQuestionType(question);
   };
 
   $scope.formatQuestion = function(question) {
@@ -846,10 +852,12 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
       final+=l;
     }
     return final;
-  }
+  };
   $scope.formatObjectiveQuestion = function(questionUID) {
-    let courseUtil = new CourseUtils($scope.class);
-    return $scope.formatAssessmentQuestion(courseUtil.getQuestion(questionUID));
+    let question = courseUtils.getQuestion(questionUID);
+    let jsonUID = UI.UIDtoJson(questionUID);
+    let highlighted = $filter('highlight')(question.questionTitle,classView.assessments.filter.query,classView.assessments.filter.caseSensitive);
+    return '<a href="#" ng-click=\'editQuestion("'+jsonUID+'")\'>'+ highlighted + '</a> ' + $scope.formatQuestionType(question);
   };
 
   $scope.formatQuestionAnswers = function(question){

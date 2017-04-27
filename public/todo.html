@@ -10,22 +10,18 @@
     <h2>Bugs</h2>
     <ul>
         <li>There are some areas which don't scroll/scrolling offset is wrong</li>
-        <li>Pointers that need to be repaired are a waste of storage space. Store ID's instead (although be careful to store topic id of questions)</li>
+        <li>Pointers that need to be repaired are a waste of storage space. Store ID's instead (Assessment Requirements)</li>
         <li>Exporting large databases crashes the window (out of memory)</li>
         <li>Importing large databases crashes the window (out of memory)</li>
         <li>Storage usage is incorrect (Always 0MB)</li>
         <li>There are some places in the code from before Question.topicID existed, these parts of the code are inefficient</li>
         <li>Importing large databases doesn't always delete old database</li>
-        <li>When saving data pointers are cloned (change to just using needed ID's instead of pointers), this will decrease startup time (no need to repair pointers) as well as decrease filesize</li>
         <li>Handle different types of quotes in filter, " and the angled ones as the same</li>
         <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning (currently they won't be deleted until save and reload) </li>
-        <li>Upon deletion of questions used as manual questions within assessments delete those manual questions and provide warning</li>
         <li>Importing questions by file adds ? symbols to every quote</li>
         <li>Topic and Objective Dropdowns in CreateRequirement aren't alphabetized</li>
-        <li>Deleting a question does not remove it from manually added question in assessments until save and reload</li>
         <li>Clicking Sort Mode moves UI below it down</li>
-        <li>Manually added questions sometimes cannot be deleted</li>
-        <li>Changing Question Topic which is manually added doesn't update reference (is cleared on refresh)</li>
+        <li>Changing the topic of a question which was just added to an assessment (unsaved) fails to migrate</li>
     </ul>
 
     <h2>Features</h2>

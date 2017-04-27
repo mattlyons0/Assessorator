@@ -420,6 +420,23 @@ function updateDataFormat(course) {
     didUpdate = true;
   }
 
+  //Migrate Assessment manuallyAdded from actual questions to UID
+  for(let assessment of course.assessments){
+    if(assessment.questions){
+      let newQuestions = [];
+      for(let question of assessment.questions){
+        if(question.hasOwnProperty('UID')){
+          newQuestions.push(UI.UIDtoJson(question.UID));
+        }
+      }
+      if(newQuestions.length) {
+        assessment.questions = newQuestions;
+        console.log('Updated Assessment Manually Added Questions Format for Assessment: ' + assessment.assessmentName);
+        didUpdate = true;
+      }
+    }
+  }
+
   return {needsSave: didUpdate, updateDate: updateDate};
 }
 
@@ -440,7 +457,7 @@ function repairPointers(course) {
     }
   }
 
-  //Repair Topic/Objective & ManuallyAddedQuestion pointers to Assessments
+  //Repair Topic/Objective pointers to Assessments
   for (let assessment of course.assessments) {
     for (let ruleIdx=0;ruleIdx<assessment.rules.length;ruleIdx++) { //Topic/Objectives
       let rule = assessment.rules[ruleIdx];
@@ -468,17 +485,6 @@ function repairPointers(course) {
         assessment.rules.splice(ruleIdx,1);
         ruleIdx--;
         console.warn("Deleted rule in assessment '"+assessment.assessmentName+"' with no Topics.");
-      }
-    }
-    for (let i = 0; i < assessment.questions.length; i++) { //Manually added questions
-      let oldQuestion = assessment.questions.splice(i, 1)[0];
-      if (oldQuestion) {
-        let topic = courseUtil.getTopic(oldQuestion.topicID);
-        if(topic) {
-          let question = new TopicUtils(topic).getQuestion(oldQuestion.ID);
-          if (question) //Handle if it was a dangling reference
-            assessment.questions.push(question) //Repair pointer
-        }
       }
     }
   }

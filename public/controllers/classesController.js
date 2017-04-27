@@ -171,6 +171,7 @@ app.controller('classesCtrl', function ($scope, $mdDialog,$sce,$uibModal) {
   $scope.viewClass = function (classID) {
     $scope.$parent.page.classID = classID;
     $scope.$parent.page.URL = 'classView.html';
+    UI.classID = classID;
   };
 
   $scope.dbReadError = function(errorType){

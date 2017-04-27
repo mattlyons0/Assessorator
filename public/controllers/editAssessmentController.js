@@ -29,18 +29,20 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
     if (!$scope.assessment.title)
       return;
 
+    let courseUtils = new CourseUtils($scope.class);
     let assessment;
     if(!$scope.edit)
-      assessment = new CourseUtils($scope.class).createAssessment($scope.assessment.title, $scope.assessment.description);
+      assessment = courseUtils.createAssessment($scope.assessment.title, $scope.assessment.description);
     else { //Editing
-      assessment = new CourseUtils($scope.class).getAssessment($scope.tabData.assessmentID);
+      assessment = courseUtils.getAssessment($scope.tabData.assessmentID);
       assessment.assessmentName = $scope.assessment.title;
       assessment.assessmentDescription = $scope.assessment.description;
     }
     let manuallyAdded = Array.from($scope.questions.manuallyAdded);
     assessment.questions = [];
     for (let question of manuallyAdded) {
-      assessment.questions.push(question);
+      if(courseUtils.getQuestion(UI.UIDfromJson(question)) !== undefined) //Check for changed topic/deleted question before saving
+        assessment.questions.push(question);
     }
     assessment.rules = [];
     for(let rule of $scope.questions.rules){
@@ -75,7 +77,7 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
     let currentTab = $scope.getTabByID($scope.tabID);
     currentTab.data.searchQuestions = { complete: false, questions: {}};
     for(let question of $scope.questions.manuallyAdded){
-      currentTab.data.searchQuestions.questions[UI.UIDtoJson(question.UID)] = true;
+      currentTab.data.searchQuestions.questions[question] = true;
     }
     $scope.searchQuestions('Pick Questions for '+currentTab.name, {type: 'pick', callbackTID: $scope.tabID});
     $scope.stopWatching2 = $scope.$watch('getTabByID(tabID).data.searchQuestions.complete', function () {
@@ -85,11 +87,9 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
         if(currentTab.data.searchQuestions.questions) {
           let classUtil = new CourseUtils($scope.class);
           let foundQ = currentTab.data.searchQuestions.questions;
-          for (let selectedQuestion in foundQ) {
-            if(foundQ.hasOwnProperty(selectedQuestion) && foundQ[selectedQuestion] === true) {
-              let id = UI.UIDfromJson(selectedQuestion);
-              let question = classUtil.getQuestion(id);
-              $scope.questions.manuallyAdded.add(question);
+          for (let uid in foundQ) {
+            if(foundQ.hasOwnProperty(uid) && foundQ[uid] === true) {
+              $scope.questions.manuallyAdded.add(uid);
             }
           }
         }
@@ -152,12 +152,18 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
   };
 
   $scope.getQuestions = function () {
-    return Array.from($scope.questions.manuallyAdded);
+    let questions = [];
+    let courseUtils = new CourseUtils($scope.class);
+    for(let uid of $scope.questions.manuallyAdded){
+      questions.push(courseUtils.getQuestion(UI.UIDfromJson(uid)));
+    }
+
+    return questions;
   };
   $scope.deleteManualQuestion = function(id,topicID){
-    let topic = new CourseUtils($scope.class).getTopic(topicID);
-    let question = new TopicUtils(topic).getQuestion(id);
-    $scope.questions.manuallyAdded.delete(question);
+    let uid = {topic: topicID, question: id};
+    let sUID = UI.UIDtoJson(uid);
+    $scope.questions.manuallyAdded.delete(sUID);
   };
 
 
