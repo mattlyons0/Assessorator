@@ -4,8 +4,8 @@
             <h3 class="list-group-item-heading">{{edit?'Edit':'Create'}} Question</h3>
         </div>
 
-        <form name="questionForm" ng-submit="submitQuestion()">
-            <div class="list-group-item" autoscroll="260">
+        <form name="questionForm">
+            <div class="list-group-item" autoscroll="180">
                 <div>
                     <div class="form-group" style="margin-bottom:5px;">
                         <label><h4 style="margin-bottom:2px;margin-top:5px">Question:</h4></label> <br/>
@@ -36,6 +36,10 @@
                                 <div ng-bind-html="topic.topicName| highlight: $select.search"></div>
                                 <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
                             </ui-select-choices>
+                            <ui-select-no-choice style="padding-left:5px;">
+                                No Topics Found
+                                <button class="btn btn-link" ng-click="createTopic()" style="position:relative;top:-1px">Create New Topic</button>
+                            </ui-select-no-choice>
                         </ui-select>
                         <span class="input-group-btn fullHeight">
                           <button type="button" ng-click="topic.selected = class.topics[0]" class="btn btn-default fullHeight"
@@ -55,7 +59,8 @@
                                 <div ng-bind-html="obj.objectiveText| highlight: $select.search"></div>
                             </ui-select-choices>
                             <ui-select-no-choice style="padding-left:5px;">
-                                No Objectives {{class.objectives.length===0?'Exist':'Left'}}!
+                                {{ class.objectives.length===0?'No Objectives Exist':'No Objectives Found' }}
+                                <button class="btn btn-link" ng-click="createObjective()" style="position:relative;top:-1px">Create New Objective</button>
                             </ui-select-no-choice>
                         </ui-select>
                     </div>
@@ -89,9 +94,9 @@
                             <textarea id="questionAnswer{{$index}}" ng-model="answer.text" placeholder="Answer" class="answerBox" rows="1" style="overflow-y:hidden">
                             </textarea>
 
-                            <button type="button" class="btn btn-link" ng-class="(answer.pinned?'blueColor':'blackColor')" style="outline:0"
+                            <button type="button" class="btn btn-link" ng-class="($last?'disabled blackColor':(answer.pinned?'blueColor':'blackColor'))" style="outline:0"
                                     tabindex="-1" ng-disabled="$last" ng-click="togglePin(answer)" popover-trigger="'mouseenter'" popover-placement="left"
-                                    uib-popover="Pin this question's location so that it will not be randomized" popover-popup-delay="750">
+                                    uib-popover="Pin this question's location so that it will not be randomized" popover-popup-delay="500">
                                 <span class="glyphicon glyphicon-pushpin pin"></span>
                             </button>
                         </div>
@@ -101,7 +106,7 @@
 
             <div class="list-group-item" style="padding:5px; text-align: right">
                 <button class="btn btn-default" ng-click="cleanup()">Cancel</button>
-                <button class="btn btn-primary" type="submit" ng-click="submitError=true">
+                <button class="btn btn-primary" type="submit" ng-click="submitError=true;submitQuestion()">
                     {{edit?'Modify':'Create'}}
                 </button>
             </div>

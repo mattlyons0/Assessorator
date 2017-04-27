@@ -59,8 +59,14 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
 
   $scope.requestFocus = function () {
     setTimeout(function () {
-      document.getElementById("assessmentTitle" + $scope.tabID).focus();
-    }, 0); //Delay until render finishes
+      try{
+        document.getElementById("assessmentTitle" + $scope.tabID).focus();
+        $scope.resizeTextArea(document.getElementById("assessmentTitle"+$scope.tabID));
+        $scope.resizeTextArea(document.getElementById("assessmentDesc"+$scope.tabID));
+      } catch(ex) {
+        console.warn('Failed to do requestFocus',ex);
+      }
+    }, 1); //Delay until render finishes
     init();
   };
 
@@ -98,29 +104,45 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
     }
     return $sce.trustAsHtml(output);
   };
-  
-  $scope.checkPossible = function(index){
+
+  $scope.checkPossibilities = function(index){
     let rule = $scope.questions.rules[index];
+    let count = 0;
     if(rule.type == 'Topic'){
       for(let topic of rule.topics){
-        if(topic.questions.length < rule.numRequired){
-          return false;
-        }
+        count+=topic.questions.length;
       }
     } else if(rule.type == 'Objective'){
       for(let objective of rule.objectives){
-        let count = 0;
         for(let topic of $scope.class.topics){
           for(let question of topic.questions){
             if(question.objectives.indexOf(objective) != -1)
               count++;
           }
         }
-        if(count < rule.numRequired)
-          return false;
       }
     }
-    return true;
+    return count;
+  };
+
+  $scope.checkPossible = function(index){
+    let rule = $scope.questions.rules[index];
+    let count = $scope.checkPossibilities(index);
+    if(count >= rule.numRequired)
+      return true;
+  };
+
+  $scope.formatPossibilities = function(index){
+    let rule = $scope.questions.rules[index];
+    let count = $scope.checkPossibilities(index);
+    if(count === 0)
+      return 'This requirement has no possible questions.';
+
+    let output = count + ' possible question' + (count===1?'':'s') + ' meet this requirement.';
+    if(count < rule.numRequired) { //Impossible
+      output = 'This requirement cannot be met because only ' + output;
+    }
+    return output;
   };
 
   $scope.getQuestions = function () {
@@ -168,7 +190,33 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
   $scope.deleteRequirement = function(index){
     $scope.questions.rules.splice(index, 1);
   };
+
+
+  /********************************
+   *  Right Click Menu Definitions
+   ********************************/
+  $scope.addedQuestionHeader = [
+    ['Edit Question', function($itemScope,$event){
+      $scope.editQuestion($itemScope.question.UID);
+    }],
+    null,
+    ['Remove Question', function($itemScope,$event){
+      $scope.deleteManualQuestion($itemScope.question.ID,$itemScope.question.topicID)
+    }]
+  ];
+  $scope.ruleHeader = [
+    ['Edit Requirement', function($itemScope,$event){
+      $scope.editRequirement($itemScope.$index,$event);
+    }],
+    null,
+    ['Delete Requirement', function($itemScope,$event){
+      $scope.deleteRequirement($itemScope.$index)
+    }]
+  ];
 });
+
+
+
 function CreateRequirementController($scope, $mdDialog, $mdToast) {
   if(!$scope.editRequirementEnabled) {
     $scope.questions.rules[$scope.index].type = "Topic";

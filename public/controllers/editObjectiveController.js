@@ -43,12 +43,17 @@ app.controller("editObjectiveCtrl", function($scope){
   $scope.cleanup = function(){
     $scope.stopWatching();
     $scope.$parent.closeTab($scope.tabID);
+    console.log($scope.lastTab);
   };
   $scope.requestFocus = function(){
     setTimeout(function(){
-      document.getElementById("objectiveName"+$scope.tabID).focus();
-      $scope.resizeTextArea(document.getElementById("objectiveName"+$scope.tabID));
-    },0); //Delay until render finishes
+      try {
+        document.getElementById("objectiveName" + $scope.tabID).focus();
+        $scope.resizeTextArea(document.getElementById("objectiveName" + $scope.tabID));
+      } catch(ex) {
+        console.warn('Failed to do requestFocus',ex);
+      }
+    },1); //Delay until render finishes
     init();
   };
 });

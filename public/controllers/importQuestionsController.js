@@ -218,7 +218,11 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
 
   $scope.requestFocus = function () {
     setTimeout(function () {
-      document.getElementById("importArea" + $scope.tabID).focus();
-    }, 0); //Delay until render finishes
+      try{
+        document.getElementById("importArea" + $scope.tabID).focus();
+      } catch(ex) {
+        console.warn('Failed to do requestFocus',ex);
+      }
+    }, 1); //Delay until render finishes
   };
 });

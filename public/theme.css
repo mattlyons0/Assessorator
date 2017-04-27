@@ -138,12 +138,17 @@ span[uib-accordion-header] > div {
 .pin {
     transform: scale(1.5);
 }
-
+button.blackColor:not(.disabled)>span:hover {
+    color: #000;
+}
+button.blueColor:not(.disabled)>span:hover {
+    color: rgb(36,57,173);
+}
 .blueColor {
     color: rgb(63,81,181) !important;
 }
 .blackColor {
-    color: rgba(0, 0, 0, 0.87) !important;
+    color: #333 !important;
 }
 
 /* Dropdown for sort order, ui-dropdown in button group */

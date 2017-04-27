@@ -309,14 +309,6 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
   };
   $scope.createObjective = function(){
     createTab('New Objective','views/editObjective.html','editObjectiveCtrl');
-
-    //Remove popup from new question topic chooser UI
-    if(document.querySelector('#objectiveChooserInput')) {
-      $timeout(function () { //Delay until after current $apply
-        document.querySelector('#objectiveChooserInput').blur();
-        angular.element(document.querySelectorAll('md-virtual-repeat-container')[1]).triggerHandler('mouseleave');
-      }, 50); //Less than this seems to screw with the animation
-    }
   };
 
   $scope.editObjective = function(id){
@@ -1064,7 +1056,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
   $scope.closeTab = function(tabID){
     for(let x=0;x<$scope.tabs.length;x++){
       if($scope.tabs[x].id === tabID){
-        $scope.tabs.splice(x,1);
+        $scope.tabs.splice(-1,1);
         $scope.lastTab.splice($scope.lastTab.length-1,1); //Delete Current Tab
         $scope.currentTab = $scope.lastTab[$scope.lastTab.length-1]; //Get Last Tab
       }

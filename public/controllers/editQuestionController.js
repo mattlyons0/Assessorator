@@ -211,10 +211,14 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
 
   $scope.requestFocus = function () {
     setTimeout(function () {
-      document.getElementById('questionTitle' + $scope.tabID).focus();
-      $scope.resizeTextArea(document.getElementById("questionTitle"+$scope.tabID));
-      $scope.resizeTextArea(document.getElementById("questionDesc"+$scope.tabID));
-    }, 0); //Delay until render is done
+      try{
+        document.getElementById('questionTitle' + $scope.tabID).focus();
+        $scope.resizeTextArea(document.getElementById("questionTitle"+$scope.tabID));
+        $scope.resizeTextArea(document.getElementById("questionDesc"+$scope.tabID));
+      } catch(ex) {
+        console.warn('Failed to do requestFocus',ex);
+      }
+    }, 1); //Delay until render is done
     init();
   };
 

@@ -4,8 +4,8 @@
             <h3 class="list-group-item-heading">{{edit?'Edit':'Create'}} Topic</h3>
         </div>
 
-        <form name="topicForm" ng-submit="submitTopic()">
-            <div class="list-group-item list-group-item-action" autoscroll="260">
+        <form name="topicForm">
+            <div class="list-group-item list-group-item-action" autoscroll="180">
                 <div class="form-group">
                     <label><h4 style="margin-bottom:2px;">Topic Name:</h4></label> <br/>
                     <textarea class="form-control" required id="topicName{{tabID}}" style="height:34px" rows="1"
@@ -25,7 +25,7 @@
 
             <div class="list-group-item" style="padding:5px; text-align: right">
                 <button class="btn btn-default" ng-click="cleanup()">Cancel</button>
-                <button class="btn btn-primary" type="submit" ng-click="submitError=true">
+                <button class="btn btn-primary" ng-click="submitError=true;submitTopic()">
                     {{edit?'Modify':'Create'}}
                 </button>
             </div>

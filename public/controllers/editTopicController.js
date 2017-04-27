@@ -43,10 +43,14 @@ app.controller("editTopicCtrl", function($scope){
   };
   $scope.requestFocus = function(){
     setTimeout(function(){
-      document.getElementById("topicName"+$scope.tabID).focus();
-      $scope.resizeTextArea(document.getElementById("topicName"+$scope.tabID));
-      $scope.resizeTextArea(document.getElementById("topicDesc"+$scope.tabID));
-    },0); //Delay until render is done
+      try{
+        document.getElementById("topicName"+$scope.tabID).focus();
+        $scope.resizeTextArea(document.getElementById("topicName"+$scope.tabID));
+        $scope.resizeTextArea(document.getElementById("topicDesc"+$scope.tabID));
+      } catch(ex) {
+        console.warn('Failed to do requestFocus',ex);
+      }
+    },1); //Delay until render is done
     init();
   };
 });
