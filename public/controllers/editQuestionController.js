@@ -163,7 +163,7 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
         UI.miscState.classView.questions.checked[newJSON] = UI.miscState.classView.questions.checked[oldJSON];
         UI.miscState.classView.questions.open[newJSON] = UI.miscState.classView.questions.open[oldJSON];
       }
-    } else{ //Edit Topic
+    } else { //Edit Topic
       let oldTopicUtil = new TopicUtils(oldTopic);
       let question = oldTopicUtil.getQuestion($scope.tabData.questionID);
       question.questionTitle = $scope.question.title;
@@ -186,6 +186,9 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
         } else{
           new QuestionUtils(question).createAnswer($scope.question.answers[i].text, $scope.question.answers[i].correct, $scope.question.answers[i].pinned);
         }
+      }
+      if($scope.question.answers.length - 1 < question.answers.length){ //If we have less answers than before delete the old ones
+        question.answers.splice($scope.question.answers.length-1, (question.answers.length-1)-($scope.question.answers.length-2));
       }
     }
     if(oldTopic && oldTopic.ID !== topic.ID){ //Move topics

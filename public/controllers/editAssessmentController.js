@@ -72,19 +72,25 @@ app.controller("editAssessmentCtrl", function ($scope, $mdDialog, $mdToast, $sce
 
 
   $scope.pickQuestion = function () {
-    $scope.getTabByID($scope.tabID).data.searchQuestions = {};
-    $scope.searchQuestions('Pick Questions', {type: 'pick', callbackTID: $scope.tabID});
+    let currentTab = $scope.getTabByID($scope.tabID);
+    currentTab.data.searchQuestions = { complete: false, questions: {}};
+    for(let question of $scope.questions.manuallyAdded){
+      currentTab.data.searchQuestions.questions[UI.UIDtoJson(question.UID)] = true;
+    }
+    $scope.searchQuestions('Pick Questions for '+currentTab.name, {type: 'pick', callbackTID: $scope.tabID});
     $scope.stopWatching2 = $scope.$watch('getTabByID(tabID).data.searchQuestions.complete', function () {
-      if ($scope.getTabByID($scope.tabID).data.searchQuestions.complete === true) { //Search for manual questions is complete
+      if (currentTab.data.searchQuestions.complete === true) { //Search for manual questions is complete
         $scope.stopWatching2();
         //Detect selected questions
-        if($scope.getTabByID($scope.tabID).data.searchQuestions.questions) {
-          for (let selectedQuestion of $scope.getTabByID($scope.tabID).data.searchQuestions.questions) {
-            let classUtil = new CourseUtils($scope.class);
-            let topic = classUtil.getTopic(selectedQuestion.topicID);
-            let topicUtil = new TopicUtils(topic);
-            let question = topicUtil.getQuestion(selectedQuestion.questionID);
-            $scope.questions.manuallyAdded.add(question);
+        if(currentTab.data.searchQuestions.questions) {
+          let classUtil = new CourseUtils($scope.class);
+          let foundQ = currentTab.data.searchQuestions.questions;
+          for (let selectedQuestion in foundQ) {
+            if(foundQ.hasOwnProperty(selectedQuestion) && foundQ[selectedQuestion] === true) {
+              let id = UI.UIDfromJson(selectedQuestion);
+              let question = classUtil.getQuestion(id);
+              $scope.questions.manuallyAdded.add(question);
+            }
           }
         }
       }

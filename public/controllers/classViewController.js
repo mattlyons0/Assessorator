@@ -947,7 +947,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
         return;
     }
     return {array: arr, accordion: accordion};
-  }
+  };
 
   $scope.countAccordion = function(type,checked){
     let values = $scope.accordion(type,checked);
@@ -980,7 +980,6 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     let values = $scope.accordion(type,checked);
     let arr = values.array;
     let accordion = values.accordion;
-
     for(let elem of arr){
       let key;
       if(type === 'question')

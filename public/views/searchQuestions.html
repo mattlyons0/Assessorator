@@ -1,78 +1,149 @@
-<style>
-    md-chips.md-default-theme .md-chips, md-chips .md-chips {
-        box-shadow: none !important;
-    }
-    md-chips input {
-        display:none;
-    }
-</style>
-<md-card id="editObjectiveContainer">
-    <md-card-title>
-        <md-card-title-text>
-            <span class="md-headline">{{tabName}}</span>
-        </md-card-title-text>
-    </md-card-title>
-    <md-content layout-padding autoscroll="300">
-        <div layout="column">
-            <md-input-container class="md-block" flex>
-                <label>Search Query</label>
-                <input id="searchQuery" type="text" name="objectiveName" ng-model="search.query"/>
-            </md-input-container>
-            <div layout="row">
-                <md-checkbox class="md-primary" ng-model="search.title">Search Questions</md-checkbox>
-                <md-checkbox class="md-primary" ng-model="search.description">Search Descriptions</md-checkbox>
-                <md-checkbox class="md-primary" ng-model="search.answers">Search Answers</md-checkbox>
-                <md-checkbox class="md-primary" ng-model="search.caseSensitive">Case Sensitive</md-checkbox>
-                <md-button ng-click="addRule($event)" style="position:relative;top:-7px;margin:0 15px 0 auto;">Add
-                    Rule
-                </md-button>
-            </div>
-            <div layout="row">
-                <fieldset class="standard" ng-if="rules.length > 0">
-                    <legend>Rules</legend>
-                    <md-chips ng-model="rules">
-                        <md-chip-template>
-                            <div ng-style="{'color':rulesTextColor}">
-                                {{$chip.selector}} {{$chip.condition}} <span ng-bind-html="getFormattedRuleValues($chip)"></span>
+<div id="searchQuestionsContainer" style="margin-top: 0">
+    <div class="list-group" flex>
+        <div class="list-group-item active">
+            <h3 class="list-group-item-heading">{{tabName}}</h3>
+        </div>
+
+        <div class="tab-pane" style="padding:5px;background:white;border:1px solid #ddd;border-top-color:white;border-radius:0 0 4px 4px">
+            <div class="container-fluid" style="padding-bottom:5px">
+                <div id="questionFloatingButtons" style="padding-bottom:5px;">
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion('question',true)">Expand All</button>
+                        <button type="button" class="btn btn-default" ng-disabled="!questionCount" ng-click="iterateAccordion('question',false)">Collapse All</button>
+                    </div>
+
+                    <div class="btn-group btn-group-sm" style="float:right;position:relative;top:6px; display: flex">
+                        <ui-select ng-model="sortModels.questions" theme="bootstrap" search-enabled="false" uib-tooltip="Sorting Mode" style="width:190px">
+                            <ui-select-match style="height:30px;border-bottom-right-radius:0;border-top-right-radius:0;border-right:0">
+                                <span class="glyphicon" ng-class="$select.selected.icon" style="width:14px;left:-5px;font-size:12px"></span>{{$select.selected.name}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="sort in sortModes">
+                                {{ sort.name }}
+                            </ui-select-choices>
+                        </ui-select>
+                        <button type="button" ng-class="'btn btn-default'+(classView.questions.filter.open?' active':'')" data-toggle="button"
+                                tooltip-placement="top" uib-tooltip="Filter" ng-click="classView.questions.filter.open = !classView.questions.filter.open;focusId('filterQuestionSearch')">
+                            <span class="glyphicon glyphicon-filter"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Dropdown -->
+                <div ng-if="classView.questions.filter.open">
+                    <div style="padding: 5px;background-color:#e7e7e7;border:1px solid rgb(205, 205, 205);display:flex;flex-flow:row wrap;">
+                        <div class="input-group" style="width:65%;margin-right:2px;flex:1 1 auto;display:flex">
+                            <input type="text" class="form-control" placeholder="Filter Questions" id="filterQuestionSearch" ng-model="classView.questions.filter.query" style="flex:1 1 auto;">
+                            <span class="input-group-addon" style="min-width:46%; white-space: normal; flex:1 1 auto;">
+                                            <label>
+                                                <input type="checkbox" ng-model="classView.questions.filter.searchQuestions" style="position:relative;top:2px"/>
+                                                Search Questions
+                                            </label>
+
+                                            <label>
+                                                <input type="checkbox" ng-model="classView.questions.filter.searchDescriptions" style="position:relative;top:2px"/>
+                                                Search Descriptions
+                                            </label>
+
+                                            <label>
+                                                <input type="checkbox" ng-model="classView.questions.filter.searchAnswers" style="position:relative;top:2px"/>
+                                                Search Answers
+                                            </label>
+
+                                            <label>
+                                                <input type="checkbox" ng-model="classView.questions.filter.caseSensitive" style="position:relative;top:2px"/>
+                                                Case Sensitive
+                                            </label>
+                                        </span>
+                        </div>
+                        <div style="width:34.8%; display:inherit;flex:1 1 auto;overflow-x:auto">
+                            <div class="input-group" style="width:49%;margin-right:2px">
+                                <ui-select append-to-body="true" allow-clear ng-model="questionsQuery.topic" theme="bootstrap">
+                                    <ui-select-match placeholder="Filter Topic">
+                                        {{$select.selected.topicName}}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="topic in (class.topics|sort:{key:'topicName',mode:'ascending'}) | filter: { topicName: $select.search }">
+                                        <div ng-bind-html="topic.topicName | highlight: $select.search"></div>
+                                        <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
+                                    </ui-select-choices>
+                                </ui-select>
+                                <span class="input-group-btn fullHeight">
+                                              <button type="button" ng-click="questionsQuery.topic = null" class="btn btn-default fullHeight" ng-disabled="!questionsQuery.topic">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                              </button>
+                                            </span>
                             </div>
-                        </md-chip-template>
-                    </md-chips>
-                </fieldset>
-            </div>
-            <div id="searchQueryContent" autoscroll="500">
-                <md-list>
-                    <md-list-item class="md-2-line" style="min-height:0" ng-click="toggleSelect($index)" ng-if="rulesValidation" ng-repeat="question in query()">
-                        <div layout="row" class="md-padding"  flex>
-                            <md-checkbox ng-model="search.selected[$index]" style="margin: 0;"></md-checkbox>
-                            <div class="md-list-item-text">
-                                <h3>{{ question.questionTitle }}</h3>
-                                <p>{{ question.questionDescription }}</p>
+                            <div class="input-group" style="width:49%">
+                                <ui-select append-to-body="true" ng-model="questionsQuery.objective" theme="bootstrap" ng-disabled="!class.objectives.length">
+                                    <ui-select-match placeholder="Filter Objective">
+                                        {{$select.selected.objectiveText}}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="objective in (class.objectives|sort:{key:'objectiveText',mode:'ascending'}) | filter: { objectiveText: $select.search }">
+                                        <span ng-bind-html="objective.objectiveText | highlight: $select.search"></span>
+                                    </ui-select-choices>
+                                </ui-select>
+                                <span class="input-group-btn fullHeight">
+                                              <button type="button" ng-click="questionsQuery.objective = null" class="btn btn-default fullHeight" ng-disabled="!questionsQuery.objective">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                              </button>
+                                            </span>
                             </div>
                         </div>
-                        <md-divider inset></md-divider>
-                    </md-list-item>
-                    <md-list-item class="md-2-line" style="min-height:0" ng-if="query().length == 0">
-                        <div layout="row" class="md-padding" flex>
-                            <div class="md-list-item-text" ng-if="rulesValidation">
-                                <h3>No questions found</h3>
-                                <p>Consider adjusting your search criteria.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="questionAccordionScroll" autoscroll="{{ 256 + (classView.questions.filter.open?46:0) + (classView.questions.bulk.open?46:0) }}" ng-scroll="floatingScrollListener('questionAccordionScroll')"
+                 style="margin: 0 5px 0 5px">
+                <div class="container-fluid" ng-if="!questionCount">
+                    <h4 class="text-info">No Questions</h4>
+                </div>
+                <div class="container-fluid" ng-if="questionCount && !filterQuestions().length">
+                    <h4 class="text-info">No results, try adjusting your filters.</h4>
+                </div>
+
+                <uib-accordion close-others="false">
+                    <div uib-accordion-group class="panel-default" ng-repeat="question in (filterQuestions()|sort:getSortParams('questions',classView.questions.sort))" is-open="state.questions.open[UIDtoJson(question.UID)]" context-menu="questionHeader" template-url="html/accordion-group.html">
+                        <uib-accordion-heading>
+                            <div>
+                                <input class="bigCheckbox" type="checkbox" ng-model="selected[UIDtoJson(question.UID)]" ng-click="$event.stopPropagation()"/>
+                                <span ng-bind-html="(classView.questions.filter.searchQuestions && classView.questions.filter.open)?(question.questionTitle | highlight: classView.questions.filter.query:classView.questions.filter.caseSensitive):(question.questionTitle)"></span>
+                                <span class="badge" ng-if="question.topicID != 0">
+                                                {{ questionBadgeTopic(question) }}
+                                            </span>
+                                <span class="badge" ng-if="question.objectives.length">
+                                                {{ questionBadgeObjectives(question) }}
+                                            </span><br ng-if="question.questionDescription"/>
+                                <small ng-if="question.questionDescription" ng-bind-html="(classView.questions.filter.searchDescriptions && classView.questions.filter.open)?(question.questionDescription | highlight: classView.questions.filter.query:classView.questions.filter.caseSensitive):(question.questionDescription)"></small>
                             </div>
-                            <div class="md-list-item-text" ng-if="!rulesValidation">
-                                <h3>Invalid Rules</h3>
-                                <p>Remove conflicting rules.</p>
-                            </div>
+                        </uib-accordion-heading>
+
+                        <div class="btn-group btn-group-sm pull-right" role="group">
+                            <button type="button" class="btn btn-default" ng-click="editQuestion(question.UID)">Edit</button>
                         </div>
-                        <md-divider inset></md-divider>
-                    </md-list-item>
-                </md-list>
+
+                        <!-- Question Topic and Objectives -->
+                        <p bind-html-compile="formatQuestionTopicObjectives(question)"></p>
+
+                        <!-- Question Type -->
+                        <strong bind-html-compile="formatQuestionType(question)"></strong>
+
+                        <!-- Answers -->
+                        <p style="padding-left:5px" ng-if="question.answers" ng-bind-html="formatQuestionAnswers(question)"></p>
+
+                        <!-- No Answers -->
+                        <p class="text-info" ng-if="!question.answers">
+                            This question has no answers.
+                        </p>
+                    </div>
+                </uib-accordion>
             </div>
         </div>
-        <div layout="row">
-            <span flex></span>
-            <md-button ng-click="discard()">Cancel</md-button>
-            <md-button ng-click="submit()" class="md-primary">
+
+        <div class="list-group-item" style="padding:5px; text-align: right">
+            <button class="btn btn-default" ng-click="discard()">Cancel</button>
+            <button class="btn btn-primary" type="submit" ng-click="submit()()">
                 {{ (tabData.type === 'pick')?'Choose':(tabData.type === 'delete')?'Delete Questions':'Close'}}
-            </md-button>
+            </button>
         </div>
-    </md-content>
-</md-card>
+    </div>
+</div>
