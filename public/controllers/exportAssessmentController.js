@@ -48,9 +48,10 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
   };
 
   $scope.exportAssessment = function(assessment){
+    let courseUtils = new CourseUtils($scope.class);
     let questions = [];
     for(let question of assessment.questions){
-      questions.push(question);
+      questions.push(courseUtils.getQuestion(UI.UIDfromJson(question)));
     }
 
     let incompleteRules = [];
@@ -65,7 +66,7 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
         for(let question of topic.questions){
           for(let objective of question.objectives){
             for(let ruleObjective of rule.objectives){
-              if(objective.ID == ruleObjective.ID){
+              if(objective.ID === ruleObjective.ID){
                 possibleQuestions.add(question);
               }
             }
@@ -100,7 +101,7 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
     }
 
     let out = "";
-    while(questions.length != 0){
+    while(questions.length !== 0){
       out+=$scope.toEDX(questions.splice(Math.floor(Math.random()*questions.length),1)[0]);
       //Add a random question to the output (removing afterwards to ensure no duplicates)
     }
