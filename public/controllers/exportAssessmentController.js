@@ -1,65 +1,53 @@
 "use strict";
 
-app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
+app.controller("exportAssessmentCtrl", function ($scope,$sce) {
   let fs = require('fs');
+  $scope.initial = { assessmentName: 'Choose an Assessment' };
 
   $scope.init = function() {
     $scope.tabData = $scope.getTabByID($scope.tabID).data;
     $scope.assessment = {};
-    $scope.assessment.selected = [];
+    $scope.assessment.selected = $scope.initial;
 
     $scope.output = {};
-    $scope.output.data = "";
+    $scope.output.data = ""; //edX text file
+    $scope.output.questions = []; //Question objects generated
+    $scope.output.warnings = [];
 
-    if (typeof $scope.tabData.assessmentID == 'number') {
+
+    if (typeof $scope.tabData.assessmentID === 'number') {
       let courseUtil = new CourseUtils($scope.class);
       let assessment = courseUtil.getAssessment($scope.tabData.assessmentID);
       if (assessment) {
-        $scope.assessment.selected[0] = assessment;
-        $scope.exportAssessment(assessment);
+        $scope.assessment.selected = assessment;
       }
     }
-  };
-
-  $scope.searchQueryAssessment = function () {
-    return $scope.assessment.searchQuery;
-  };
-  $scope.searchAssessments = function () {
-    let array = [];
-    let query = $scope.assessment.searchQuery;
-    if (!query) {
-      array = $scope.class.assessments.slice(0); //Copy Array
-    } else {
-      for (let assessment of $scope.class.assessments) {
-        if (assessment.assessmentName.toLowerCase().indexOf(query.toLowerCase()) > -1) //Check if its in the search
-          array.push($scope.class.assessments[x]);
-      }
-    }
-    return array;
-  };
-  $scope.transformChipAssessment = function (chip) {
-    if ($scope.assessment.selected.length > 0) {
-      $scope.assessment.selected.splice(0, 1); //remove first topic
-    }
-
-    $scope.exportAssessment(chip);
-
-    return chip;
   };
 
   $scope.exportAssessment = function(assessment){
+    $scope.output.questions = []; //Clear generated questions
+    $scope.output.warnings = []; //Clear generated warnings
+
     let courseUtils = new CourseUtils($scope.class);
-    let questions = [];
+    let questions = new Set();
     for(let question of assessment.questions){
-      questions.push(courseUtils.getQuestion(UI.UIDfromJson(question)));
+      let questionObj = courseUtils.getQuestion(UI.UIDfromJson(question));
+      let questionUtil = new QuestionUtils(questionObj);
+      if(!questionUtil.isValid()){
+        $scope.output.warnings.push($sce.trustAsHtml('<span class="text-danger">Question: <i>'+
+          questionObj.questionTitle+'</i> is not valid. It is an added question however it has been omitted.'))
+      } else {
+        questions.add(questionObj);
+      }
     }
 
-    let incompleteRules = [];
     for(let rule of assessment.rules){
-      let possibleQuestions = new Set();
+      let possibleQuestions = new Set(); //Create a set of all the questions which satisfy the rule
       for(let topic of rule.topics){
         for(let question of topic.questions){
-          possibleQuestions.add(question);
+          let questionUtil = new QuestionUtils(question);
+          if(!questions.has(question) && questionUtil.isValid())
+            possibleQuestions.add(question);
         }
       }
       for(let topic of $scope.class.topics){
@@ -67,7 +55,9 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
           for(let objective of question.objectives){
             for(let ruleObjective of rule.objectives){
               if(objective.ID === ruleObjective.ID){
-                possibleQuestions.add(question);
+                let questionUtil = new QuestionUtils(question);
+                if(!questions.has(question) && questionUtil.isValid())
+                  possibleQuestions.add(question);
               }
             }
           }
@@ -76,36 +66,50 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
 
       let possibleQuestionArray = Array.from(possibleQuestions);
       let randoms = new Set();
+      let addedCount = 0;
       for(let i=0;i<rule.numRequired;i++){
         let max = possibleQuestionArray.length;
 
         if(max===0) {
-          incompleteRules.push(rule);
+          let warningStr = 'Requirement <i>'+rule.type+': ';
+          if(rule.type === 'Objective')
+            warningStr += $scope.formatArray(rule.objectives,'objectiveText');
+          else
+            warningStr += $scope.formatArray(rule.topics,'topicName');
+          warningStr += '</i> can only be met with '+addedCount+' question'+
+            (addedCount===1?'':'s')+', '+rule.numRequired+' required.';
+
+          $scope.output.warnings.push($sce.trustAsHtml(warningStr));
           break;
         }
 
         let randomNum = Math.floor(Math.random()*max); //Random number 0-(max-1)
-        questions.push(possibleQuestionArray[randomNum]);
+        questions.add(possibleQuestionArray[randomNum]);
         possibleQuestionArray.splice(randomNum,1);
+        addedCount++;
       }
 
       let randomArr = Array.from(randoms);
       for(let rand of randomArr){
-        questions.push(possibleQuestionArray[rand]);
+        questions.add(possibleQuestionArray[rand]);
       }
     }
 
-    if(incompleteRules.length > 0){
-      showToast(incompleteRules.length+" rule"+(incompleteRules.length>1?'s':'')+" could not be satisfied for this assessment. " +
-        "The assessment generated is incomplete.", {level: 'warning', delay: 7});
-    }
-
+    let questionsArr = Array.from(questions);
     let out = "";
-    while(questions.length !== 0){
-      out+=$scope.toEDX(questions.splice(Math.floor(Math.random()*questions.length),1)[0]);
+    while(questionsArr.length !== 0){
+      let pickedQuestion = questionsArr.splice(Math.floor(Math.random()*questionsArr.length),1)[0];
       //Add a random question to the output (removing afterwards to ensure no duplicates)
+      out+=$scope.toEDX(pickedQuestion);
+      $scope.output.questions.push(pickedQuestion);
     }
-    $scope.output.data=out;
+    $scope.output.data=out.trim();
+
+    setTimeout(() => {
+      let textArea = document.getElementById("importArea" + $scope.tabID);
+      textArea.dispatchEvent(new Event('input', {bubbles: true, cancelable: false }));
+    }, 1); //Let DOM Update
+
   };
 
   $scope.toEDX = function(question){
@@ -146,22 +150,22 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
       title: 'Save edX Assessment',
       properties: ['createDirectory'],
       filters: [{name: 'Text File', extensions: ['txt']}, {name: 'All Files', extensions: ['*']}]
+    }, (filename)=>{
+      if(filename){
+        fs.writeFile(filename,$scope.output.data, function(err){
+          if(err){
+            showToast('Error saving file', {level: 'danger', keepOpen: true});
+            console.error('Error saving file "'+filename+'"');
+            console.log(err);
+          } else{
+            showToast("File Saved to '"+filename+"'"+
+              '<p class="btn btn-default" onclick="require(\'electron\').shell.showItemInFolder(\''+filename+'\')" ' +
+              'style="opacity:.75;margin-left:10px; margin-bottom: 0 !important;">Open in Folder</p>',
+              {level: 'success', compile: true, keepOpen: true, apply: true, noClick: true});
+          }
+        });
+      }
     });
-
-    if(saveDirectory){
-      fs.writeFile(saveDirectory,$scope.output.data, function(err){
-        if(err){
-          showToast('Error saving file', {level: 'danger', keepOpen: true});
-          console.error('Error saving file "'+saveDirectory+'"');
-          console.log(err);
-        } else{
-          showToast("File Saved to '"+saveDirectory+"'"+
-            '<p class="btn btn-default" onclick="require(\'electron\').shell.showItemInFolder(\''+saveDirectory+'\')" ' +
-            'style="opacity:.75;margin-left:10px; margin-bottom: 0 !important;">Open in Folder</p>',
-            {level: 'success', compile: true, keepOpen: true, apply: true, noClick: true});
-        }
-      });
-    }
   };
 
   $scope.cleanup = function () {
@@ -169,14 +173,43 @@ app.controller("exportAssessmentCtrl", function ($scope,$mdToast) {
     $scope.$parent.closeTab($scope.tabID);
   };
 
-  $scope.stopWatching=$scope.$watch('assessment.selected.length', function(){
-    if($scope.assessment.selected.length == 0){
+  $scope.stopWatching=$scope.$watch('assessment.selected', function(){
+    if($scope.assessment.selected === $scope.initial){
       $scope.output.data = "";
+    } else {
+      $scope.exportAssessment($scope.assessment.selected);
     }
   });
 
   $scope.requestFocus = function(){
+    setTimeout(function(){
+      try {
+        $scope.resizeTextArea(document.getElementById("importArea" + $scope.tabID));
+      } catch(ex) {
+        console.warn('Failed to do requestFocus',ex);
+      }
+    },1); //Delay until render finishes
     $scope.init(); //Call once variables have been set through ng-init
   };
+
+  $scope.formatArray = function (data,property) {
+    let output = "";
+    for (let i = 0; i < data.length; i++) {
+      if (data[i][property])
+        output += '<i>' + data[i][property] + '</i>';
+
+      if (i < data.length - 2)
+        output += ", ";
+      else if (i < data.length - 1)
+        output += " and ";
+    }
+    return output;
+  };
+
+  $scope.editQuestionHeader = [
+    ['Edit Question', function($itemScope,$event){
+      $scope.editQuestion($itemScope.question.UID);
+    }]
+  ];
 
 });

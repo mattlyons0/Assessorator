@@ -102,7 +102,7 @@
                 </div>
 
                 <uib-accordion close-others="false">
-                    <div uib-accordion-group class="panel-default" ng-repeat="question in (filterQuestions()|sort:getSortParams('questions',classView.questions.sort))" is-open="state.questions.open[UIDtoJson(question.UID)]" context-menu="questionHeader" template-url="html/accordion-group.html">
+                    <div uib-accordion-group class="panel-default" ng-repeat="question in (filterQuestions()|sort:getSortParams('questions',classView.questions.sort))" is-open="state.questions.open[UIDtoJson(question.UID)]" context-menu="editQuestionHeader" template-url="html/accordion-group.html">
                         <uib-accordion-heading>
                             <div>
                                 <input class="bigCheckbox" type="checkbox" ng-model="selected[UIDtoJson(question.UID)]" ng-click="$event.stopPropagation()"/>

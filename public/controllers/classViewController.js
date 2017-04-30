@@ -170,20 +170,23 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     return Array.from(out);
   };
 
-  $scope.filterQuestions = function(){
+  //If questionBank is undefined $scope.getAllQuestions() will be used
+  $scope.filterQuestions = function(questionBank){
     let questions;
+    if(questionBank === undefined)
+      questions = $scope.getAllQuestions();
+    else
+      questions = questionBank.slice();
+
     if(classView.questions.filter.open && classView.questions.filter.topicQuery !== null){
-      questions = [];
-      for(let topic of $scope.class.topics){
-        if(topic.ID === classView.questions.filter.topicQuery){
-          for(let question of topic.questions){
-            questions.push(question);
-          }
+      for(let i=0;i<questions.length;i++){
+        if(questions[i].topicID !== classView.questions.filter.topicQuery){
+          questions.splice(i,1);
+          i--;
         }
       }
-    } else{
-      questions = $scope.getAllQuestions();
     }
+
     if(classView.questions.filter.open && classView.questions.filter.objectiveQuery !== null){
       for(let i=0;i<questions.length;i++){
         let containsObj = false;
@@ -728,7 +731,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
     return assessment.questions.length + ' Added Question' + (assessment.questions.length != 1 ? 's' : '');
   };
   $scope.assessmentBadgeRules = function(assessment){
-    return assessment.rules.length + ' Rule'+ (assessment.rules.length!=1?'s':'');
+    return assessment.rules.length + ' Requirement'+ (assessment.rules.length!=1?'s':'');
   };
   $scope.assessmentTotalQuestions = function(assessment){
     let sum = 0;

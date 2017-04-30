@@ -23,4 +23,10 @@ app.controller("searchQuestionsCtrl", function ($scope) {
     $scope.getTabByID($scope.tabData.callbackTID).data.searchQuestions.complete = false; //Trigger wipe of selected field
     $scope.cleanup();
   };
+
+  $scope.editQuestionHeader = [
+    ['Edit Question', function($itemScope,$event){
+      $scope.editQuestion($itemScope.question.UID);
+    }]
+  ];
 });

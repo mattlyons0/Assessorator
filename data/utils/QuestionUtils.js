@@ -48,6 +48,17 @@ class QuestionUtils {
     }
   }
 
+  isValid(){
+    if(this.question.answers.length < 2)
+      return false; //Need length of at least 2
+    for(let answer of this.question.answers){
+      if(answer.correct === true){
+        return true; //Need at least 1 correct answer
+      }
+    }
+    return false; //No correct answers
+  }
+
   /**
    * Generate and add a UID to the given question
    */

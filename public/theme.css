@@ -216,6 +216,9 @@ textarea {
 .padding {
     padding: 15px;
 }
+.selectGrey::selection{
+    background:lightgrey;
+}
 
 /* Overview UIB Tabs */
 li.uib-tab.active>a.nav-link {
@@ -258,7 +261,6 @@ div.ui-select-container.ui-select-multiple>div {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-    /*align-content:stretch;*/
 }
 div.ui-select-container.ui-select-multiple>div>input.ui-select-search {
     flex: 1 1 auto;

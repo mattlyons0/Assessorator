@@ -114,15 +114,20 @@ app.controller("editAssessmentCtrl", function ($scope, $uibModal,$sce) {
   $scope.checkPossibilities = function(index){
     let rule = $scope.questions.rules[index];
     let count = 0;
-    if(rule.type == 'Topic'){
+    if(rule.type === 'Topic'){
       for(let topic of rule.topics){
-        count+=topic.questions.length;
+        for(let question of topic.questions){
+          let questionUtil = new QuestionUtils(question);
+          if(questionUtil.isValid())
+            count++;
+        }
       }
-    } else if(rule.type == 'Objective'){
+    } else if(rule.type === 'Objective'){
       for(let objective of rule.objectives){
         for(let topic of $scope.class.topics){
           for(let question of topic.questions){
-            if(question.objectives.indexOf(objective) != -1)
+            let questionUtil = new QuestionUtils(question);
+            if(question.objectives.indexOf(objective) !== -1 && questionUtil.isValid())
               count++;
           }
         }

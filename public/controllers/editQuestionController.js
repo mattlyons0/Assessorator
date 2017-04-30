@@ -131,6 +131,8 @@ app.controller('editQuestionCtrl', function ($scope, $uibModal) {
       }
       if(!correct)
         showToast('Question saved as incomplete. No correct answer was chosen.', {level: 'warning'});
+      if($scope.question.answers.length-1 < 2)
+        showToast('Question saved as incomplete. There is only 1 answer.', {level: 'warning'});
     }
 
     let topic = $scope.topic.selected;

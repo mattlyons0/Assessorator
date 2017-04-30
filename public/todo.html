@@ -17,11 +17,12 @@
         <li>There are some places in the code from before Question.topicID existed, these parts of the code are inefficient</li>
         <li>Importing large databases doesn't always delete old database</li>
         <li>Handle different types of quotes in filter, " and the angled ones as the same</li>
-        <li>Upon deletion of topics or objectives used in rules within assessments delete those rules and provide warning (currently they won't be deleted until save and reload) </li>
+        <li>Upon deletion of topics or objectives used in rules within assessments provide warning</li>
         <li>Importing questions by file adds ? symbols to every quote</li>
-        <li>Topic and Objective Dropdowns in CreateRequirement aren't alphabetized</li>
         <li>Changing the topic of a question which was just added to an assessment (unsaved) fails to migrate</li>
         <li>View in folder can hang the application</li>
+        <li>Filters in question picking and assessment exporting save for overview questions filter</li>
+        <li>Expanded cards in question picking and assessment exporting save for overview questions filter</li>
     </ul>
 
     <h2>Features</h2>
@@ -40,15 +41,7 @@
             <ul>
                 <li>A way to find invalid questions (questions with no correct answer)</li>
             </ul>
-            <li>Assessments Edit</li>
-            <ul>
-                <li>Don't generate assessments with questions that are incomplete (or at least warn if this is the case)</li>
-            </ul>
             <li>Retrieve classes and incrementally update the UI as they are received (instead of doing them all at once)</li>
-        </ul>
-        <li>Export View Redesign</li>
-        <ul>
-            Show a rich preview of the exported assessment instead of the text output
         </ul>
         <li>edX format Importing</li>
         <ul>
@@ -105,7 +98,6 @@
         <li>Handle window crash</li>
         <li>Handle window hang (ensure dialogs don't cause this)</li>
         <li>Keyboard shortcuts</li>
-        <li>Open file chooser without hanging render proc</li>
     </ul>
     <li>Open Source Project</li>
 </ul>
