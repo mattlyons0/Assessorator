@@ -1035,11 +1035,11 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
 
   $scope.goBack = function () {
     if($scope.tabs.length > 0) {
-      let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-danger"><h3 style="margin-top:10px">'
+      let header = '<div class="list-group flex" style="margin-bottom:0"><div class="list-group-item alert-warning"><h3 style="margin-top:10px">'
         +'<h3 style="text-align:center">Go Back to Course Selection?</h3></div><li class="list-group-item">';
       let html = '<h4>Changes in <i>'+$scope.getTabByID($scope.currentTab).name+'</i> will be lost.</h4></li>';
       let buttons ='<div style="padding: 5px; text-align:right"> <button type="button" class="btn btn-default" ng-click="dismiss()" style="margin-right:2px">Cancel</button>'
-        +'<button type="button" class="btn btn-danger" ng-click="close()"><b>Go to Course Selection</b></button></div>';
+        +'<button type="button" class="btn btn-warning" ng-click="close()"><b>Go to Course Selection</b></button></div>';
       let confirm = $uibModal.open({
         template: header+html+buttons,
         controller: function($scope,$uibModalInstance){

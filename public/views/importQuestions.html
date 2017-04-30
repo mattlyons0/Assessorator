@@ -1,67 +1,71 @@
-<md-card id="importQuestionsContainer">
-    <md-card-title flex>
-        <md-card-title-text flex>
-            <span class="md-headline">Import Questions <md-button id="helpButton" ng-click="showHelp($event)" style="float:right">Help</md-button></span>
-        </md-card-title-text>
-    </md-card-title>
-    <form name="importForm" ng-submit="import()">
-        <md-content layout-padding>
-            <div layout="column" autoscroll="335">
-                <md-input-container class="md-block" flex>
-                    <label>Paste edX formatted questions in the box:</label>
-                    <textarea id="importArea{{tabID}}" type="text" name="importData" ng-model="input.data" md-select-on-focus></textarea>
-                </md-input-container>
+<div id="importQuestionsContainer" style="margin-top: 0">
+    <div class="list-group" flex>
+        <div class="list-group-item active">
+            <h3 class="list-group-item-heading">
+                Import Questions
+                <button class="btn btn-default" id="helpButton" ng-click="showHelp($event)" style="float:right">Help</button>
+            </h3>
+        </div>
+
+        <form name="objectiveForm">
+            <div class="list-group-item list-group-item-action" autoscroll="180">
+                <div class="form-group">
+                    <h4 style="margin-bottom:2px">
+                        Paste edX formatted questions in the box:
+                    </h4><br/>
+                    <textarea class="form-control" id="importArea{{tabID}}" style="height:34px; margin-bottom:15px;" rows="1"
+                              ng-model="input.data"></textarea>
+                </div>
             </div>
-            <div layout="row">
-                <md-button ng-click="browseFile()">Import File</md-button>
 
-                <md-chips ng-model="topic.selected" style="margin-right:7px"
-                          md-transform-chip="transformChipTopic($chip)"
-                          md-require-match="true" flex>
-                    <md-chip-template>
-                        {{$chip.topicName}}
-                    </md-chip-template>
-                    <md-autocomplete md-no-cache="true" placeholder="Topic" md-min-length="0"
-                                     md-input-id="topicChooserInput" md-autocomplete-snap
-                                     md-search-text="topic.searchQuery" md-items="topic in searchTopics()"
-                                     md-select-on-match>
-                        <md-item-template>
-                                        <span md-highlight-text="searchQueryTopic()" md-highlight-flags="i">
-                                            {{topic.topicName}}
-                                        </span>
-                        </md-item-template>
-                        <md-not-found>
-                            <div ng-click="createTopic()"
-                                 style="height:100%;width:100%; outline:none;border:0">Create New Topic
-                            </div>
-                        </md-not-found>
-                    </md-autocomplete>
-                </md-chips>
+            <div class="list-group-item" style="padding:5px; text-align: right; display:flex">
+                <button class="btn btn-default" ng-click="browseFile()">Import File</button>
 
-                <md-chips required ng-model="objective.selected" style="margin-left:7px"
-                          md-require-match="true" md-autocomplete-snap flex>
-                    <md-chip-template>
-                        {{$chip.objectiveText}}
-                    </md-chip-template>
-                    <md-autocomplete md-no-cache="true" placeholder="Objective" md-min-length="0"
-                                     md-input-id="objectiveChooserInput"
-                                     md-search-text="objective.searchQuery"
-                                     md-items="objective in searchObjectives()" md-select-on-match>
-                                    <span md-highlight-text="searchQueryObjective()" md-highlight-flags="i">
-                                        {{objective.objectiveText}}
-                                    </span>
-                        <md-not-found>
-                            <div ng-click="createObjective()"
-                                 style="height:100%;width:100%; outline:none;border:0">Create New Objective
-                            </div>
-                        </md-not-found>
-                    </md-autocomplete>
-                </md-chips>
-                <md-button ng-click="cleanup()">Cancel</md-button>
-                <md-button type="submit" class="md-primary">
+                <!-- Select Topic-->
+                <div style="width:35%;margin-left:auto;display:flex">
+                    <ui-select class="ng-animate-disabled fullHeight" ng-model="topic.selected" theme="bootstrap" style="width:100%">
+                        <ui-select-match placeholder="Choose a Topic" class="input-group fullHeight" style="width:100%">
+                            {{$select.selected.topicName}}
+                        </ui-select-match>
+                        <ui-select-choices
+                                repeat="topic in (class.topics |sort:{key:'topicName',mode:'ascending'}) | filter: { 'topicName': $select.search }">
+                            <div ng-bind-html="topic.topicName| highlight: $select.search"></div>
+                            <small class="text-muted" ng-bind-html="topic.topicDescription"></small>
+                        </ui-select-choices>
+                        <ui-select-no-choice style="padding-left:5px;">
+                            No Topics Found
+                            <button class="btn btn-link" ng-click="createTopic()" style="position:relative;top:-1px">Create New Topic</button>
+                        </ui-select-no-choice>
+                    </ui-select>
+                    <span class="input-group-btn fullHeight">
+                          <button type="button" ng-click="topic.selected = class.topics[0]" class="btn btn-default fullHeight"
+                                  ng-disabled="topic.selected.ID === 0" style="border-left-width:0;">
+                            <span class="glyphicon glyphicon-remove"></span>
+                          </button>
+                        </span>
+                </div>
+                <!-- Select Objectives -->
+                <div style="width:35%;margin-right:auto;margin-left:50px">
+                    <ui-select multiple class="ng-animate-disabled" ng-model="objective.selected" theme="bootstrap" style="min-height:34px">
+                        <ui-select-match placeholder="Add an Objective">
+                            {{$item.objectiveText}}
+                        </ui-select-match>
+                        <ui-select-choices
+                                repeat="obj in (class.objectives|sort:{key:'objectiveText',mode:'ascending'}) | filter: { 'objectiveText': $select.search }">
+                            <div ng-bind-html="obj.objectiveText| highlight: $select.search"></div>
+                        </ui-select-choices>
+                        <ui-select-no-choice style="padding-left:5px;">
+                            {{ class.objectives.length===0?'No Objectives Exist':'No Objectives Found' }}
+                            <button class="btn btn-link" ng-click="createObjective()" style="position:relative;top:-1px">Create New Objective</button>
+                        </ui-select-no-choice>
+                    </ui-select>
+                </div>
+
+                <button class="btn btn-default" ng-click="cleanup()">Cancel</button>
+                <button class="btn btn-primary" type="submit" ng-click="submitError=true;import()">
                     Import
-                </md-button>
+                </button>
             </div>
-        </md-content>
-    </form>
-</md-card>
+        </form>
+    </div>
+</div>

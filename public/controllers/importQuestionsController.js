@@ -1,62 +1,23 @@
 "use strict";
 
-app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
+app.controller("importQuestionsCtrl", function ($scope, $uibModal) {
   let fs = require('fs');
 
   let tab;
   $scope.input = [];
 
   $scope.topic = {};
-  $scope.topic.selected = [];
+  $scope.topic.selected = $scope.class.topics[0];
   $scope.objective = {};
   $scope.objective.selected = [];
-
-  $scope.searchQueryTopic = function () {
-    return $scope.topic.searchQuery;
-  };
-  $scope.searchTopics = function () {
-    let array = [];
-    let query = $scope.topic.searchQuery;
-    if (!query) {
-      array = $scope.class.topics.slice(0);
-      array.splice(0, 1); //Remove first topic, 'No Topic'
-    } else {
-      for (let topic of $scope.class.topics) {
-        if (topic.topicName.toLowerCase().indexOf(query.toLowerCase()) > -1 && topic.ID != 0) //Check if its in the search and it isn't the No Topic
-          array.push($scope.class.topics[x]);
-      }
-    }
-    return array;
-  };
-  $scope.transformChipTopic = function (chip) {
-    if ($scope.topic.selected.length > 0) {
-      $scope.topic.selected.splice(0, 1); //remove first topic
-    }
-    return chip;
-  };
-
-  $scope.searchQueryObjective = function () {
-    return $scope.objective.searchQuery;
-  };
-  $scope.searchObjectives = function () {
-    let array = [];
-    let query = $scope.objective.searchQuery;
-    if (!query)
-      return $scope.class.objectives;
-    for (let x = 0; x < $scope.class.objectives.length; x++) {
-      if ($scope.class.objectives[x].objectiveText.toLowerCase().indexOf(query.toLowerCase()) > -1)
-        array.push($scope.class.objectives[x]);
-    }
-    return array;
-  };
 
   $scope.import = function () {
     if (!$scope.input.data) {
       showToast('No text entered', {level: 'danger'});
       return;
     }
-    let topic = $scope.topic.selected[0]; //Topic object
-    if (topic == undefined)
+    let topic = $scope.topic.selected; //Topic object
+    if (topic === undefined)
       topic = $scope.class.topics[0]; //The 'No Topic' Topic
     let objectives = $scope.objective.selected; //Array of Objective Objects
 
@@ -176,22 +137,24 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
     $scope.$parent.closeTab($scope.tabID);
   };
 
-  $scope.showHelp = function (event) {
+  $scope.showHelp = function () {
+    let helpMarkup = '<div ng-controller="settingsCtrl" class="list-group flex" style="margin-bottom:0">' +
+      '<div class="list-group-item active"><h2 style="margin-top:10px">Import Help</h2></div><li class="list-group-item form-check form-check-inline">';
     let helpText = "The import format accepted is edX format. <br/><br/>The following notation is accepted:<br/><ul>" +
       "<li><b>&gt;&gt;</b> must precede question title and <b>&lt;&lt;</b> must come at the end of the question title.</li>" +
       "<li><b>( )</b> must precede any answer. It can contain data however all data will be ignored except a capital or lowercase <b>x</b>, denoting a correct answer.</li>" +
       "<li><b>[explanation]</b> can be used to denote the description of a question. The <b>[explanation]</b> tag must be on its own line and be followed with a closing <b>[explanation]</b> tag once the explanation is over.<li/>" +
       "</ul>Note: Each of the above notations is limited to a length of one line (with the exception of the explanation), and must not contain more than one notation per line." +
-      "";
+      '</li>';
+    let helpFooter = '<div style="padding: 5px; text-align:right">'+
+      '<button type="button" style="margin-right:2px" class="btn btn-default" ng-click="$dismiss()">Close</button>'+
+      '</div>';
 
-    $mdDialog.show($mdDialog.alert().closeTo(document.querySelector('#helpButton'))
-      .parent(angular.element(document.body))
-      .targetEvent(event)
-      .clickOutsideToClose(true)
-      .title('Import Syntax')
-      .htmlContent(helpText)
-      .ok('Close'));
-  };
+      let helpModal = $uibModal.open({
+        template: helpMarkup+helpText+helpFooter,
+        size: 'lg'
+      });
+    };
 
   $scope.browseFile = function () {
     const dialog = require('electron').remote.dialog;
@@ -199,27 +162,33 @@ app.controller("importQuestionsCtrl", function ($scope, $mdDialog, $mdToast) {
       title: 'Import edX Questions',
       properties: ['openFile', 'multiSelections'],
       filters: [{name: 'All Files', extensions: ['*']}, {name: 'Text Files', extensions: ['txt']}]
-    });
+    }, (filenames)=>{
+      if(filenames) {
+        for (let selectedFile of filenames) {
+          fs.readFile(selectedFile,'utf8', function(err,data){
+            if(err){
+              showToast('Error reading file: '+selectedFile, {level: 'danger'});
+              console.log(err);
+            } else{
+              $scope.input.data+=data;
+              $scope.$apply();
+            }
 
-    if(selectedFiles) {
-      for (let selectedFile of selectedFiles) {
-        fs.readFile(selectedFile,'utf8', function(err,data){
-          if(err){
-            showToast('Error reading file: '+selectedFile, {level: 'danger'});
-            console.log(err);
-          } else{
-            $scope.input.data+=data;
-          }
-          $scope.$apply();
-        });
+          });
+        }
+        setTimeout(() => {
+          let textArea = document.getElementById("importArea" + $scope.tabID);
+          textArea.dispatchEvent(new Event('input', {bubbles: true, cancelable: false }));
+        }, 1); //Let DOM Update
       }
-    }
+    });
   };
 
   $scope.requestFocus = function () {
     setTimeout(function () {
       try{
         document.getElementById("importArea" + $scope.tabID).focus();
+        $scope.resizeTextArea(document.getElementById("importArea" + $scope.tabID));
       } catch(ex) {
         console.warn('Failed to do requestFocus',ex);
       }
