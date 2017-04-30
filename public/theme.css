@@ -249,3 +249,7 @@ div.ui-select-match>span.btn.btn-default.ui-select-toggle {
 div.ui-select-container>input.ui-select-search {
     height: 100%;
 }
+/* Fix Sort Mode lowering things under it when clicked */
+.ui-select-search-hidden {
+    display: none !important;
+}
