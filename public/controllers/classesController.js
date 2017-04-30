@@ -176,21 +176,23 @@ app.controller('classesCtrl', function ($scope, $mdDialog,$sce,$uibModal) {
 
   $scope.dbReadError = function(errorType){
     let name = require('../package.json').name;
-    $scope.$apply($scope.readError = true);
-    if(errorType == 'dom'){
-      $scope.readErrorText = $sce.trustAsHtml('Error opening database. Please ensure no other instances of '+name+' are open then ' +
-        '<a href=\'javascript:document.location.reload()\'>Retry</a>.');
-    } else if(errorType == 'version'){
-      $scope.readErrorText = $sce.trustAsHtml('Error opening database, invalid version. See ' +
-        '<a href=\'javascript:require("electron").remote.getCurrentWindow().toggleDevTools();\'>console</a> for more information.');
-    } else if(errorType == 'blocked'){
-      $scope.readErrorText = $sce.trustAsHtml('Error opening database. Please ensure no other instances of '+name+' are open then ' +
-        '<a href=\'javascript:document.location.reload()\'>Retry</a>.');
-    } else if(errorType == 'unknown'){
-      $scope.readErrorText = $sce.trustAsHtml('Error opening database. See ' +
-        '<a href=\'javascript:require("electron").remote.getCurrentWindow().toggleDevTools();\'>console</a> for more information. ' +
-        '<a href=\'javascript:document.location.reload()\'>Retry</a>')
-    }
+    $scope.$apply(()=>{
+      $scope.readError = true
+      if(errorType === 'dom'){
+        $scope.readErrorText = $sce.trustAsHtml('Error opening database. Please ensure no other instances of '+name+' are open then ' +
+          '<a href=\'javascript:document.location.reload()\'>Retry</a>.');
+      } else if(errorType === 'version'){
+        $scope.readErrorText = $sce.trustAsHtml('Error opening database, invalid version. See ' +
+          '<a href=\'javascript:require("electron").remote.getCurrentWindow().toggleDevTools();\'>console</a> for more information.');
+      } else if(errorType === 'blocked'){
+        $scope.readErrorText = $sce.trustAsHtml('Error opening database. Please ensure no other instances of '+name+' are open then ' +
+          '<a href=\'javascript:document.location.reload()\'>Retry</a>.');
+      } else if(errorType === 'unknown'){
+        $scope.readErrorText = $sce.trustAsHtml('Error opening database. See ' +
+          '<a href=\'javascript:require("electron").remote.getCurrentWindow().toggleDevTools();\'>console</a> for more information. ' +
+          '<a href=\'javascript:document.location.reload()\'>Retry</a>')
+      }
+    });
   };
 });
 
