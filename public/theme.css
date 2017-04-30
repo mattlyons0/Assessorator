@@ -253,3 +253,14 @@ div.ui-select-container>input.ui-select-search {
 .ui-select-search-hidden {
     display: none !important;
 }
+/* Fix Chips adding an extra line when it doesn't need it (in edit question ui specifically)*/
+div.ui-select-container.ui-select-multiple>div {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    /*align-content:stretch;*/
+}
+div.ui-select-container.ui-select-multiple>div>input.ui-select-search {
+    flex: 1 1 auto;
+    width: auto !important;
+}

@@ -506,7 +506,7 @@ app.controller('classViewCtrl', function ($scope,$timeout, $mdToast, $sce, $filt
       model: '',
       label: 'Select the objectives to add:',
       multiple: true
-    }
+    };
 
     let confirm = $uibModal.open({
       templateUrl: 'html/modalTemplate.html',
