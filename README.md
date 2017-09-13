@@ -39,5 +39,5 @@ Assessorator
 - Misc
   - Support export and import of database
   - Automatically Backups (locally to configurable location)
-  - Automatic Updates
+  - Automatic Updates (Windows Only)
   - UI Tested with HCI Usability Study
