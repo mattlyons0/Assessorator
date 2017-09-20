@@ -31,8 +31,8 @@ Edit Question:
 
 ### Usage
 - Download and install the [Latest Release](https://github.com/mattlyons0/Assessorator/releases)
-- *Optionally Import (File -> Import Database) demoImport.json*
-  - demoImport.json will import a dummy course (CPI 101) containing dummy data which can be used to familiarize yourself with the application
+- *Optionally Import (File -> Import Database) [demoImport.json](https://github.com/mattlyons0/Assessorator/blob/master/demoImport.json)*
+  - [demoImport.json](https://github.com/mattlyons0/Assessorator/blob/master/demoImport.json) will import a dummy course (CPI 101) containing dummy data which can be used to familiarize yourself with the application
 - Create Assessments then Export them to generate edX syntax (which can be used in edX itself to import an assessment)
 
 ### Features
